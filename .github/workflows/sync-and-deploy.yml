@@ -18,6 +18,7 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
+          token: ${{ secrets.DOCS_TOKEN }}
 
       - uses: subosito/flutter-action@v2
         with:
