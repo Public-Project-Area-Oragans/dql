@@ -6,6 +6,7 @@ import 'scenes/wing_scene.dart';
 class DolGame extends FlameGame {
   VoidCallback? onNavigateToHall;
   void Function(String wingId)? onWingSelectedCallback;
+  void Function(String npcId)? onNpcTappedCallback;
 
   @override
   Color backgroundColor() => const Color(0xFF0F0B07);
@@ -35,6 +36,10 @@ class DolGame extends FlameGame {
 
   void onWingSelected(String wingId) {
     onWingSelectedCallback?.call(wingId);
+  }
+
+  void onNpcTapped(String npcId) {
+    onNpcTappedCallback?.call(npcId);
   }
 
   static final _wingConfigs = <String, (String, Color)>{

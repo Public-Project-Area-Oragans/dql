@@ -31,9 +31,7 @@ class WingScene extends Component with HasGameReference<DolGame> {
       npcName: config.npcName,
       color: themeColor,
       position: Vector2(game.size.x * 0.15, game.size.y * 0.4),
-      onNpcTapped: () {
-        game.overlays.add('dialogue');
-      },
+      onNpcTapped: () => game.onNpcTapped(config.npcId),
     ));
 
     final shelfWidth = game.size.x * 0.2;
