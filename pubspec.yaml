@@ -56,3 +56,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - content/books/java-spring/book.json
+    - content/books/dart/book.json
+    - content/books/flutter/book.json
+    - content/books/mysql/book.json
+    - content/books/msa/book.json

@@ -7,6 +7,7 @@ class DolGame extends FlameGame {
   VoidCallback? onNavigateToHall;
   void Function(String wingId)? onWingSelectedCallback;
   void Function(String npcId)? onNpcTappedCallback;
+  void Function(String shelfId, String category)? onShelfTappedCallback;
 
   @override
   Color backgroundColor() => const Color(0xFF0F0B07);
@@ -40,6 +41,10 @@ class DolGame extends FlameGame {
 
   void onNpcTapped(String npcId) {
     onNpcTappedCallback?.call(npcId);
+  }
+
+  void onShelfTapped(String shelfId, String category) {
+    onShelfTappedCallback?.call(shelfId, category);
   }
 
   static final _wingConfigs = <String, (String, Color)>{
