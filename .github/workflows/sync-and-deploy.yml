@@ -1,0 +1,50 @@
+name: Sync & Deploy
+
+on:
+  repository_dispatch:
+    types: [docs-updated]
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      # docs-updated 트리거일 때만 submodule 최신화 후 커밋/푸시
+      - name: Update submodule (dispatch only)
+        if: github.event_name == 'repository_dispatch'
+        run: |
+          git submodule update --remote --merge
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs-source
+          git diff --cached --quiet || git commit -m "chore: sync docs-source submodule"
+          git push
+
+      - name: Build content
+        run: dart run tools/content_builder.dart docs-source
+
+      - name: Build web
+        run: |
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+          flutter build web --release --web-renderer canvaskit --base-href /dol/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
