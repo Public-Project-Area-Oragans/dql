@@ -1,11 +1,14 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../data/models/quest_model.dart';
 import '../../domain/providers/game_providers.dart';
 import '../../domain/providers/quest_providers.dart';
 import '../../game/dol_game.dart';
 import '../overlays/dialogue_overlay.dart';
+import '../overlays/hud_overlay.dart';
+import '../overlays/quest_board_overlay.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   const GameScreen({super.key});
@@ -30,6 +33,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
         ref
             .read(activeDialogueProvider.notifier)
             .startDialogue(_placeholderTreeFor(npcId));
+      }
+      ..onShelfTappedCallback = (_, _) {
+        ref.read(questBoardOpenProvider.notifier).open();
       };
   }
 
@@ -37,12 +43,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Widget build(BuildContext context) {
     final scene = ref.watch(currentSceneProvider);
     final dialogue = ref.watch(activeDialogueProvider);
+    final boardOpen = ref.watch(questBoardOpenProvider);
 
     return Scaffold(
       body: Stack(
         children: [
           GameWidget(game: _game),
-          if (scene == GameScene.wing && dialogue == null)
+          const HudOverlay(),
+          if (scene == GameScene.wing && dialogue == null && !boardOpen)
             Positioned(
               top: 16,
               left: 16,
@@ -55,9 +63,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                 },
               ),
             ),
-          if (dialogue != null)
-            DialogueOverlay(
-              onClose: () {},
+          if (dialogue != null) DialogueOverlay(onClose: () {}),
+          if (boardOpen)
+            QuestBoardOverlay(
+              onClose: () => ref.read(questBoardOpenProvider.notifier).close(),
+              onChapterSelected: (bookId, chapterId) {
+                ref.read(questBoardOpenProvider.notifier).close();
+                context.go('/book/$bookId/chapter/$chapterId');
+              },
             ),
         ],
       ),

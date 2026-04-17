@@ -20,3 +20,12 @@ class CurrentWingId extends _$CurrentWingId {
   void select(String wingId) => state = wingId;
   void clear() => state = null;
 }
+
+@riverpod
+class QuestBoardOpen extends _$QuestBoardOpen {
+  @override
+  bool build() => false;
+
+  void open() => state = true;
+  void close() => state = false;
+}

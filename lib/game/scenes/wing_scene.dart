@@ -39,14 +39,14 @@ class WingScene extends Component with HasGameReference<DolGame> {
 
     for (var i = 0; i < config.categories.length; i++) {
       final x = game.size.x * 0.5 + i * (shelfWidth + 20);
+      final shelfId = '${wingId}_shelf_$i';
+      final category = config.categories[i];
       add(BookshelfComponent(
-        shelfId: '${wingId}_shelf_$i',
-        category: config.categories[i],
+        shelfId: shelfId,
+        category: category,
         position: Vector2(x, game.size.y * 0.25),
         size: Vector2(shelfWidth, shelfHeight),
-        onShelfTapped: () {
-          game.overlays.add('questBoard');
-        },
+        onShelfTapped: () => game.onShelfTapped(shelfId, category),
       ));
 
       add(SpiritComponent(
