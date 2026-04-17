@@ -1,0 +1,64 @@
+name: dol
+description: "Dev Quest Library — 게임형 문서 학습 시스템"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.8
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 게임 엔진
+  flame: ^1.21.0
+
+  # 상태관리
+  flutter_riverpod: ^3.1.0
+  riverpod_annotation: ^4.0.0
+
+  # 라우팅
+  go_router: ^17.2.0
+
+  # 네트워크
+  dio: ^5.9.2
+  pretty_dio_logger: ^1.4.0
+
+  # JSON / 모델
+  json_annotation: ^4.9.0
+  freezed_annotation: ^3.0.0
+
+  # 로컬 저장소
+  shared_preferences: ^2.3.3
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # UI
+  flutter_screenutil: ^5.9.3
+  flutter_markdown: ^0.7.6
+  flutter_svg: ^2.0.10+1
+
+  # 유틸
+  intl: ^0.19.0
+  uuid: ^4.5.1
+  collection: ^1.18.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.0
+  json_serializable: ^6.8.0
+  freezed: ^3.0.0
+  riverpod_generator: ^4.0.0+1
+  riverpod_lint: ^3.1.0
+  custom_lint: ^0.8.1
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - content/books/java-spring/book.json
+    - content/books/dart/book.json
+    - content/books/flutter/book.json
+    - content/books/mysql/book.json
+    - content/books/msa/book.json
