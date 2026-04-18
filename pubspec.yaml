@@ -36,6 +36,7 @@ dependencies:
   # UI
   flutter_screenutil: ^5.9.3
   flutter_markdown: ^0.7.6
+  markdown: ^7.0.0
   flutter_svg: ^2.0.10+1
 
   # 유틸
