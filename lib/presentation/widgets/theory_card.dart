@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
 import '../../core/constants/app_colors.dart';
 import '../../data/models/book_model.dart';
+import 'blocks/content_block_renderer.dart';
 import 'steampunk_panel.dart';
 
 class TheoryCard extends StatelessWidget {
@@ -18,12 +19,7 @@ class TheoryCard extends StatelessWidget {
         for (final section in theory.sections) ...[
           SteampunkPanel(
             title: section.title,
-            child: MarkdownBody(
-              data: section.content,
-              selectable: true,
-              styleSheet: _markdownStyle(context),
-              builders: {'pre': _ScrollablePreBuilder()},
-            ),
+            child: _sectionBody(context, section),
           ),
           const SizedBox(height: 16),
         ],
@@ -53,6 +49,31 @@ class TheoryCard extends StatelessWidget {
             const SizedBox(height: 12),
           ],
         ],
+      ],
+    );
+  }
+
+  /// `section.blocks`가 비어있지 않으면 각 블록을 `ContentBlockRenderer`로
+  /// 순서대로 렌더한다. 비어있는 경우 기존 `content`(markdown) 경로로 폴백
+  /// (Phase 1 하위호환).
+  Widget _sectionBody(BuildContext context, TheorySection section) {
+    if (section.blocks.isEmpty) {
+      return MarkdownBody(
+        data: section.content,
+        selectable: true,
+        styleSheet: _markdownStyle(context),
+        builders: {'pre': _ScrollablePreBuilder()},
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final block in section.blocks)
+          ContentBlockRenderer(
+            block: block,
+            proseStyle: _markdownStyle(context),
+            proseBuilders: {'pre': _ScrollablePreBuilder()},
+          ),
       ],
     );
   }
