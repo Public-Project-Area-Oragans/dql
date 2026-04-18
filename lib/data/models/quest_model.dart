@@ -66,6 +66,10 @@ abstract class Quest with _$Quest {
     MixedQuiz? mixedQuiz,
     required QuestReward reward,
     @Default(QuestStatus.locked) QuestStatus status,
+    // P0-5 NPC-2: 퀘스트의 분관/카테고리 범위. 책장 필터 + QuestBoard
+    // 분류에 사용.
+    @Default('') String wingId,
+    @Default([]) List<String> relatedCategories,
   }) = _Quest;
 
   factory Quest.fromJson(Map<String, dynamic> json) => _$QuestFromJson(json);
