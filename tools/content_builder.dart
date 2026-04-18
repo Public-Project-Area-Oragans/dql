@@ -94,11 +94,25 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
 
     if (line.startsWith('```') && inCodeBlock) {
       inCodeBlock = false;
-      codeExamples.add({
-        'language': codeLanguage ?? 'text',
-        'code': codeBuffer.toString().trimRight(),
-        'description': currentSection ?? '',
-      });
+      final body = codeBuffer.toString().trimRight();
+      // Task 12 option D: language가 ascii/diagram/text/'' 이면서 박스
+      // 드로잉 문자가 포함된 블록은 codeExamples로 분리하지 않고 섹션
+      // 본문 안에 코드펜스로 유지한다. (코드 예제 섹션에서 문맥을 잃지 않음)
+      final asciiLike = {'ascii', 'diagram', 'text'};
+      final lang = (codeLanguage ?? 'text');
+      final keepInSection =
+          asciiLike.contains(lang.toLowerCase()) && _hasBoxDrawing(body);
+      if (keepInSection) {
+        currentContent.writeln('```$lang');
+        currentContent.writeln(body);
+        currentContent.writeln('```');
+      } else {
+        codeExamples.add({
+          'language': codeLanguage ?? 'text',
+          'code': body,
+          'description': currentSection ?? '',
+        });
+      }
       continue;
     }
 
@@ -111,7 +125,7 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
       if (currentSection != null) {
         sections.add({
           'title': currentSection,
-          'content': currentContent.toString().trim(),
+          'content': _wrapAsciiBlocks(currentContent.toString().trim()),
         });
       }
       currentSection = line.substring(3).trim();
@@ -127,7 +141,7 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
   if (currentSection != null) {
     sections.add({
       'title': currentSection,
-      'content': currentContent.toString().trim(),
+      'content': _wrapAsciiBlocks(currentContent.toString().trim()),
     });
   }
 
@@ -180,4 +194,57 @@ Map<String, dynamic> applyOverride(
   }
 
   return chapter;
+}
+
+/// Unicode 박스 드로잉(U+2500–U+259F) 문자가 하나라도 포함되어 있는지.
+/// Task 12: 이 범위가 존재하면 ASCII 다이어그램 후보로 간주한다.
+bool _hasBoxDrawing(String text) {
+  for (final rune in text.runes) {
+    if (rune >= 0x2500 && rune <= 0x259F) return true;
+  }
+  return false;
+}
+
+/// 섹션 본문 안의 연속된 박스 드로잉 줄(≥3)을 ```text``` 코드펜스로 감싸
+/// MarkdownBody가 monospace로 정렬을 보존하도록 한다. (Task 12 option B)
+///
+/// 주의: 이미 코드펜스 내부에 있는 줄은 감싸지 않는다. 원문이 `순수 다이어그램`
+/// 구간만 대상.
+String _wrapAsciiBlocks(String content) {
+  final lines = content.split('\n');
+  final out = <String>[];
+  var i = 0;
+  var insideFence = false;
+  while (i < lines.length) {
+    final line = lines[i];
+    if (line.startsWith('```')) {
+      insideFence = !insideFence;
+      out.add(line);
+      i++;
+      continue;
+    }
+    if (insideFence) {
+      out.add(line);
+      i++;
+      continue;
+    }
+    if (_hasBoxDrawing(line)) {
+      var j = i;
+      while (j < lines.length &&
+          !lines[j].startsWith('```') &&
+          _hasBoxDrawing(lines[j])) {
+        j++;
+      }
+      if (j - i >= 3) {
+        out.add('```text');
+        for (var k = i; k < j; k++) out.add(lines[k]);
+        out.add('```');
+        i = j;
+        continue;
+      }
+    }
+    out.add(line);
+    i++;
+  }
+  return out.join('\n');
 }

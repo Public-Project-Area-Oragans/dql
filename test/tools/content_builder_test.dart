@@ -1,5 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 
+// 원본 parseMdToChapter를 상대 경로로 import해서 단일 소스로 검증한다.
+// (과거에는 테스트 파일 안에 같은 함수를 복제했으나 Task 12에서
+//  ASCII 다이어그램 감지 로직이 추가되면서 drift 방지를 위해 제거.)
+import '../../tools/content_builder.dart';
+
 void main() {
   group('parseMdToChapter', () {
     test('extracts title from first heading', () {
@@ -50,90 +55,106 @@ JDK 21을 다운로드한다.
       expect(result['theory']['codeExamples'], isEmpty);
     });
   });
-}
 
-/// MD 파일을 챕터 JSON으로 변환하는 핵심 로직
-Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
-  final lines = markdown.split('\n');
+  group('parseMdToChapter — Task 12 ASCII 다이어그램 보존', () {
+    test(
+        'fence language가 비어있고 박스 드로잉이 포함되면 섹션에 유지 (codeExamples로 이동하지 않음)',
+        () {
+      const md = '''
+# 샘플
 
-  var title = id;
-  for (final line in lines) {
-    if (line.startsWith('# ') && !line.startsWith('## ')) {
-      title = line.substring(2).trim();
-      break;
-    }
-  }
+## 구조도
 
-  final sections = <Map<String, String>>[];
-  final codeExamples = <Map<String, String>>[];
-  String? currentSection;
-  final currentContent = StringBuffer();
-  var inCodeBlock = false;
-  String? codeLanguage;
-  final codeBuffer = StringBuffer();
+위에 설명. 아래는 구조도:
 
-  for (final line in lines) {
-    if (line.startsWith('```') && !inCodeBlock) {
-      inCodeBlock = true;
-      codeLanguage = line.substring(3).trim();
-      if (codeLanguage.isEmpty) codeLanguage = 'text';
-      codeBuffer.clear();
-      continue;
-    }
+```
+단일 애플리케이션
+├── 사용자 관리
+├── 상품 관리
+└── 알림
+```
 
-    if (line.startsWith('```') && inCodeBlock) {
-      inCodeBlock = false;
-      codeExamples.add({
-        'language': codeLanguage ?? 'text',
-        'code': codeBuffer.toString().trimRight(),
-        'description': currentSection ?? '',
-      });
-      continue;
-    }
+아래에 부연.
+''';
 
-    if (inCodeBlock) {
-      codeBuffer.writeln(line);
-      continue;
-    }
+      final result = parseMdToChapter(md, 'x-01', 1);
+      final sections = result['theory']['sections'] as List;
+      final codeExamples = result['theory']['codeExamples'] as List;
 
-    if (line.startsWith('## ')) {
-      if (currentSection != null) {
-        sections.add({
-          'title': currentSection,
-          'content': currentContent.toString().trim(),
-        });
-      }
-      currentSection = line.substring(3).trim();
-      currentContent.clear();
-      continue;
-    }
-
-    if (line.startsWith('# ') && !line.startsWith('## ')) continue;
-
-    currentContent.writeln(line);
-  }
-
-  if (currentSection != null) {
-    sections.add({
-      'title': currentSection,
-      'content': currentContent.toString().trim(),
+      expect(codeExamples, isEmpty,
+          reason: '박스 드로잉 포함 + 언어 비어있음 → 섹션에 남아야 함');
+      final content = sections.first['content'] as String;
+      expect(content, contains('```text'),
+          reason: '섹션 본문에 text 언어로 다시 감싼 코드펜스 존재');
+      expect(content, contains('├── 사용자 관리'));
     });
-  }
 
-  return {
-    'id': id,
-    'title': title,
-    'order': order,
-    'theory': {
-      'sections': sections,
-      'codeExamples': codeExamples,
-      'diagrams': <Map<String, String>>[],
-    },
-    'simulator': {
-      'type': 'codeStep',
-      'steps': <Map<String, dynamic>>[],
-      'completionCriteria': {'minStepsCompleted': 0},
-    },
-    'isCompleted': false,
-  };
+    test('fence language가 java라면 박스 드로잉 여부와 관계없이 codeExamples로 이동',
+        () {
+      const md = '''
+# 샘플
+
+## 예제
+
+```java
+class Foo {
+  // ├── 이건 주석 안의 박스 드로잉
+}
+```
+''';
+
+      final result = parseMdToChapter(md, 'x-02', 1);
+      final codeExamples = result['theory']['codeExamples'] as List;
+
+      expect(codeExamples, hasLength(1));
+      expect(codeExamples.first['language'], 'java');
+    });
+
+    test(
+        '섹션 본문 내 연속된 ≥3 박스 드로잉 줄은 자동으로 ```text``` 펜스로 감싸진다',
+        () {
+      const md = '''
+# 샘플
+
+## 트리
+
+트리 구조:
+┌── root
+├── a
+└── b
+끝.
+''';
+
+      final result = parseMdToChapter(md, 'x-03', 1);
+      final sections = result['theory']['sections'] as List;
+      final content = sections.first['content'] as String;
+
+      expect(content, contains('```text'));
+      expect(content, contains('┌── root'));
+      // 인덱스 순서: 설명 → fence open → 박스 3줄 → fence close → 끝.
+      final fenceIndex = content.indexOf('```text');
+      final endIndex = content.indexOf('끝.');
+      expect(fenceIndex < endIndex, isTrue,
+          reason: '펜스가 "끝." 이전에 위치해야 함');
+    });
+
+    test('연속 박스 드로잉 줄이 2줄 이하면 감싸지지 않는다', () {
+      const md = '''
+# 샘플
+
+## 짧은 장식
+
+├── 한 줄
+설명 텍스트.
+└── 또 한 줄
+''';
+
+      final result = parseMdToChapter(md, 'x-04', 1);
+      final sections = result['theory']['sections'] as List;
+      final content = sections.first['content'] as String;
+
+      expect(content.contains('```text'), isFalse,
+          reason: '3줄 미만인 경우 감싸지 않고 원문 유지');
+    });
+  });
 }

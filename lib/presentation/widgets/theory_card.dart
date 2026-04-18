@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:markdown/markdown.dart' as md;
 import '../../core/constants/app_colors.dart';
 import '../../data/models/book_model.dart';
 import 'steampunk_panel.dart';
@@ -21,6 +22,7 @@ class TheoryCard extends StatelessWidget {
               data: section.content,
               selectable: true,
               styleSheet: _markdownStyle(context),
+              builders: {'pre': _ScrollablePreBuilder()},
             ),
           ),
           const SizedBox(height: 16),
@@ -119,6 +121,41 @@ class TheoryCard extends StatelessWidget {
       ),
       tableColumnWidth: const IntrinsicColumnWidth(),
       tableCellsPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+    );
+  }
+}
+
+/// 코드펜스(`<pre>`) 블록을 가로 스크롤 가능한 monospace 박스로 렌더.
+/// Task 12 Option B로 삽입된 ASCII 다이어그램이 뷰포트보다 길어도 줄바꿈 없이
+/// 정렬을 유지하도록 한다.
+class _ScrollablePreBuilder extends MarkdownElementBuilder {
+  @override
+  Widget visitElementAfterWithContext(
+    BuildContext context,
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.darkWalnut,
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.all(10),
+        child: SelectableText(
+          element.textContent,
+          style: const TextStyle(
+            color: AppColors.steamGreen,
+            fontFamily: 'monospace',
+            fontSize: 13,
+            height: 1.4,
+          ),
+        ),
+      ),
     );
   }
 }
