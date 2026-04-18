@@ -37,6 +37,8 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_markdown: ^0.7.6
   markdown: ^7.0.0
+  # Mermaid flowchart 네이티브 렌더링 (Phase 3 PR #4). 순수 Dart/CustomPaint.
+  graphview: ^1.2.0
   flutter_svg: ^2.0.10+1
 
   # 유틸
