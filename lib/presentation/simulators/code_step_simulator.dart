@@ -5,7 +5,7 @@ import '../widgets/steampunk_panel.dart';
 import '../widgets/steampunk_button.dart';
 
 class CodeStepSimulator extends StatefulWidget {
-  final SimulatorConfig config;
+  final CodeStepConfig config;
   final VoidCallback onComplete;
 
   const CodeStepSimulator({

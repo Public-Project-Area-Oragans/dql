@@ -1,0 +1,38 @@
+{
+  "chapterId": "msa-phase4-step4-resilience-patterns",
+  "simulator": {
+    "type": "structureAssembly",
+    "gridSize": {"cols": 5, "rows": 5},
+    "palette": [
+      {"id": "client", "label": "Client", "spriteKey": "client"},
+      {"id": "timeout", "label": "Timeout (3s)", "spriteKey": "timeout"},
+      {"id": "retry", "label": "Retry + Backoff", "spriteKey": "retry"},
+      {"id": "circuitBreaker", "label": "Circuit Breaker", "spriteKey": "circuit_breaker"},
+      {"id": "service", "label": "대상 서비스", "spriteKey": "service"},
+      {"id": "fallback", "label": "Fallback (Cache/Default)", "spriteKey": "fallback"},
+      {"id": "bulkhead", "label": "Bulkhead", "spriteKey": "bulkhead"}
+    ],
+    "solution": {
+      "nodes": [
+        {"id": "client", "pos": {"col": 0, "row": 2}},
+        {"id": "timeout", "pos": {"col": 1, "row": 2}},
+        {"id": "retry", "pos": {"col": 2, "row": 2}},
+        {"id": "circuitBreaker", "pos": {"col": 3, "row": 2}},
+        {"id": "service", "pos": {"col": 4, "row": 1}},
+        {"id": "fallback", "pos": {"col": 4, "row": 3}}
+      ],
+      "edges": [
+        {"from": "client", "to": "timeout", "directed": true},
+        {"from": "timeout", "to": "retry", "directed": true},
+        {"from": "retry", "to": "circuitBreaker", "directed": true},
+        {"from": "circuitBreaker", "to": "service", "directed": true},
+        {"from": "circuitBreaker", "to": "fallback", "directed": true}
+      ]
+    },
+    "partialFeedback": {
+      "missingNodes": "필수 컴포넌트가 빠졌습니다: {names}. 방어층 순서는 Client → Timeout → Retry → Circuit Breaker 순으로 배치합니다.",
+      "missingEdges": "다음 연결이 필요합니다: {pairs}. 각 방어층은 순차적으로 래핑되며, Circuit Breaker는 정상 경로(서비스)와 차단 경로(Fallback) 두 갈래로 나뉩니다.",
+      "extraEdges": "불필요한 연결이 있습니다: {pairs}. 방어층은 역순 호출이나 레이어 건너뛰기를 허용하지 않습니다."
+    }
+  }
+}

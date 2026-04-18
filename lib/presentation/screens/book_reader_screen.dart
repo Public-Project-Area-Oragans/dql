@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
+import '../../data/models/book_model.dart';
+import '../../data/models/telemetry_event.dart';
 import '../../domain/providers/content_providers.dart';
+import '../../domain/providers/telemetry_providers.dart';
 import '../simulators/code_step_simulator.dart';
+import '../simulators/structure_assembly_simulator.dart';
 import '../widgets/steampunk_button.dart';
 import '../widgets/theory_card.dart';
 
@@ -29,12 +33,33 @@ class _BookReaderScreenState extends ConsumerState<BookReaderScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    // Phase 2 Task 2-5: 챕터 진입 시점 계측.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(telemetryServiceProvider).append(
+            TelemetryEvent(
+              type: 'chapter_start',
+              chapterId: widget.chapterId,
+              at: DateTime.now(),
+            ),
+          );
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _recordComplete() {
+    ref.read(telemetryServiceProvider).append(
+          TelemetryEvent(
+            type: 'chapter_complete',
+            chapterId: widget.chapterId,
+            at: DateTime.now(),
+          ),
+        );
   }
 
   @override
@@ -110,24 +135,39 @@ class _BookReaderScreenState extends ConsumerState<BookReaderScreen>
           ),
           SingleChildScrollView(
             padding: const EdgeInsets.all(16),
-            child: chapter.simulator.steps.isNotEmpty
-                ? CodeStepSimulator(
-                    config: chapter.simulator,
-                    onComplete: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('시뮬레이터 완료!'),
-                          backgroundColor: AppColors.steamGreen,
-                        ),
-                      );
-                    },
-                  )
-                : const Center(
-                    child: Text(
-                      '이 챕터의 시뮬레이터는 준비 중입니다',
-                      style: TextStyle(color: AppColors.parchment),
-                    ),
+            child: switch (chapter.simulator) {
+              CodeStepConfig(:final steps) when steps.isNotEmpty =>
+                CodeStepSimulator(
+                  config: chapter.simulator as CodeStepConfig,
+                  onComplete: () {
+                    _recordComplete();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('시뮬레이터 완료!'),
+                        backgroundColor: AppColors.steamGreen,
+                      ),
+                    );
+                  },
+                ),
+              StructureAssemblyConfig() => StructureAssemblySimulator(
+                  config: chapter.simulator as StructureAssemblyConfig,
+                  onComplete: () {
+                    _recordComplete();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('구조 조립 완료!'),
+                        backgroundColor: AppColors.steamGreen,
+                      ),
+                    );
+                  },
+                ),
+              _ => const Center(
+                  child: Text(
+                    '이 챕터의 시뮬레이터는 준비 중입니다',
+                    style: TextStyle(color: AppColors.parchment),
                   ),
+                ),
+            },
           ),
         ],
       ),

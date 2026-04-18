@@ -1,0 +1,35 @@
+{
+  "chapterId": "msa-phase4-step2-service-discovery",
+  "simulator": {
+    "type": "structureAssembly",
+    "gridSize": {"cols": 5, "rows": 5},
+    "palette": [
+      {"id": "client", "label": "호출 클라이언트 (order-service)", "spriteKey": "client"},
+      {"id": "registry", "label": "Service Registry", "spriteKey": "registry"},
+      {"id": "instance1", "label": "서비스 인스턴스 #1", "spriteKey": "service_instance"},
+      {"id": "instance2", "label": "서비스 인스턴스 #2", "spriteKey": "service_instance"},
+      {"id": "loadBalancer", "label": "Load Balancer", "spriteKey": "load_balancer"},
+      {"id": "apiGateway", "label": "API Gateway", "spriteKey": "gateway"}
+    ],
+    "solution": {
+      "nodes": [
+        {"id": "client", "pos": {"col": 0, "row": 2}},
+        {"id": "registry", "pos": {"col": 2, "row": 2}},
+        {"id": "instance1", "pos": {"col": 4, "row": 1}},
+        {"id": "instance2", "pos": {"col": 4, "row": 3}}
+      ],
+      "edges": [
+        {"from": "client", "to": "registry", "directed": true},
+        {"from": "instance1", "to": "registry", "directed": true},
+        {"from": "instance2", "to": "registry", "directed": true},
+        {"from": "client", "to": "instance1", "directed": true},
+        {"from": "client", "to": "instance2", "directed": true}
+      ]
+    },
+    "partialFeedback": {
+      "missingNodes": "필수 컴포넌트가 빠졌습니다: {names}. Service Discovery는 Registry와 최소 1개 이상의 인스턴스가 필요합니다.",
+      "missingEdges": "다음 연결이 필요합니다: {pairs}. 클라이언트는 Registry에 조회하고, 인스턴스는 Registry에 heartbeat를 보내야 합니다.",
+      "extraEdges": "불필요한 연결이 있습니다: {pairs}. Client-side Discovery에서는 클라이언트가 Registry와 인스턴스 양쪽에 연결되며, 라우터를 거치지 않습니다."
+    }
+  }
+}
