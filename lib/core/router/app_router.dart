@@ -1,7 +1,8 @@
 import 'package:go_router/go_router.dart';
+import '../../presentation/screens/book_reader_screen.dart';
+import '../../presentation/screens/debug_telemetry_screen.dart';
 import '../../presentation/screens/game_screen.dart';
 import '../../presentation/screens/login_screen.dart';
-import '../../presentation/screens/book_reader_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -21,6 +22,10 @@ final appRouter = GoRouter(
         final chapterId = state.pathParameters['chapterId']!;
         return BookReaderScreen(bookId: bookId, chapterId: chapterId);
       },
+    ),
+    GoRoute(
+      path: '/debug/telemetry',
+      builder: (context, state) => const DebugTelemetryScreen(),
     ),
   ],
 );

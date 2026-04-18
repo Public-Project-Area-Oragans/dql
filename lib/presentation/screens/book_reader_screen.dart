@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/models/book_model.dart';
+import '../../data/models/telemetry_event.dart';
 import '../../domain/providers/content_providers.dart';
+import '../../domain/providers/telemetry_providers.dart';
 import '../simulators/code_step_simulator.dart';
 import '../simulators/structure_assembly_simulator.dart';
 import '../widgets/steampunk_button.dart';
@@ -31,12 +33,33 @@ class _BookReaderScreenState extends ConsumerState<BookReaderScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    // Phase 2 Task 2-5: 챕터 진입 시점 계측.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(telemetryServiceProvider).append(
+            TelemetryEvent(
+              type: 'chapter_start',
+              chapterId: widget.chapterId,
+              at: DateTime.now(),
+            ),
+          );
+    });
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void _recordComplete() {
+    ref.read(telemetryServiceProvider).append(
+          TelemetryEvent(
+            type: 'chapter_complete',
+            chapterId: widget.chapterId,
+            at: DateTime.now(),
+          ),
+        );
   }
 
   @override
@@ -117,6 +140,7 @@ class _BookReaderScreenState extends ConsumerState<BookReaderScreen>
                 CodeStepSimulator(
                   config: chapter.simulator as CodeStepConfig,
                   onComplete: () {
+                    _recordComplete();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('시뮬레이터 완료!'),
@@ -128,6 +152,7 @@ class _BookReaderScreenState extends ConsumerState<BookReaderScreen>
               StructureAssemblyConfig() => StructureAssemblySimulator(
                   config: chapter.simulator as StructureAssemblyConfig,
                   onComplete: () {
+                    _recordComplete();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('구조 조립 완료!'),
