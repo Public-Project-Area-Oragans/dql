@@ -59,4 +59,5 @@ master ← develop ← feature/task-XX-*
 - [Phase 1 구현 계획](docs/2026-04-17-dev-quest-library-plan.md) — Task 상세
 - [Phase 2 설계](docs/2026-04-18-dev-quest-library-phase2-design.md) — MSA 구조 조립 시뮬레이터 (§10은 로드맵 피벗이 대체)
 - [Phase 3 다이어그램 위젯 이주 설계](docs/2026-04-18-diagram-widget-migration-design.md) — ASCII/표/Mermaid → Flutter 위젯
+- [P0-5 NPC 분관 보강 설계](docs/2026-04-18-npc-branch-enhancement-design.md) — Claude API 기반 NPC Q&A + 책장 카테고리 필터 + 퀘스트 분관화
 - [flutter-setup 스킬](../develop-study-documents/Skillbook/flutter-setup/) — Flutter 패키지/설정 레퍼런스
