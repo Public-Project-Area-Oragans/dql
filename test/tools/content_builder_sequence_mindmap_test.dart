@@ -80,6 +80,34 @@ sequenceDiagram
       final label = (block['steps'] as List).single['label'];
       expect(label, 'POST /orders Authorization: Bearer x');
     });
+
+    test('lost message `--x` 커넥터 (reply kind)', () {
+      final block = parseMermaidSingle('''
+sequenceDiagram
+    participant A
+    participant B
+    B--xA: Connection Refused
+''', 'sequence');
+      expect((block['steps'] as List).single['kind'], 'reply');
+      expect((block['steps'] as List).single['label'], 'Connection Refused');
+    });
+
+    test('async `--)` 커넥터', () {
+      final block = parseMermaidSingle('''
+sequenceDiagram
+    A--)B: fire-and-forget
+''', 'sequence');
+      expect((block['steps'] as List).single['kind'], 'reply',
+          reason: 'dash 2개면 reply 계열로 분류');
+    });
+
+    test('sync `-x` (단일 dash + x)', () {
+      final block = parseMermaidSingle('''
+sequenceDiagram
+    A-xB: timeout
+''', 'sequence');
+      expect((block['steps'] as List).single['kind'], 'sync');
+    });
   });
 
   group('_parseMermaid → mindmap', () {
