@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/models/book_model.dart';
+import '../../data/models/quest_model.dart';
 import '../../domain/providers/content_providers.dart';
 import '../../domain/providers/game_providers.dart';
+import '../../domain/providers/wing_quests_providers.dart';
 
 class QuestBoardOverlay extends ConsumerWidget {
   final VoidCallback onClose;
@@ -20,11 +22,14 @@ class QuestBoardOverlay extends ConsumerWidget {
     final booksAsync = ref.watch(allBooksProvider);
     // NPC-1: 분관 책장에서 열렸으면 해당 카테고리로 필터링.
     final filterCategory = ref.watch(questBoardFilterCategoryProvider);
+    // NPC-6: 현재 분관의 샘플 퀘스트를 상단 섹션으로 표시.
+    final wingId = ref.watch(currentWingIdProvider) ?? '';
+    final wingQuests = ref.watch(wingQuestsProvider(wingId));
 
     return Center(
       child: Container(
         width: 500,
-        height: 400,
+        height: 460,
         decoration: BoxDecoration(
           color: AppColors.deepPurple,
           border: Border.all(color: AppColors.gold, width: 2),
@@ -63,27 +68,46 @@ class QuestBoardOverlay extends ConsumerWidget {
                       : rawBooks
                           .where((Book b) => b.category == filterCategory)
                           .toList();
-                  if (books.isEmpty) {
-                    return Center(
-                      child: Text(
-                        filterCategory == null
-                            ? '콘텐츠가 빌드되지 않았습니다.\n'
-                                'dart run tools/content_builder.dart <docs-source>'
-                            : '$filterCategory 카테고리에 책이 없습니다.',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: AppColors.parchment),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                        padding: const EdgeInsets.all(8),
-                        itemCount: books.length,
-                        itemBuilder: (context, i) {
-                          final book = books[i];
-                          return ExpansionTile(
+                  return ListView(
+                    padding: const EdgeInsets.all(8),
+                    children: [
+                      if (wingQuests.isNotEmpty) ...[
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(8, 4, 8, 6),
+                          child: Text(
+                            '✦ 이번 분관 퀘스트',
+                            style: TextStyle(
+                              color: AppColors.brightGold,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        for (final q in wingQuests) _QuestTile(quest: q),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: Divider(color: AppColors.gold, height: 1),
+                        ),
+                      ],
+                      if (books.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Text(
+                            filterCategory == null
+                                ? '콘텐츠가 빌드되지 않았습니다.\n'
+                                    'dart run tools/content_builder.dart <docs-source>'
+                                : '$filterCategory 카테고리에 책이 없습니다.',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: AppColors.parchment),
+                          ),
+                        )
+                      else
+                        for (final book in books)
+                          ExpansionTile(
                             title: Text(
                               book.title,
-                              style: const TextStyle(color: AppColors.parchment),
+                              style:
+                                  const TextStyle(color: AppColors.parchment),
                             ),
                             subtitle: Text(
                               '${(book.totalProgress * 100).toInt()}% 완료',
@@ -115,9 +139,9 @@ class QuestBoardOverlay extends ConsumerWidget {
                                 onTap: () => onChapterSelected(book.id, ch.id),
                               );
                             }).toList(),
-                          );
-                        },
-                      );
+                          ),
+                    ],
+                  );
                 },
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: AppColors.gold),
@@ -132,6 +156,82 @@ class QuestBoardOverlay extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _QuestTile extends StatelessWidget {
+  final Quest quest;
+
+  const _QuestTile({required this.quest});
+
+  @override
+  Widget build(BuildContext context) {
+    final done = quest.status == QuestStatus.completed;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.darkWalnut,
+        border: Border.all(
+          color: done
+              ? AppColors.steamGreen
+              : AppColors.gold.withValues(alpha: 0.6),
+        ),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                done ? Icons.check_circle : Icons.flag_outlined,
+                size: 16,
+                color: done ? AppColors.steamGreen : AppColors.brightGold,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  quest.title,
+                  style: TextStyle(
+                    color:
+                        done ? AppColors.steamGreen : AppColors.brightGold,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Text(
+                '+${quest.reward.xp} XP',
+                style: const TextStyle(
+                  color: AppColors.gold,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            quest.description,
+            style: const TextStyle(
+              color: AppColors.parchment,
+              fontSize: 12,
+              height: 1.4,
+            ),
+          ),
+          if (quest.requiredChapters.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(
+              '필요 챕터: ${quest.requiredChapters.join(", ")}',
+              style: TextStyle(
+                color: AppColors.parchment.withValues(alpha: 0.6),
+                fontSize: 11,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
