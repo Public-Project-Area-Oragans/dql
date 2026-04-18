@@ -27,9 +27,8 @@ jobs:
 
   integration:
     runs-on: ubuntu-latest
-    # Phase 2 Task 2-6c 도입 초기 — ChromeDriver 환경 변동 위험이 있어 머지
-    # 차단 조건에서는 제외. 첫 안정화 이후 continue-on-error를 제거한다.
-    continue-on-error: true
+    # Phase 2 Task 2-6c 도입 이후 PR #24~#43에 걸쳐 6+회 연속 녹색을
+    # 안정적으로 누적해 머지 차단 조건으로 승격 (continue-on-error 제거).
     steps:
       - uses: actions/checkout@v4
         with:
