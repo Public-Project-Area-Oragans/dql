@@ -44,7 +44,8 @@ void main(List<String> args) {
       final id = '$categoryId-$fileName';
       final content = file.readAsStringSync();
 
-      chapters.add(parseMdToChapter(content, id, i + 1));
+      final chapter = parseMdToChapter(content, id, i + 1);
+      chapters.add(applyOverride(chapter, categoryId, id));
     }
 
     final book = {
@@ -146,4 +147,37 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
     },
     'isCompleted': false,
   };
+}
+
+/// `content/overrides/<categoryId>/<chapterId>.json` 파일이 있으면
+/// 해당 챕터의 simulator 필드를 override로 교체한다.
+///
+/// - 파일 없음 → 기본값 유지 (경고 로그 없음, 대부분 챕터는 default).
+/// - JSON 파싱 실패 → 예외 throw, 빌드 중단.
+/// - override에 `simulator` 필드 없으면 무시.
+Map<String, dynamic> applyOverride(
+  Map<String, dynamic> chapter,
+  String categoryId,
+  String chapterId,
+) {
+  final overrideFile = File('content/overrides/$categoryId/$chapterId.json');
+  if (!overrideFile.existsSync()) {
+    return chapter;
+  }
+
+  Map<String, dynamic> overrideJson;
+  try {
+    overrideJson =
+        jsonDecode(overrideFile.readAsStringSync()) as Map<String, dynamic>;
+  } catch (e) {
+    throw Exception('override JSON 파싱 실패 ${overrideFile.path}: $e');
+  }
+
+  final simulatorOverride = overrideJson['simulator'];
+  if (simulatorOverride is Map<String, dynamic>) {
+    chapter['simulator'] = simulatorOverride;
+    print('  ↗ override 적용: $chapterId');
+  }
+
+  return chapter;
 }

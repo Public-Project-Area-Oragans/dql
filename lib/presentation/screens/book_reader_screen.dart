@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_colors.dart';
+import '../../data/models/book_model.dart';
 import '../../domain/providers/content_providers.dart';
 import '../simulators/code_step_simulator.dart';
 import '../widgets/steampunk_button.dart';
@@ -110,24 +111,32 @@ class _BookReaderScreenState extends ConsumerState<BookReaderScreen>
           ),
           SingleChildScrollView(
             padding: const EdgeInsets.all(16),
-            child: chapter.simulator.steps.isNotEmpty
-                ? CodeStepSimulator(
-                    config: chapter.simulator,
-                    onComplete: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('시뮬레이터 완료!'),
-                          backgroundColor: AppColors.steamGreen,
-                        ),
-                      );
-                    },
-                  )
-                : const Center(
-                    child: Text(
-                      '이 챕터의 시뮬레이터는 준비 중입니다',
-                      style: TextStyle(color: AppColors.parchment),
-                    ),
+            child: switch (chapter.simulator) {
+              CodeStepConfig(:final steps) when steps.isNotEmpty =>
+                CodeStepSimulator(
+                  config: chapter.simulator as CodeStepConfig,
+                  onComplete: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('시뮬레이터 완료!'),
+                        backgroundColor: AppColors.steamGreen,
+                      ),
+                    );
+                  },
+                ),
+              StructureAssemblyConfig() => const Center(
+                  child: Text(
+                    '구조 조립 시뮬레이터는 Task 2-2에서 구현됩니다',
+                    style: TextStyle(color: AppColors.parchment),
                   ),
+                ),
+              _ => const Center(
+                  child: Text(
+                    '이 챕터의 시뮬레이터는 준비 중입니다',
+                    style: TextStyle(color: AppColors.parchment),
+                  ),
+                ),
+            },
           ),
         ],
       ),

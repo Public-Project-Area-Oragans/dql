@@ -1,0 +1,18 @@
+{
+  "_comment": "TODO Task 2-1: docs-source/MSA/phase4-step1-api-gateway.md 정독 후 palette + solution 채움",
+  "chapterId": "msa-phase4-step1-api-gateway",
+  "simulator": {
+    "type": "structureAssembly",
+    "gridSize": {"cols": 5, "rows": 5},
+    "palette": [],
+    "solution": {
+      "nodes": [],
+      "edges": []
+    },
+    "partialFeedback": {
+      "missingNodes": "필수 컴포넌트가 빠졌습니다: {names}",
+      "missingEdges": "다음 연결이 필요합니다: {pairs}",
+      "extraEdges": "불필요한 연결이 있습니다: {pairs}"
+    }
+  }
+}

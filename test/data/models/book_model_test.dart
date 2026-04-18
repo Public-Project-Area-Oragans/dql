@@ -41,7 +41,8 @@ void main() {
       expect(chapter.title, 'Java란 무엇인가');
       expect(chapter.order, 1);
       expect(chapter.theory.sections.length, 1);
-      expect(chapter.simulator.type, SimulatorType.codeStep);
+      expect(chapter.simulator, isA<CodeStepConfig>());
+      expect((chapter.simulator as CodeStepConfig).steps, hasLength(1));
       expect(chapter.isCompleted, false);
     });
 
@@ -55,8 +56,7 @@ void main() {
           codeExamples: [],
           diagrams: [],
         ),
-        simulator: SimulatorConfig(
-          type: SimulatorType.codeStep,
+        simulator: SimulatorConfig.codeStep(
           steps: [],
           completionCriteria: CompletionRule(minStepsCompleted: 0),
         ),
@@ -108,8 +108,7 @@ Chapter _makeChapter(String id, {required bool completed}) {
     title: id,
     order: 0,
     theory: TheoryContent(sections: [], codeExamples: [], diagrams: []),
-    simulator: SimulatorConfig(
-      type: SimulatorType.codeStep,
+    simulator: SimulatorConfig.codeStep(
       steps: [],
       completionCriteria: CompletionRule(minStepsCompleted: 0),
     ),
