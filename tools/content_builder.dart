@@ -317,11 +317,16 @@ final RegExp _flowchartHeaderPattern =
     RegExp(r'^(?:flowchart|graph)(?:\s+(TB|TD|LR|BT|RL))?\s*$');
 
 // from + connector + optional "|label|" + to
-// 지원 connector: -->, -.->, ==>, ---, -.- (깨진 점선), ===,
-//                 <-->(양방향), --o(서클 end), --x(크로스 end).
+// 지원 connector (느슨 — 소스에서 발견된 변종 포함):
+//   --> / -->> / -->>>                   solid (dashes n>{1..3})
+//   -.-> / -.->> / -.->>>                dashed
+//   ==> / ==>> / ==>>>                   thick
+//   --- / === / -.-                      open (no arrow, connection만)
+//   <-->                                 bidirectional
+//   --o / --x                            marker end
 final RegExp _edgePattern = RegExp(
   r'^([A-Za-z_]\w*)'
-  r'\s*(-->|-\.->|==>|---|-\.\-|===|<-->|--[ox])'
+  r'\s*(-->{1,3}|-\.->{1,3}|==>{1,3}|---|-\.\-|===|<-->|--[ox])'
   r'(?:\s*\|\s*"?([^"|]+?)"?\s*\|\s*)?'
   r'\s*([A-Za-z_]\w*)',
 );
@@ -383,21 +388,12 @@ Map<String, dynamic>? _parseFlowchart(List<String> lines) {
   }
 
   String edgeStyle(String connector) {
-    switch (connector) {
-      case '-.->':
-      case '-.-':
-        return 'dashed';
-      case '==>':
-      case '===':
-        return 'thick';
-      case '-->':
-      case '---':
-      case '<-->': // 양방향 → solid (renderer에서 양 끝 화살표 처리 가능)
-      case '--o':
-      case '--x':
-      default:
-        return 'solid';
-    }
+    // 점선: `-.` 포함 (dashed).
+    if (connector.contains('.')) return 'dashed';
+    // 두꺼운 선: `=` 포함 (thick).
+    if (connector.contains('=')) return 'thick';
+    // 그 외 (`-->`, `-->>`, `<-->`, `--o`, `--x`, `---`) → solid.
+    return 'solid';
   }
 
   for (var idx = 1; idx < lines.length; idx++) {
@@ -534,9 +530,9 @@ bool _tryParseMultiway(
   List<Map<String, dynamic>> edges,
   String Function(String) edgeStyle,
 ) {
-  // 엣지 커넥터를 먼저 탐색: `-->`, `-.->`, `==>`, `---` 등.
+  // 엣지 커넥터를 먼저 탐색 (PR #7 feat 보강과 동일 세트).
   final connectorPattern =
-      RegExp(r'(-->|-\.->|==>|---|-\.\-|===|<-->|--[ox])');
+      RegExp(r'(-->{1,3}|-\.->{1,3}|==>{1,3}|---|-\.\-|===|<-->|--[ox])');
   final m = connectorPattern.firstMatch(stripped);
   if (m == null) return false;
   final connector = m.group(1)!;
