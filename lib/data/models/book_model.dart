@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'content_block.dart';
+
 part 'book_model.freezed.dart';
 part 'book_model.g.dart';
 
@@ -10,6 +12,9 @@ abstract class TheorySection with _$TheorySection {
   const factory TheorySection({
     required String title,
     required String content,
+    // Phase 3 "다이어그램 위젯 이주" skeleton. build-time parser가 채우며,
+    // 비어있으면 `content`(markdown) 단일 ProseBlock으로 폴백.
+    @Default([]) List<ContentBlock> blocks,
   }) = _TheorySection;
 
   factory TheorySection.fromJson(Map<String, dynamic> json) =>
