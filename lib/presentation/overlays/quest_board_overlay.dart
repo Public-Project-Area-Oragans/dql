@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
+import '../../data/models/book_model.dart';
 import '../../domain/providers/content_providers.dart';
+import '../../domain/providers/game_providers.dart';
 
 class QuestBoardOverlay extends ConsumerWidget {
   final VoidCallback onClose;
@@ -16,6 +18,8 @@ class QuestBoardOverlay extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final booksAsync = ref.watch(allBooksProvider);
+    // NPC-1: 분관 책장에서 열렸으면 해당 카테고리로 필터링.
+    final filterCategory = ref.watch(questBoardFilterCategoryProvider);
 
     return Center(
       child: Container(
@@ -53,16 +57,25 @@ class QuestBoardOverlay extends ConsumerWidget {
             ),
             Expanded(
               child: booksAsync.when(
-                data: (books) => books.isEmpty
-                    ? const Center(
-                        child: Text(
-                          '콘텐츠가 빌드되지 않았습니다.\n'
-                          'dart run tools/content_builder.dart <docs-source>',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.parchment),
-                        ),
-                      )
-                    : ListView.builder(
+                data: (rawBooks) {
+                  final books = filterCategory == null
+                      ? rawBooks
+                      : rawBooks
+                          .where((Book b) => b.category == filterCategory)
+                          .toList();
+                  if (books.isEmpty) {
+                    return Center(
+                      child: Text(
+                        filterCategory == null
+                            ? '콘텐츠가 빌드되지 않았습니다.\n'
+                                'dart run tools/content_builder.dart <docs-source>'
+                            : '$filterCategory 카테고리에 책이 없습니다.',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: AppColors.parchment),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
                         padding: const EdgeInsets.all(8),
                         itemCount: books.length,
                         itemBuilder: (context, i) {
@@ -104,7 +117,8 @@ class QuestBoardOverlay extends ConsumerWidget {
                             }).toList(),
                           );
                         },
-                      ),
+                      );
+                },
                 loading: () => const Center(
                   child: CircularProgressIndicator(color: AppColors.gold),
                 ),

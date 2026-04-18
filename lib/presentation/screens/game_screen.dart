@@ -34,7 +34,9 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             .read(activeDialogueProvider.notifier)
             .startDialogue(_placeholderTreeFor(npcId));
       }
-      ..onShelfTappedCallback = (_, _) {
+      ..onShelfTappedCallback = (_, category) {
+        // NPC-1: 분관 책장 클릭 시 해당 카테고리로 QuestBoard 필터링.
+        ref.read(questBoardFilterCategoryProvider.notifier).set(category);
         ref.read(questBoardOpenProvider.notifier).open();
       };
   }
@@ -66,9 +68,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
           if (dialogue != null) DialogueOverlay(onClose: () {}),
           if (boardOpen)
             QuestBoardOverlay(
-              onClose: () => ref.read(questBoardOpenProvider.notifier).close(),
+              onClose: () {
+                ref.read(questBoardOpenProvider.notifier).close();
+                ref.read(questBoardFilterCategoryProvider.notifier).clear();
+              },
               onChapterSelected: (bookId, chapterId) {
                 ref.read(questBoardOpenProvider.notifier).close();
+                ref.read(questBoardFilterCategoryProvider.notifier).clear();
                 context.go('/book/$bookId/chapter/$chapterId');
               },
             ),
