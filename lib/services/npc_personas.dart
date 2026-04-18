@@ -98,6 +98,30 @@ Breaker, Bulkhead, Retry, Timeout, Fallback), 분산 트랜잭션(Saga),
     'architect_architecture': architectArchitecture,
   };
 
+  /// NPC id(game 배치 ID) → persona key.
+  /// wing_scene._wingNpcConfig의 npcId와 정합.
+  static const Map<String, String> npcIdToKey = {
+    'wizard': 'wizard_backend',
+    'mechanic': 'mechanic_frontend',
+    'alchemist': 'alchemist_database',
+    'architect': 'architect_architecture',
+  };
+
+  /// NPC id → 담당 카테고리 목록.
+  static const Map<String, List<String>> npcIdToCategories = {
+    'wizard': ['java-spring'],
+    'mechanic': ['dart', 'flutter'],
+    'alchemist': ['mysql'],
+    'architect': ['msa'],
+  };
+
   /// lookup 헬퍼. 키 없으면 null.
   static String? forKey(String key) => all[key];
+
+  /// NPC id 기반 persona prompt lookup.
+  static String? forNpcId(String npcId) {
+    final key = npcIdToKey[npcId];
+    if (key == null) return null;
+    return all[key];
+  }
 }
