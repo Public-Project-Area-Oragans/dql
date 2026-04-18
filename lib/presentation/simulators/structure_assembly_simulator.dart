@@ -137,11 +137,11 @@ class _StructureAssemblySimulatorState
   // ── Header ───────────────────────────────────────────────
 
   Widget _buildHeader() {
-    return SteampunkPanel(
+    return const SteampunkPanel(
       title: '🪙 조립 과제',
       child: Text(
         '팔레트에서 컴포넌트를 끌어와 캔버스에 배치하고, 노드를 탭해 연결 관계를 그린 뒤 판정을 누르세요.',
-        style: const TextStyle(color: AppColors.parchment, fontSize: 14),
+        style: TextStyle(color: AppColors.parchment, fontSize: 14),
       ),
     );
   }
