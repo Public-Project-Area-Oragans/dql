@@ -302,6 +302,14 @@ Map<String, dynamic> _parseMermaid(String source) {
     final parsed = _parseFlowchart(lines);
     if (parsed != null) return parsed;
   }
+  if (header == 'sequenceDiagram') {
+    final parsed = _parseSequence(lines);
+    if (parsed != null) return parsed;
+  }
+  if (header == 'mindmap') {
+    final parsed = _parseMindmap(lines);
+    if (parsed != null) return parsed;
+  }
   return {'type': 'raw', 'language': 'mermaid', 'source': source};
 }
 
@@ -469,6 +477,177 @@ String _shapeFromOpen(String open) {
 
 String _stripLabel(String label) {
   return label.replaceAll('<br/>', ' ').replaceAll('<br>', ' ').trim();
+}
+
+// ── sequenceDiagram ─────────────────────────────────────────
+
+final RegExp _participantPattern =
+    RegExp(r'^participant\s+([A-Za-z_][\w-]*)(?:\s+as\s+(.+))?$');
+final RegExp _actorPattern =
+    RegExp(r'^actor\s+([A-Za-z_][\w-]*)(?:\s+as\s+(.+))?$');
+
+// 메시지 커넥터: `-`{1,2} + `>`{1,3}.
+// 대시 2개 = reply/async, 대시 1개 = sync. `+`/`-` 활성화 표기는 무시.
+// 주의: id 패턴에서 `-`를 제외해야 greedy 매칭이 커넥터 대시까지 먹지 않음.
+final RegExp _sequenceMsgPattern = RegExp(
+  r'^([A-Za-z_]\w*)\s*(-{1,2}>{1,3})\+?-?\s*([A-Za-z_]\w*)\s*:\s*(.+)$',
+);
+
+Map<String, dynamic>? _parseSequence(List<String> lines) {
+  final participants = <String>[];
+  final displayByRef = <String, String>{};
+  final steps = <Map<String, dynamic>>[];
+
+  void addParticipant(String id, [String? display]) {
+    if (!participants.contains(id)) {
+      participants.add(id);
+      if (display != null) displayByRef[id] = display;
+    } else if (display != null && !displayByRef.containsKey(id)) {
+      displayByRef[id] = display;
+    }
+  }
+
+  for (var idx = 1; idx < lines.length; idx++) {
+    final raw = lines[idx].trim();
+    if (raw.isEmpty) continue;
+
+    // 명시적 participant / actor 선언.
+    final pMatch = _participantPattern.firstMatch(raw) ??
+        _actorPattern.firstMatch(raw);
+    if (pMatch != null) {
+      addParticipant(pMatch.group(1)!, pMatch.group(2)?.trim());
+      continue;
+    }
+
+    // 지원 안 하는 제어 구조/노트는 무시.
+    if (raw.startsWith('Note ') ||
+        raw.startsWith('note ') ||
+        raw == 'end' ||
+        raw.startsWith('alt ') ||
+        raw.startsWith('else') ||
+        raw.startsWith('opt ') ||
+        raw.startsWith('loop ') ||
+        raw.startsWith('par ') ||
+        raw.startsWith('and ') ||
+        raw.startsWith('critical ') ||
+        raw.startsWith('break ') ||
+        raw.startsWith('rect ') ||
+        raw.startsWith('activate ') ||
+        raw.startsWith('deactivate ') ||
+        raw.startsWith('autonumber')) {
+      continue;
+    }
+
+    final msg = _sequenceMsgPattern.firstMatch(raw);
+    if (msg != null) {
+      final from = msg.group(1)!;
+      final connector = msg.group(2)!;
+      final to = msg.group(3)!;
+      final label = _stripLabel(msg.group(4)!);
+      addParticipant(from);
+      addParticipant(to);
+      // reply 구분: 이중 대시 포함 (--> 또는 -->>) → reply.
+      final kind = connector.startsWith('--') ? 'reply' : 'sync';
+      steps.add({
+        'from': from,
+        'to': to,
+        'label': label,
+        'kind': kind,
+      });
+      continue;
+    }
+
+    // 인식 불가 라인: 전체 폴백.
+    return null;
+  }
+
+  if (participants.isEmpty && steps.isEmpty) return null;
+
+  final participantLabels = participants
+      .map((id) => displayByRef[id] ?? id)
+      .toList(growable: false);
+
+  return {
+    'type': 'sequence',
+    'participants': participantLabels,
+    'steps': steps.map((s) {
+      // step에는 ref id 대신 display 라벨을 저장해 위젯에서 1:1 매칭 가능.
+      return {
+        'from': displayByRef[s['from']] ?? s['from'],
+        'to': displayByRef[s['to']] ?? s['to'],
+        'label': s['label'],
+        'kind': s['kind'],
+      };
+    }).toList(),
+  };
+}
+
+// ── mindmap ────────────────────────────────────────────────
+
+// 옵션 prefix (ex: root) + 도형 markers + 본문.
+final RegExp _mindmapNodePattern =
+    RegExp(r'^(?:[A-Za-z_]\w*\s*)?(\(\(|\[|\{\{|\{)(.+?)(\)\)|\]|\}\}|\})$');
+
+Map<String, dynamic>? _parseMindmap(List<String> lines) {
+  if (lines.length < 2) return null;
+  // 인덴트 기반 트리. 각 라인의 leading whitespace 길이로 깊이 판정.
+  // root는 `mindmap` 다음 첫 라인 (자식 X — 그 자체가 최상위).
+  final content = <Map<String, dynamic>>[]; // {indent, label}
+  for (var idx = 1; idx < lines.length; idx++) {
+    final line = lines[idx];
+    if (line.trim().isEmpty) continue;
+    final indent = line.length - line.trimLeft().length;
+    final label = _mindmapNodeLabel(line.trim());
+    content.add({'indent': indent, 'label': label});
+  }
+  if (content.isEmpty) return null;
+
+  // 최소 indent를 0으로 정규화.
+  final baseIndent = content
+      .map((e) => e['indent'] as int)
+      .reduce((a, b) => a < b ? a : b);
+  for (final e in content) {
+    e['indent'] = (e['indent'] as int) - baseIndent;
+  }
+
+  // 스택 기반 트리 구축. 첫 요소가 root.
+  final root = <String, dynamic>{
+    'label': content.first['label'],
+    'children': <Map<String, dynamic>>[],
+  };
+  final stack = <_MindmapStackFrame>[
+    _MindmapStackFrame(indent: 0, node: root),
+  ];
+  for (var i = 1; i < content.length; i++) {
+    final indent = content[i]['indent'] as int;
+    final label = content[i]['label'] as String;
+    // 현재 indent보다 깊거나 같은 프레임을 pop.
+    while (stack.length > 1 && stack.last.indent >= indent) {
+      stack.removeLast();
+    }
+    final child = <String, dynamic>{
+      'label': label,
+      'children': <Map<String, dynamic>>[],
+    };
+    (stack.last.node['children'] as List).add(child);
+    stack.add(_MindmapStackFrame(indent: indent, node: child));
+  }
+
+  return {'type': 'mindmap', 'root': root};
+}
+
+class _MindmapStackFrame {
+  final int indent;
+  final Map<String, dynamic> node;
+  _MindmapStackFrame({required this.indent, required this.node});
+}
+
+String _mindmapNodeLabel(String trimmed) {
+  final m = _mindmapNodePattern.firstMatch(trimmed);
+  if (m != null) {
+    return _stripLabel(m.group(2)!);
+  }
+  return _stripLabel(trimmed);
 }
 
 /// GFM 표 감지 결과. 없으면 null.
