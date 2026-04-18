@@ -30,13 +30,14 @@ void main() {
       });
     }
 
-    // Phase 2에서 override가 적용되는 3 MSA 챕터는 StructureAssemblyConfig,
-    // 나머지는 모두 CodeStepConfig여야 한다.
+    // Phase 2 Task 2-1: 대조군 설계에 따라 MSA Phase 4 3챕터 중
+    //  - step1-api-gateway는 대조군(시뮬레이터 없음, CodeStepConfig 유지)
+    //  - step2-service-discovery, step4-resilience-patterns는 StructureAssemblyConfig
     const structureAssemblyChapters = {
-      'msa-phase4-step1-api-gateway',
       'msa-phase4-step2-service-discovery',
       'msa-phase4-step4-resilience-patterns',
     };
+    const controlGroupChapter = 'msa-phase4-step1-api-gateway';
 
     test('override 비적용 챕터는 CodeStepConfig (Phase 1 하위호환)', () {
       for (final category in categories) {
@@ -53,7 +54,25 @@ void main() {
       }
     });
 
-    test('override 적용된 3 MSA 챕터는 StructureAssemblyConfig', () {
+    test('대조군 챕터($controlGroupChapter)는 CodeStepConfig 유지', () {
+      final file = File('content/books/msa/book.json');
+      if (!file.existsSync()) {
+        markTestSkipped('msa book.json 없음');
+        return;
+      }
+      final json = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+      final book = Book.fromJson(json);
+
+      final chapter = book.chapters
+          .firstWhere((c) => c.id == controlGroupChapter, orElse: () {
+        fail('대조군 챕터 $controlGroupChapter 가 msa book.json에 없음');
+      });
+      expect(chapter.simulator, isA<CodeStepConfig>(),
+          reason:
+              '$controlGroupChapter는 대조군이므로 override 미적용 상태여야 함 (CodeStepConfig)');
+    });
+
+    test('override 적용된 2 MSA 챕터는 StructureAssemblyConfig', () {
       final file = File('content/books/msa/book.json');
       if (!file.existsSync()) {
         markTestSkipped('msa book.json 없음');
