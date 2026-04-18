@@ -5,7 +5,7 @@
 > Task 세분화는 `docs/2026-04-18-task-workflow.md`의 표준 플로우를 따른다.
 
 - **최초 작성**: 2026-04-18
-- **현재 단계**: **P0 (개인 사용용 전체 기능 완성)** — 진행 중
+- **현재 단계**: **P0 (개인 사용용 전체 기능 완성)** — 진행 중 (P0-5 NPC 보강 완료 / P0-1 시뮬레이터 타입 당위성 재검토 남음)
 
 ---
 
@@ -56,7 +56,21 @@ Phase 0~3 전체 + Task 12 + Task 2-5 완료.
 
 **결정 포인트**: 이 P0-1 진행 전 **카테고리별 시뮬레이터 당위성** 재검토 필요. 단순 이론 탭 + 마크다운만으로 충분할 수도.
 
-#### P0-5 (2026-04-18 추가): 분관별 NPC 기능 보강
+#### P0-5 (2026-04-18 **완료**): 분관별 NPC 기능 보강
+
+**상태**: ✅ 완료 (PR #46~#53 머지, 릴리즈 #54). 설계 문서 `docs/2026-04-18-npc-branch-enhancement-design.md` 채택.
+
+**구현 요약** (상세는 `work-history.md` §6.4):
+- NPC-1: 책장 카테고리 필터링.
+- NPC-2: NpcModel/Quest 필드 확장 + NpcPersonas 상수.
+- NPC-3: Claude API 서비스 (SSE 스트리밍 + Hive 키 저장) + `/debug/settings`.
+- NPC-4: DialogueOverlay 대화/질문 탭 + NpcQaSession.
+- NPC-5: RAG-lite (book.json 섹션 overlap 추출).
+- NPC-6: 분관별 샘플 퀘스트 + wingQuestsProvider + QuestBoard 상단 섹션.
+
+---
+
+#### P0-5 원본 계획 (참고용)
 
 사용자 요청(2026-04-18)으로 추가. **별도 설계 문서 선행 필요** (`docs/YYYY-MM-DD-npc-branch-enhancement-design.md`).
 

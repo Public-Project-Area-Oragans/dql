@@ -5,7 +5,7 @@
 
 - **최초 작성**: 2026-04-18
 - **대상 저장소**: `Public-Project-Area-Oragans/dol`
-- **범위**: PR #1 ~ #45
+- **범위**: PR #1 ~ #54
 
 ---
 
@@ -19,8 +19,9 @@
 | Phase 2 (MSA 시뮬레이터) | 2026-04-18 | #17 ~ #24, #26 | ✅ 완료 |
 | Phase 3 (다이어그램 위젯 이주) | 2026-04-18 | #27 ~ #32, #35, #38, #40, #42 ~ #45 | ✅ 구조화 97% 달성 |
 | 로드맵 재정립 | 2026-04-18 | #37 | ✅ 완료 |
+| P0-5 (분관별 NPC 기능 보강) | 2026-04-18 | #46 ~ #53 | ✅ 완료 (NPC-1~6 + 설계/문서) |
 
-**배포 릴리즈 (develop → master)**: #33, #36, #39, #41, #45 (총 5차).
+**배포 릴리즈 (develop → master)**: #33, #36, #39, #41, #45, #54 (총 6차).
 
 ---
 
@@ -127,6 +128,35 @@
 
 ---
 
+## 6.4 P0-5 — 분관별 NPC 기능 보강 (2026-04-18)
+
+### 6.4.1 문서 & 설계
+
+| PR | 내용 |
+|---|---|
+| #46 | docs: Phase 계획 / Task 워크플로 / 작업 이력 3종 문서 신설 + P0-5 NPC Task |
+| #47 | docs: P0-5 분관별 NPC 기능 보강 설계 문서 |
+
+### 6.4.2 구현 (NPC-1 ~ NPC-6)
+
+| PR | 내용 |
+|---|---|
+| #48 | feat(npc-1): 분관 책장 카테고리 필터링 + `java` → `java-spring` ID 교정 |
+| #49 | feat(npc-2): `NpcModel.expertiseCategories` + `Quest.wingId/relatedCategories` 필드 확장 + `NpcPersonas` 상수 테이블 |
+| #50 | feat(npc-3): Claude API 서비스 레이어 (SSE 스트리밍 + Hive 키 저장) + `/debug/settings` |
+| #51 | feat(npc-4): DialogueOverlay 💬 대화 / ❓ 질문 탭 + `ActiveNpcId` + `NpcQaSession` (streaming) |
+| #52 | feat(npc-5): RAG-lite 카테고리 book.json 컨텍스트 주입 (substring overlap) |
+| #53 | feat(npc-6): 분관별 샘플 퀘스트 + `wingQuestsProvider` + QuestBoard 상단 섹션 |
+
+**산출물**:
+- 4개 분관 (backend/frontend/database/architecture) ↔ 카테고리 매핑 고정 (shelf 필터).
+- Claude Messages API (`claude-sonnet-4-6`) 기반 NPC Q&A — system prompt 4종 + ephemeral prompt caching.
+- RAG-lite: category `book.json` 섹션별 토큰 overlap → 상위 N청크 `cache_control: ephemeral`로 system에 주입.
+- 샘플 퀘스트 4개 (wing당 1) + `PlayerProgress.completedChapters` 연동 상태 재계산.
+- API 키는 Hive `Box<String>('auth')` 평문 저장 (P0 한정, P2에서 서버 프록시 재검토).
+
+---
+
 ## 7. 배포 릴리즈 (develop → master)
 
 | 릴리즈 PR | 포함 | master commit |
@@ -136,18 +166,21 @@
 | #39 | 커넥터 변종 (#38) | (생략) |
 | #41 | 인용 라벨 괄호 보존 (#40) | (생략) |
 | #45 | sequence 커넥터 + strict CI (#42, #43, #44) | (생략) |
+| #54 | P0-5 NPC 분관 보강 전체 (#46~#53) | `a71cfbb` |
 
 프로덕션 URL: `https://public-project-area-oragans.github.io/dol/`
 
 ---
 
-## 8. 현재 상태 (2026-04-18 기준)
+## 8. 현재 상태 (2026-04-18 P0-5 완료 기준)
 
-- **테스트**: `flutter test` 136/136 pass, `flutter analyze lib/` clean.
+- **테스트**: `flutter analyze lib/` clean. Unit + integration 전량 green (NPC-3/4/5/6 단위 테스트 포함).
 - **CI strict**: test + integration 양쪽 머지 차단 조건.
 - **구조화 성공률**: MSA mermaid 97% (630/672). 표·ASCII 100%.
-- **의존성**: `graphview ^1.2.0` (Sugiyama), `markdown ^7.0.0` (direct), `integration_test` (sdk), `flutter_markdown ^0.7.6`.
-- **로드맵 단계**: **P0 (개인 사용용 전체 기능 완성)**. P1/P2/P3 별도 설계.
+- **의존성 추가**: `dio ^5.9.2` (NPC-3 Claude API), `hive ^2.2.3` / `hive_flutter` (기존 유지).
+- **NPC Q&A 지원**: `/debug/settings`에서 Claude API 키 등록 후 4개 분관 NPC 대화 → ❓ 질문 탭 스트리밍.
+- **퀘스트**: 분관당 샘플 1개 (book.json 필요 챕터 ID 연동).
+- **로드맵 단계**: **P0 (개인 사용용 전체 기능 완성)** — P0-5 NPC 보강 완료. 잔여: P0-1 (타 카테고리 시뮬레이터 당위성 재검토).
 
 ---
 

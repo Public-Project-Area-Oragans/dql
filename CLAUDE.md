@@ -50,10 +50,11 @@ master ← develop ← feature/task-XX-*
 
 ## 참조 문서
 
+- [**세션 핸드오프 (2026-04-18)**](docs/2026-04-18-session-handoff.md) — **새 세션 진입 시 최우선 읽기. 직전 세션 결과·프로덕션 검증 체크리스트·다음 Task.**
 - [**로드맵 피벗 (2026-04-18)**](docs/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계 P0 · 순차 로드맵. Phase 2 §10 게이트 대체.**
 - [**Phase 계획**](docs/2026-04-18-phase-plan.md) — P0~P3 단계별 산출물·전환 기준·잔여 태스크 (P0-5 NPC 보강 포함)
 - [**Task 워크플로**](docs/2026-04-18-task-workflow.md) — 브랜치→커밋→PR→머지→릴리즈 표준 절차
-- [**작업 이력**](docs/2026-04-18-work-history.md) — PR #1~#45 전체 타임라인 + 배포 릴리즈 기록
+- [**작업 이력**](docs/2026-04-18-work-history.md) — PR #1~#54 전체 타임라인 + 배포 릴리즈 기록 (릴리즈 #54 = P0-5 NPC)
 - [**트러블슈팅 저널**](docs/2026-04-18-troubleshooting-journal.md) — 세션 간 재발 방지용 문제·해결 축적. **같은 증상 만나면 먼저 여기 검색.**
 - [Phase 1 설계](docs/2026-04-17-dev-quest-library-design.md) — 아키텍처 · 데이터 모델 · 화면 흐름 · **4개 분관 + NPC 역할** 정의 (백엔드=Java·Spring / 프론트=Dart·Flutter / DB=MySQL / 아키=MSA)
 - [Phase 1 구현 계획](docs/2026-04-17-dev-quest-library-plan.md) — Task 상세
