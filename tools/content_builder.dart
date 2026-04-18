@@ -98,10 +98,13 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
       // Task 12 option D: language가 ascii/diagram/text/'' 이면서 박스
       // 드로잉 문자가 포함된 블록은 codeExamples로 분리하지 않고 섹션
       // 본문 안에 코드펜스로 유지한다. (코드 예제 섹션에서 문맥을 잃지 않음)
+      // Phase 3 PR #4: mermaid도 섹션에 유지해 _extractBlocks가 구조화.
       final asciiLike = {'ascii', 'diagram', 'text'};
       final lang = (codeLanguage ?? 'text');
+      final lower = lang.toLowerCase();
       final keepInSection =
-          asciiLike.contains(lang.toLowerCase()) && _hasBoxDrawing(body);
+          (asciiLike.contains(lower) && _hasBoxDrawing(body)) ||
+              lower == 'mermaid';
       if (keepInSection) {
         currentContent.writeln('```$lang');
         currentContent.writeln(body);
@@ -256,6 +259,13 @@ List<Map<String, dynamic>> _extractBlocks(String content) {
         i = j + 1;
         continue;
       }
+      if (closed && lang == 'mermaid') {
+        // Mermaid → 타입별 구조화. 현재 지원: flowchart. 나머지는 RawBlock.
+        flushProse();
+        blocks.add(_parseMermaid(body));
+        i = j + 1;
+        continue;
+      }
       // 그 외 펜스는 원본 그대로 prose에 유지 (flutter_markdown이 코드블록으로 렌더).
       proseBuf.writeln(line);
       for (var k = i + 1; k <= j && k < lines.length; k++) {
@@ -271,6 +281,194 @@ List<Map<String, dynamic>> _extractBlocks(String content) {
   flushProse();
   // content가 완전히 비어있으면 단일 ProseBlock("")이라도 emit하지 않고 빈 리스트.
   return blocks;
+}
+
+/// Phase 3 PR #4: Mermaid 소스 → ContentBlock 디스패치.
+/// 현재 flowchart만 구조화, 나머지는 RawBlock 폴백.
+Map<String, dynamic> _parseMermaid(String source) {
+  final rawLines = source.split('\n');
+  final lines = <String>[];
+  for (final line in rawLines) {
+    final trimmed = line.trim();
+    if (trimmed.isEmpty) continue;
+    if (trimmed.startsWith('%%')) continue;
+    lines.add(line);
+  }
+  if (lines.isEmpty) {
+    return {'type': 'raw', 'language': 'mermaid', 'source': source};
+  }
+  final header = lines.first.trim();
+  if (_flowchartHeaderPattern.hasMatch(header)) {
+    final parsed = _parseFlowchart(lines);
+    if (parsed != null) return parsed;
+  }
+  return {'type': 'raw', 'language': 'mermaid', 'source': source};
+}
+
+final RegExp _flowchartHeaderPattern =
+    RegExp(r'^(?:flowchart|graph)(?:\s+(TB|TD|LR|BT|RL))?\s*$');
+
+// from + connector + optional "|label|" + to
+final RegExp _edgePattern = RegExp(
+  r'^([A-Za-z_][\w-]*)'
+  r'\s*(-->|-\.->|==>|---|-\.\-|===)'
+  r'(?:\s*\|\s*"?([^"|]+?)"?\s*\|\s*)?'
+  r'\s*([A-Za-z_][\w-]*)',
+);
+
+// `A --label--> B` 형태의 중간 라벨 엣지.
+final RegExp _edgeDashLabelPattern = RegExp(
+  r'^([A-Za-z_][\w-]*)\s*--\s*"?([^"-]+?)"?\s*-->\s*([A-Za-z_][\w-]*)',
+);
+
+// 노드 정의: `A[label]`, `A("label")`, `A{label}`, `A((label))` 등.
+final RegExp _nodeShapePattern = RegExp(
+  r'([A-Za-z_][\w-]*)\s*(\[\[|\[|\(\(|\(|\{\{|\{)("?)([^\]\)\}"]+)\3(\]\]|\]|\)\)|\)|\}\}|\})',
+);
+
+/// lines는 `%%` 제거 + 빈 줄 제거 + 헤더 포함된 상태.
+/// 실패 시 null 반환 → RawBlock 폴백.
+Map<String, dynamic>? _parseFlowchart(List<String> lines) {
+  final headerMatch = _flowchartHeaderPattern.firstMatch(lines.first.trim());
+  if (headerMatch == null) return null;
+  var direction = headerMatch.group(1) ?? 'TB';
+  if (direction == 'TD') direction = 'TB';
+
+  final nodes = <String, Map<String, String>>{};
+  final edges = <Map<String, dynamic>>[];
+
+  void ensureNode(String id, {String? label, String? shape}) {
+    final existing = nodes[id];
+    if (existing == null) {
+      nodes[id] = {
+        'label': label ?? id,
+        'shape': shape ?? 'rect',
+      };
+    } else {
+      if (label != null && existing['label'] == id) existing['label'] = label;
+      if (shape != null && existing['shape'] == 'rect') {
+        existing['shape'] = shape;
+      }
+    }
+  }
+
+  String edgeStyle(String connector) {
+    switch (connector) {
+      case '-.->':
+      case '-.-':
+        return 'dashed';
+      case '==>':
+      case '===':
+        return 'thick';
+      case '-->':
+      case '---':
+      default:
+        return 'solid';
+    }
+  }
+
+  for (var idx = 1; idx < lines.length; idx++) {
+    final raw = lines[idx].trim();
+    if (raw.isEmpty) continue;
+
+    // 무시: subgraph/end/classDef/class/style/direction/linkStyle.
+    if (raw.startsWith('subgraph') ||
+        raw == 'end' ||
+        raw.startsWith('classDef') ||
+        raw.startsWith('class ') ||
+        raw.startsWith('style ') ||
+        raw.startsWith('direction ') ||
+        raw.startsWith('linkStyle')) {
+      continue;
+    }
+
+    // 인라인 노드 선언 먼저 수집.
+    for (final m in _nodeShapePattern.allMatches(raw)) {
+      final id = m.group(1)!;
+      final open = m.group(2)!;
+      final label = m.group(4)!;
+      ensureNode(id,
+          label: _stripLabel(label), shape: _shapeFromOpen(open));
+    }
+
+    // 노드 shape 선언을 id만 남기도록 치환해 edge 매칭 용이하게 함.
+    final stripped =
+        raw.replaceAllMapped(_nodeShapePattern, (m) => m.group(1)!);
+
+    final dashLabel = _edgeDashLabelPattern.firstMatch(stripped);
+    if (dashLabel != null) {
+      final from = dashLabel.group(1)!;
+      final label = dashLabel.group(2)!.trim();
+      final to = dashLabel.group(3)!;
+      ensureNode(from);
+      ensureNode(to);
+      edges.add({
+        'from': from,
+        'to': to,
+        'label': label,
+        'style': 'solid',
+      });
+      continue;
+    }
+
+    final edgeMatch = _edgePattern.firstMatch(stripped);
+    if (edgeMatch != null) {
+      final from = edgeMatch.group(1)!;
+      final connector = edgeMatch.group(2)!;
+      final label = (edgeMatch.group(3) ?? '').trim();
+      final to = edgeMatch.group(4)!;
+      ensureNode(from);
+      ensureNode(to);
+      edges.add({
+        'from': from,
+        'to': to,
+        'label': label,
+        'style': edgeStyle(connector),
+      });
+      continue;
+    }
+
+    if (_nodeShapePattern.hasMatch(raw)) continue;
+    // 인식 불가 — 전체를 raw로 폴백.
+    return null;
+  }
+
+  if (nodes.isEmpty && edges.isEmpty) return null;
+
+  final nodeList = nodes.entries
+      .map((e) => {
+            'id': e.key,
+            'label': e.value['label'],
+            'shape': e.value['shape'],
+          })
+      .toList();
+
+  return {
+    'type': 'flowchart',
+    'direction': direction,
+    'nodes': nodeList,
+    'edges': edges,
+  };
+}
+
+String _shapeFromOpen(String open) {
+  switch (open) {
+    case '((':
+      return 'circle';
+    case '(':
+      return 'round';
+    case '{{':
+    case '{':
+      return 'diamond';
+    case '[[':
+    case '[':
+    default:
+      return 'rect';
+  }
+}
+
+String _stripLabel(String label) {
+  return label.replaceAll('<br/>', ' ').replaceAll('<br>', ' ').trim();
 }
 
 /// GFM 표 감지 결과. 없으면 null.
