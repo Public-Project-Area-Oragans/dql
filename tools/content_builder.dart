@@ -336,19 +336,14 @@ final RegExp _edgeDashLabelPattern = RegExp(
   r'^([A-Za-z_]\w*)\s*--\s*"?([^"-]+?)"?\s*-->\s*([A-Za-z_]\w*)',
 );
 
-// 노드 정의: 다양한 shape 지원.
-// - `[[label]]` subroutine → rect
-// - `[(label)]` cylinder → rect
-// - `([label])` stadium → round
-// - `((label))` circle → circle
-// - `{{label}}` hexagon → diamond
-// - `[label]` rect
-// - `(label)` round
-// - `{label}` diamond
+// 노드 정의: 다양한 shape 지원. 라벨은 두 변종:
+//   - `"라벨"` (쌍따옴표 래핑) → 내부에 `()[]{}` 허용
+//   - 비인용 라벨 → `]`, `)`, `}`, `"` 제외한 문자열
+// 비인용 라벨이 `()` 포함 시 `)` 에서 조기 종료하는 고질적 버그를 해결.
 final RegExp _nodeShapePattern = RegExp(
   r'([A-Za-z_]\w*)\s*'
   r'(\[\[|\[\(|\(\[|\(\(|\{\{|\[|\(|\{)'
-  r'("?)([^\]\)\}"]+)\3'
+  r'(?:"([^"]+)"|([^\]\)\}"]+))'
   r'(\]\]|\)\]|\]\)|\)\)|\}\}|\]|\)|\})',
 );
 
@@ -417,7 +412,8 @@ Map<String, dynamic>? _parseFlowchart(List<String> lines) {
     for (final m in _nodeShapePattern.allMatches(raw)) {
       final id = m.group(1)!;
       final open = m.group(2)!;
-      final label = m.group(4)!;
+      // group 3 = 인용 라벨(따옴표 제거), group 4 = 비인용 라벨.
+      final label = m.group(3) ?? m.group(4)!;
       ensureNode(id,
           label: _stripLabel(label), shape: _shapeFromOpen(open));
     }
