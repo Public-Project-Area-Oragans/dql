@@ -12,6 +12,12 @@ abstract class NpcModel with _$NpcModel {
     required String role,
     required String spriteAsset,
     required List<Quest> quests,
+    // P0-5 NPC-2: 담당 카테고리 (book.json의 category 값 기준).
+    // wing_scene._wingNpcConfig와 정합 유지.
+    @Default([]) List<String> expertiseCategories,
+    // npc_personas.dart 상수 테이블 lookup key.
+    // (예: 'wizard_backend', 'mechanic_frontend')
+    @Default('') String personaPromptKey,
   }) = _NpcModel;
 
   factory NpcModel.fromJson(Map<String, dynamic> json) =>

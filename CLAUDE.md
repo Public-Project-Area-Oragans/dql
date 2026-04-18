@@ -50,10 +50,14 @@ master ← develop ← feature/task-XX-*
 
 ## 참조 문서
 
-- [**로드맵 피벗 (2026-04-18)**](docs/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계·다음 단계 기준 문서. Phase 2 §10 게이트 대체.**
-- [Phase 1 설계 문서](docs/2026-04-17-dev-quest-library-design.md) — 전체 아키텍처, 데이터 모델, 화면 흐름
-- [Phase 1 구현 계획서](docs/2026-04-17-dev-quest-library-plan.md) — Task별 상세 구현 단계
-- [Phase 2 설계 문서](docs/2026-04-18-dev-quest-library-phase2-design.md) — MSA 구조 조립 시뮬레이터 (§10 실험 게이트는 로드맵 피벗이 대체)
-- [Phase 3 다이어그램 위젯 이주 설계](docs/2026-04-18-diagram-widget-migration-design.md) — ASCII/표/Mermaid → 순수 Flutter 위젯 이주 설계
+- [**로드맵 피벗 (2026-04-18)**](docs/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계 P0 · 순차 로드맵. Phase 2 §10 게이트 대체.**
+- [**Phase 계획**](docs/2026-04-18-phase-plan.md) — P0~P3 단계별 산출물·전환 기준·잔여 태스크 (P0-5 NPC 보강 포함)
+- [**Task 워크플로**](docs/2026-04-18-task-workflow.md) — 브랜치→커밋→PR→머지→릴리즈 표준 절차
+- [**작업 이력**](docs/2026-04-18-work-history.md) — PR #1~#45 전체 타임라인 + 배포 릴리즈 기록
 - [**트러블슈팅 저널**](docs/2026-04-18-troubleshooting-journal.md) — 세션 간 재발 방지용 문제·해결 축적. **같은 증상 만나면 먼저 여기 검색.**
+- [Phase 1 설계](docs/2026-04-17-dev-quest-library-design.md) — 아키텍처 · 데이터 모델 · 화면 흐름 · **4개 분관 + NPC 역할** 정의 (백엔드=Java·Spring / 프론트=Dart·Flutter / DB=MySQL / 아키=MSA)
+- [Phase 1 구현 계획](docs/2026-04-17-dev-quest-library-plan.md) — Task 상세
+- [Phase 2 설계](docs/2026-04-18-dev-quest-library-phase2-design.md) — MSA 구조 조립 시뮬레이터 (§10은 로드맵 피벗이 대체)
+- [Phase 3 다이어그램 위젯 이주 설계](docs/2026-04-18-diagram-widget-migration-design.md) — ASCII/표/Mermaid → Flutter 위젯
+- [P0-5 NPC 분관 보강 설계](docs/2026-04-18-npc-branch-enhancement-design.md) — Claude API 기반 NPC Q&A + 책장 카테고리 필터 + 퀘스트 분관화
 - [flutter-setup 스킬](../develop-study-documents/Skillbook/flutter-setup/) — Flutter 패키지/설정 레퍼런스
