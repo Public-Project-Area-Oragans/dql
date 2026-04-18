@@ -317,22 +317,44 @@ final RegExp _flowchartHeaderPattern =
     RegExp(r'^(?:flowchart|graph)(?:\s+(TB|TD|LR|BT|RL))?\s*$');
 
 // from + connector + optional "|label|" + to
+// 지원 connector: -->, -.->, ==>, ---, -.- (깨진 점선), ===,
+//                 <-->(양방향), --o(서클 end), --x(크로스 end).
 final RegExp _edgePattern = RegExp(
-  r'^([A-Za-z_][\w-]*)'
-  r'\s*(-->|-\.->|==>|---|-\.\-|===)'
+  r'^([A-Za-z_]\w*)'
+  r'\s*(-->|-\.->|==>|---|-\.\-|===|<-->|--[ox])'
   r'(?:\s*\|\s*"?([^"|]+?)"?\s*\|\s*)?'
-  r'\s*([A-Za-z_][\w-]*)',
+  r'\s*([A-Za-z_]\w*)',
 );
 
 // `A --label--> B` 형태의 중간 라벨 엣지.
 final RegExp _edgeDashLabelPattern = RegExp(
-  r'^([A-Za-z_][\w-]*)\s*--\s*"?([^"-]+?)"?\s*-->\s*([A-Za-z_][\w-]*)',
+  r'^([A-Za-z_]\w*)\s*--\s*"?([^"-]+?)"?\s*-->\s*([A-Za-z_]\w*)',
 );
 
-// 노드 정의: `A[label]`, `A("label")`, `A{label}`, `A((label))` 등.
+// 노드 정의: 다양한 shape 지원.
+// - `[[label]]` subroutine → rect
+// - `[(label)]` cylinder → rect
+// - `([label])` stadium → round
+// - `((label))` circle → circle
+// - `{{label}}` hexagon → diamond
+// - `[label]` rect
+// - `(label)` round
+// - `{label}` diamond
 final RegExp _nodeShapePattern = RegExp(
-  r'([A-Za-z_][\w-]*)\s*(\[\[|\[|\(\(|\(|\{\{|\{)("?)([^\]\)\}"]+)\3(\]\]|\]|\)\)|\)|\}\}|\})',
+  r'([A-Za-z_]\w*)\s*'
+  r'(\[\[|\[\(|\(\[|\(\(|\{\{|\[|\(|\{)'
+  r'("?)([^\]\)\}"]+)\3'
+  r'(\]\]|\)\]|\]\)|\)\)|\}\}|\]|\)|\})',
 );
+
+// Mermaid node class 지정 suffix (예: `A[Label]:::primary`). 매번 strip.
+final RegExp _classSuffixPattern = RegExp(r':::[A-Za-z_][\w-]*');
+
+// Invisible link `~~~` (정렬용, 시각적 엣지 아님).
+final RegExp _invisibleLinkPattern = RegExp(r'~{3,}');
+
+// Multiway: `A & B --> C` 형태에서 `&` 구분자 분해.
+final RegExp _ampersandSplitPattern = RegExp(r'\s*&\s*');
 
 /// lines는 `%%` 제거 + 빈 줄 제거 + 헤더 포함된 상태.
 /// 실패 시 null 반환 → RawBlock 폴백.
@@ -370,23 +392,28 @@ Map<String, dynamic>? _parseFlowchart(List<String> lines) {
         return 'thick';
       case '-->':
       case '---':
+      case '<-->': // 양방향 → solid (renderer에서 양 끝 화살표 처리 가능)
+      case '--o':
+      case '--x':
       default:
         return 'solid';
     }
   }
 
   for (var idx = 1; idx < lines.length; idx++) {
-    final raw = lines[idx].trim();
+    // PR #7: `:::className` suffix 스트립 (거의 모든 MSA flowchart에 존재).
+    final raw = lines[idx].trim().replaceAll(_classSuffixPattern, '').trim();
     if (raw.isEmpty) continue;
 
-    // 무시: subgraph/end/classDef/class/style/direction/linkStyle.
+    // 무시: subgraph/end/classDef/class/style/direction/linkStyle/click.
     if (raw.startsWith('subgraph') ||
         raw == 'end' ||
         raw.startsWith('classDef') ||
         raw.startsWith('class ') ||
         raw.startsWith('style ') ||
         raw.startsWith('direction ') ||
-        raw.startsWith('linkStyle')) {
+        raw.startsWith('linkStyle') ||
+        raw.startsWith('click ')) {
       continue;
     }
 
@@ -402,6 +429,27 @@ Map<String, dynamic>? _parseFlowchart(List<String> lines) {
     // 노드 shape 선언을 id만 남기도록 치환해 edge 매칭 용이하게 함.
     final stripped =
         raw.replaceAllMapped(_nodeShapePattern, (m) => m.group(1)!);
+
+    // PR #7: `~~~` invisible link. 엣지 emit 없이 양쪽 id만 등록.
+    if (_invisibleLinkPattern.hasMatch(stripped)) {
+      final parts = stripped.split(_invisibleLinkPattern);
+      for (final p in parts) {
+        final id = p.trim();
+        if (RegExp(r'^[A-Za-z_]\w*$').hasMatch(id)) ensureNode(id);
+      }
+      continue;
+    }
+
+    // PR #7: Multiway `A & B --> C` 전개. edge regex 실패를 미리 방지.
+    if (stripped.contains('&')) {
+      final multiEdge = _tryParseMultiway(
+        stripped,
+        ensureNode,
+        edges,
+        edgeStyle,
+      );
+      if (multiEdge) continue;
+    }
 
     final dashLabel = _edgeDashLabelPattern.firstMatch(stripped);
     if (dashLabel != null) {
@@ -464,15 +512,76 @@ String _shapeFromOpen(String open) {
     case '((':
       return 'circle';
     case '(':
+    case '([': // stadium → round
       return 'round';
     case '{{':
     case '{':
       return 'diamond';
+    case '[(': // cylinder → rect(시각적 근사)
     case '[[':
     case '[':
     default:
       return 'rect';
   }
+}
+
+/// PR #7: `A & B --> C` 또는 `A --> B & C` 멀티웨이 엣지 전개.
+/// stripped는 이미 노드 shape가 id만 남은 상태의 라인.
+/// 성공 시 edges에 expanded pairs 추가하고 true 반환.
+bool _tryParseMultiway(
+  String stripped,
+  void Function(String id, {String? label, String? shape}) ensureNode,
+  List<Map<String, dynamic>> edges,
+  String Function(String) edgeStyle,
+) {
+  // 엣지 커넥터를 먼저 탐색: `-->`, `-.->`, `==>`, `---` 등.
+  final connectorPattern =
+      RegExp(r'(-->|-\.->|==>|---|-\.\-|===|<-->|--[ox])');
+  final m = connectorPattern.firstMatch(stripped);
+  if (m == null) return false;
+  final connector = m.group(1)!;
+
+  // label: 커넥터 우측 바로 뒤 `|...|` 가능.
+  String label = '';
+  final afterConnector = stripped.substring(m.end).trimLeft();
+  String toSection = afterConnector;
+  final labelMatch =
+      RegExp(r'^\|\s*"?([^"|]+?)"?\s*\|\s*(.+)$').firstMatch(afterConnector);
+  if (labelMatch != null) {
+    label = labelMatch.group(1)!.trim();
+    toSection = labelMatch.group(2)!;
+  }
+
+  final fromSection = stripped.substring(0, m.start).trim();
+  final fromIds = fromSection
+      .split(_ampersandSplitPattern)
+      .map((s) => s.trim())
+      .where((s) => RegExp(r'^[A-Za-z_]\w*$').hasMatch(s))
+      .toList();
+  final toIds = toSection
+      .trim()
+      .split(_ampersandSplitPattern)
+      .map((s) => s.trim())
+      .where((s) => RegExp(r'^[A-Za-z_]\w*$').hasMatch(s))
+      .toList();
+
+  // 단일 x 단일이면 multiway가 아니므로 일반 edge 경로로 넘김.
+  if (fromIds.length <= 1 && toIds.length <= 1) return false;
+  if (fromIds.isEmpty || toIds.isEmpty) return false;
+
+  for (final from in fromIds) {
+    for (final to in toIds) {
+      ensureNode(from);
+      ensureNode(to);
+      edges.add({
+        'from': from,
+        'to': to,
+        'label': label,
+        'style': edgeStyle(connector),
+      });
+    }
+  }
+  return true;
 }
 
 String _stripLabel(String label) {

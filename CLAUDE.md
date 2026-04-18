@@ -45,10 +45,13 @@ master ← develop ← feature/task-XX-*
 ## 구현 계획
 
 `docs/2026-04-17-dev-quest-library-plan.md` 참조.
-Task 1-2 완료, Task 3(콘텐츠 파서)부터 이어서 진행.
+Phase 1 / Task 12 / Phase 2 / Phase 3(다이어그램 이주) 전부 master 릴리즈 (2026-04-18).
 
 ## 참조 문서
 
-- [설계 문서](docs/2026-04-17-dev-quest-library-design.md) — 전체 아키텍처, 데이터 모델, 화면 흐름
-- [구현 계획서](docs/2026-04-17-dev-quest-library-plan.md) — Task별 상세 구현 단계
+- [Phase 1 설계 문서](docs/2026-04-17-dev-quest-library-design.md) — 전체 아키텍처, 데이터 모델, 화면 흐름
+- [Phase 1 구현 계획서](docs/2026-04-17-dev-quest-library-plan.md) — Task별 상세 구현 단계
+- [Phase 2 설계 문서](docs/2026-04-18-dev-quest-library-phase2-design.md) — MSA 구조 조립 시뮬레이터 · 대조군 실험 계획
+- [Phase 3 다이어그램 위젯 이주 설계](docs/2026-04-18-diagram-widget-migration-design.md) — ASCII/표/Mermaid → 순수 Flutter 위젯 이주 설계
+- [**트러블슈팅 저널**](docs/2026-04-18-troubleshooting-journal.md) — 세션 간 재발 방지용 문제·해결 축적. **같은 증상 만나면 먼저 여기 검색.**
 - [flutter-setup 스킬](../develop-study-documents/Skillbook/flutter-setup/) — Flutter 패키지/설정 레퍼런스
