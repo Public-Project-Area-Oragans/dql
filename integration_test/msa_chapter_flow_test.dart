@@ -1,5 +1,6 @@
 import 'package:dol/app.dart';
 import 'package:dol/core/router/app_router.dart';
+import 'package:dol/data/models/book_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -84,7 +85,10 @@ void main() {
       Future<void> dropAtCell(String paletteLabel, int col, int row) async {
         final paletteFinder = find.text(paletteLabel).first;
         final targetIndex = row * 5 + col;
-        final dragTargets = find.byType(DragTarget);
+        // DragTarget without generics doesn't match `DragTarget<PaletteItem>`
+        // under strict type finder semantics — must specify the same type
+        // argument as the simulator uses.
+        final dragTargets = find.byType(DragTarget<PaletteItem>);
         final gesture = await tester.startGesture(
           tester.getCenter(paletteFinder),
         );
