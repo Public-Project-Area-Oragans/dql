@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/content_block.dart';
+import 'table_block_widget.dart';
 
 /// Phase 3 "다이어그램 위젯 이주" — 구조화 ContentBlock을 타입별 네이티브
 /// Flutter 위젯으로 디스패치한다. 이미지 에셋은 전혀 사용하지 않는다.
@@ -31,8 +32,7 @@ class ContentBlockRenderer extends StatelessWidget {
           builders: proseBuilders ?? const {},
         ),
       RawBlock(:final source) => _MonospaceScroll(source: source),
-      TableBlock() =>
-        const _PlaceholderBlock(kind: '표 (PR #2에서 구현 예정)'),
+      final TableBlock t => TableBlockWidget(block: t),
       AsciiDiagramBlock(:final source) => _MonospaceScroll(source: source),
       FlowchartBlock() =>
         const _PlaceholderBlock(kind: 'Mermaid flowchart (PR #4에서 구현 예정)'),

@@ -75,7 +75,7 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
     }
   }
 
-  final sections = <Map<String, String>>[];
+  final sections = <Map<String, dynamic>>[];
   final codeExamples = <Map<String, String>>[];
   String? currentSection;
   final currentContent = StringBuffer();
@@ -123,9 +123,11 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
 
     if (line.startsWith('## ')) {
       if (currentSection != null) {
+        final wrapped = _wrapAsciiBlocks(currentContent.toString().trim());
         sections.add({
           'title': currentSection,
-          'content': _wrapAsciiBlocks(currentContent.toString().trim()),
+          'content': wrapped,
+          'blocks': _extractBlocks(wrapped),
         });
       }
       currentSection = line.substring(3).trim();
@@ -139,9 +141,11 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
   }
 
   if (currentSection != null) {
+    final wrapped = _wrapAsciiBlocks(currentContent.toString().trim());
     sections.add({
       'title': currentSection,
-      'content': _wrapAsciiBlocks(currentContent.toString().trim()),
+      'content': wrapped,
+      'blocks': _extractBlocks(wrapped),
     });
   }
 
@@ -194,6 +198,115 @@ Map<String, dynamic> applyOverride(
   }
 
   return chapter;
+}
+
+/// Phase 3 PR #2: 섹션 본문을 ContentBlock 리스트로 분해.
+///
+/// 현재 인식 타입: GFM 표 → TableBlock, 그 외 구간 → ProseBlock.
+/// 후속 PR에서 mermaid/asciiDiagram 분리도 이 함수에서 처리.
+List<Map<String, dynamic>> _extractBlocks(String content) {
+  final lines = content.split('\n');
+  final blocks = <Map<String, dynamic>>[];
+  final proseBuf = StringBuffer();
+
+  void flushProse() {
+    final text = proseBuf.toString().trim();
+    if (text.isEmpty) {
+      proseBuf.clear();
+      return;
+    }
+    blocks.add({'type': 'prose', 'markdown': text});
+    proseBuf.clear();
+  }
+
+  var i = 0;
+  while (i < lines.length) {
+    final tableEnd = _tryParseTable(lines, i);
+    if (tableEnd != null) {
+      flushProse();
+      blocks.add(tableEnd.block);
+      i = tableEnd.nextIndex;
+      continue;
+    }
+    proseBuf.writeln(lines[i]);
+    i++;
+  }
+  flushProse();
+  // content가 완전히 비어있으면 단일 ProseBlock("")이라도 emit하지 않고 빈 리스트.
+  return blocks;
+}
+
+/// GFM 표 감지 결과. 없으면 null.
+class _TableParseResult {
+  final Map<String, dynamic> block;
+  final int nextIndex;
+  _TableParseResult(this.block, this.nextIndex);
+}
+
+final RegExp _separatorCellPattern = RegExp(r'^\s*:?-{3,}:?\s*$');
+
+_TableParseResult? _tryParseTable(List<String> lines, int start) {
+  if (start + 1 >= lines.length) return null;
+  final header = lines[start];
+  final separator = lines[start + 1];
+  if (!_isTableRow(header) || !_isTableSeparator(separator)) return null;
+
+  final headers = _splitRow(header);
+  final alignments = _splitRow(separator).map(_alignmentFor).toList();
+  if (headers.length != alignments.length) return null;
+
+  final rows = <List<String>>[];
+  var j = start + 2;
+  while (j < lines.length && _isTableRow(lines[j])) {
+    final cells = _splitRow(lines[j]);
+    // 열 수 불일치는 무시하지 않고 table 끝으로 간주 (Markdown 사양 모호).
+    if (cells.length != headers.length) break;
+    rows.add(cells);
+    j++;
+  }
+
+  // 데이터 행 0개도 허용 (헤더만 있는 "빈 표"). content_builder 관점에선 희귀
+  // 하지만 파서 무결성을 위해 허용.
+  return _TableParseResult(
+    {
+      'type': 'table',
+      'headers': headers,
+      'rows': rows,
+      'alignments': alignments,
+    },
+    j,
+  );
+}
+
+bool _isTableRow(String line) {
+  final t = line.trim();
+  if (t.length < 3) return false;
+  return t.startsWith('|') && t.endsWith('|') && t.contains('|', 1);
+}
+
+bool _isTableSeparator(String line) {
+  final t = line.trim();
+  if (!t.startsWith('|') || !t.endsWith('|')) return false;
+  final cells = _splitRow(line);
+  if (cells.length < 2) return false;
+  return cells.every((c) => _separatorCellPattern.hasMatch(c));
+}
+
+List<String> _splitRow(String line) {
+  var t = line.trim();
+  if (t.startsWith('|')) t = t.substring(1);
+  if (t.endsWith('|')) t = t.substring(0, t.length - 1);
+  return t.split('|').map((c) => c.trim()).toList();
+}
+
+String _alignmentFor(String separatorCell) {
+  final t = separatorCell.trim();
+  final startsColon = t.startsWith(':');
+  final endsColon = t.endsWith(':');
+  if (startsColon && endsColon) return 'center';
+  if (endsColon) return 'right';
+  if (startsColon) return 'left';
+  return '';
 }
 
 /// Unicode 박스 드로잉(U+2500–U+259F) 문자가 하나라도 포함되어 있는지.
