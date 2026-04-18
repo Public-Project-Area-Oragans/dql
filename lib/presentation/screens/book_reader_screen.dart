@@ -5,6 +5,7 @@ import '../../core/constants/app_colors.dart';
 import '../../data/models/book_model.dart';
 import '../../domain/providers/content_providers.dart';
 import '../simulators/code_step_simulator.dart';
+import '../simulators/structure_assembly_simulator.dart';
 import '../widgets/steampunk_button.dart';
 import '../widgets/theory_card.dart';
 
@@ -124,11 +125,16 @@ class _BookReaderScreenState extends ConsumerState<BookReaderScreen>
                     );
                   },
                 ),
-              StructureAssemblyConfig() => const Center(
-                  child: Text(
-                    '구조 조립 시뮬레이터는 Task 2-2에서 구현됩니다',
-                    style: TextStyle(color: AppColors.parchment),
-                  ),
+              StructureAssemblyConfig() => StructureAssemblySimulator(
+                  config: chapter.simulator as StructureAssemblyConfig,
+                  onComplete: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('구조 조립 완료!'),
+                        backgroundColor: AppColors.steamGreen,
+                      ),
+                    );
+                  },
                 ),
               _ => const Center(
                   child: Text(
