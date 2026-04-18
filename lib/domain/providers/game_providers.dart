@@ -29,3 +29,14 @@ class QuestBoardOpen extends _$QuestBoardOpen {
   void open() => state = true;
   void close() => state = false;
 }
+
+/// 분관 책장에서 QuestBoard를 열 때 해당 분관의 카테고리를 전달.
+/// null이면 전체 노출 (중앙 홀 등).
+@riverpod
+class QuestBoardFilterCategory extends _$QuestBoardFilterCategory {
+  @override
+  String? build() => null;
+
+  void set(String? category) => state = category;
+  void clear() => state = null;
+}

@@ -65,8 +65,9 @@ class _WingNpcConfig {
   const _WingNpcConfig(this.npcId, this.npcName, this.categories);
 }
 
+// NPC-1: book.json 카테고리 ID와 정확히 매칭시킴 (과거 'java' 오타 수정).
 final _wingNpcConfig = {
-  'backend': const _WingNpcConfig('wizard', '아르카누스', ['java']),
+  'backend': const _WingNpcConfig('wizard', '아르카누스', ['java-spring']),
   'frontend': const _WingNpcConfig('mechanic', '코그윈', ['dart', 'flutter']),
   'database': const _WingNpcConfig('alchemist', '메르쿠리아', ['mysql']),
   'architecture': const _WingNpcConfig('architect', '모뉴멘타', ['msa']),
