@@ -24,3 +24,39 @@ jobs:
       - run: dart run tools/content_builder.dart docs-source
       - run: flutter analyze lib/
       - run: flutter test
+
+  integration:
+    runs-on: ubuntu-latest
+    # Phase 2 Task 2-6c 도입 초기 — ChromeDriver 환경 변동 위험이 있어 머지
+    # 차단 조건에서는 제외. 첫 안정화 이후 continue-on-error를 제거한다.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.DOCS_TOKEN }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - uses: nanasess/setup-chromedriver@v2
+
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: dart run tools/content_builder.dart docs-source
+
+      - name: Start ChromeDriver
+        run: |
+          chromedriver --port=4444 &
+          sleep 2
+
+      - name: Run integration tests (Chrome, headless)
+        run: |
+          flutter drive \
+            --driver=test_driver/integration_test.dart \
+            --target=integration_test/msa_chapter_flow_test.dart \
+            -d web-server \
+            --browser-name=chrome \
+            --browser-dimension=1280,2000 \
+            --release
