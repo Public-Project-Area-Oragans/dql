@@ -142,21 +142,36 @@
 - **해결**: 각 indent 버전별로 별도 Edit 호출.
 - **참조**: PR #29.
 
-### 4.5 MSA flowchart 42%가 파서 실패 → RawBlock 폴백
+### 4.5 MSA flowchart 42% → 6%: 실측 주도 점진 복구 (PR #35 → #38 → #40)
 
-- **증상**: 배포 후 `msa/book.json` 분석 시 `type=raw` mermaid 블록이 263건. 그중 236건이 `flowchart|graph` 헤더.
-- **근본 원인 (236건 breakdown)**:
-  - `:::className` 스타일 접미사 (거의 전부): 노드/엣지 라인 끝에 `:::primary` 같은 class 지정이 붙어 있으면 regex가 매칭에 실패.
-  - Stadium `([...])` / Cylinder `[(...)]` 노드 형상 미지원.
-  - `~~~` invisible link 미지원.
-  - `<-->`, `--o`, `--x` 특수 엣지 미지원 (15건).
-  - Multiway `A & B --> C` (7건).
-- **해결 (대기 PR #7)**:
-  1. 모든 라인에서 `:::className` 스트립 후 노드/엣지 regex 적용.
-  2. Stadium/Cylinder 형상 추가.
-  3. `~~~` 감지 시 엣지 emit 건너뜀 (정렬 힌트용, 노드 사이 시각적 관계 없음).
-  4. 특수 엣지 4종 처리.
-- **참조**: Phase 3 release 이후 발견, PR #7 예정.
+실제 배포 후 실측·샘플 분석 → 소규모 parser 패치를 3회 반복해 **94% 구조화** 달성. 단순 설계상 수치 추정(98%)에 근접.
+
+**측정 타임라인 (MSA 기준)**:
+
+| 시점 | flowchart | raw | 구조화 % |
+|---|---|---|---|
+| Phase 3 초기 릴리즈 (PR #33) | 321 | 263 | 57% |
+| PR #35 (`:::className` 스트립 + Stadium/Cylinder + 특수 엣지 + multiway) | 349 | 235 | 65% (+8p) |
+| PR #38 (`-->>` / `==>>` 시퀀스 변종 수용) | 349 | 235 | 65% (무변화) |
+| **PR #40 (인용 라벨 내 `()` 보존)** | **550** | **34** | **94% (+29p)** |
+
+**각 PR의 발견 & 교훈**:
+
+1. **PR #35 (주요 패턴 일괄 대응)**: `:::className` suffix가 거의 모든 MSA flowchart에 있음 + Stadium/Cylinder 형상 + `~~~` invisible link + `<-->`/`--o`/`--x` + multiway `A & B -->`. **예상 192+ 복구 → 실측 27**. 설계 추정이 부정확했음.
+2. **PR #38 (커넥터 변종)**: `-->>`, `==>>` (sequenceDiagram 커넥터를 flowchart에 오용). **1건만 복구**. 원인이 여전히 다른 곳에 있었음.
+3. **PR #40 (인용 라벨 파서)**: 기존 `[^\]\)\}"]+` 라벨 패턴이 따옴표 안 `(`에서 조기 종료 → 매칭 실패 → 엉뚱한 close 매칭 → 전체 파서 오염. quoted/unquoted 두 alternative로 분기한 뒤 **201건 복구**. 이 하나가 진짜 원인이었음.
+
+**교훈**:
+- 여러 패턴이 의심되는 상황에서 **실측·샘플 제한 후 검증** → 한 버그씩 분리 적용 → 재측정 반복이 최단 경로. 한 PR에 모든 추정을 담지 않기.
+- **라벨 regex는 quoted / unquoted 분리가 필수**. 단일 char class `[^...]` 로 둘 다 처리 시 quoted 안의 구조 문자(`)`, `]`, `}`)가 조기 종료 원인.
+- `_nodeShapePattern` / `_edgePattern` 수정 시 ID 패턴의 `-` 허용 여부도 재확인 (connector 대시와 greedy 충돌 리스크).
+
+**잔여 34 raw (2026-04-18 PR #40 배포 기준)**:
+- sequenceDiagram-failed: 16 (`--x` 등 mermaid 확장 문법 미지원)
+- flowchart-residual: 7 (엣지 케이스)
+- gantt: 4 / stateDiagram: 3 / erDiagram: 1 / classDiagram: 1 / quadrantChart: 1 / block-beta: 1 → 도메인 특화, 구조화 비용 대비 이득 낮음. RawBlock monospace로 방치 가능.
+
+**참조**: PR #28 #29 #30 #31 #32 #35 #38 #40.
 
 ---
 
