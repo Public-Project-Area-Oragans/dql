@@ -587,11 +587,15 @@ final RegExp _participantPattern =
 final RegExp _actorPattern =
     RegExp(r'^actor\s+([A-Za-z_][\w-]*)(?:\s+as\s+(.+))?$');
 
-// 메시지 커넥터: `-`{1,2} + `>`{1,3}.
-// 대시 2개 = reply/async, 대시 1개 = sync. `+`/`-` 활성화 표기는 무시.
-// 주의: id 패턴에서 `-`를 제외해야 greedy 매칭이 커넥터 대시까지 먹지 않음.
+// 메시지 커넥터 (Mermaid sequence):
+//   -> / ->>      (solid, 1 dash)
+//   --> / -->>    (dashed, 2 dashes = reply)
+//   -x / --x      (lost message, cross)
+//   -) / --)      (async, open arrow)
+// 2 dashes → reply/async, 1 dash → sync. `+`/`-` activation suffix 무시.
+// id 패턴에서 `-`를 제외해야 greedy가 커넥터 대시를 먹지 않음.
 final RegExp _sequenceMsgPattern = RegExp(
-  r'^([A-Za-z_]\w*)\s*(-{1,2}>{1,3})\+?-?\s*([A-Za-z_]\w*)\s*:\s*(.+)$',
+  r'^([A-Za-z_]\w*)\s*(-{1,2}(?:>>?|x|\)))\+?-?\s*([A-Za-z_]\w*)\s*:\s*(.+)$',
 );
 
 Map<String, dynamic>? _parseSequence(List<String> lines) {
