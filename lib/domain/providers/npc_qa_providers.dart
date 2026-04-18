@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/models/qa_message.dart';
 import '../../services/claude_api_service.dart';
 import '../../services/npc_personas.dart';
+import 'category_context_providers.dart';
 import 'claude_api_providers.dart';
 
 part 'npc_qa_providers.g.dart';
@@ -96,6 +97,25 @@ class NpcQaSession extends _$NpcQaSession {
 
     final service = ref.read(claudeApiServiceProvider);
     final buffer = StringBuffer();
+
+    // P0-5 NPC-5: 카테고리 book.json에서 질문 관련 섹션 상위 추출.
+    // 실패 시 빈 리스트로 폴백 (RAG 없이도 답변 가능).
+    var ragChunks = const <String>[];
+    final categories = NpcPersonas.npcIdToCategories[npcId] ?? const [];
+    if (categories.isNotEmpty) {
+      try {
+        ragChunks = await ref
+            .read(categoryContextServiceProvider)
+            .fetchRelevantChunks(
+              categories: categories,
+              question: trimmed,
+              maxChunksPerCategory: 2,
+            );
+      } catch (_) {
+        ragChunks = const [];
+      }
+    }
+
     try {
       final stream = service.askStream(
         systemPrompt: persona,
@@ -103,6 +123,7 @@ class NpcQaSession extends _$NpcQaSession {
             .where((m) => m.role != QaRole.user || m.content != trimmed)
             .toList(),
         userQuestion: trimmed,
+        cachedContextChunks: ragChunks,
       );
       await _sub?.cancel();
       _sub = stream.listen(
