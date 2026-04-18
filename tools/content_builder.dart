@@ -200,11 +200,15 @@ Map<String, dynamic> applyOverride(
   return chapter;
 }
 
-/// Phase 3 PR #2: 섹션 본문을 ContentBlock 리스트로 분해.
+/// Phase 3: 섹션 본문을 ContentBlock 리스트로 분해.
 ///
-/// 현재 인식 타입: GFM 표 → TableBlock, 그 외 구간 → ProseBlock.
-/// 후속 PR에서 mermaid/asciiDiagram 분리도 이 함수에서 처리.
+/// 인식 타입:
+/// - GFM 표 → TableBlock (PR #2)
+/// - ```text / ```ascii / ```diagram / ``` 펜스 + 박스 드로잉 → AsciiDiagramBlock (PR #3)
+/// - 그 외 구간 → ProseBlock
+/// 후속 PR에서 mermaid 분리 추가.
 List<Map<String, dynamic>> _extractBlocks(String content) {
+  const asciiLikeLangs = {'', 'text', 'ascii', 'diagram'};
   final lines = content.split('\n');
   final blocks = <Map<String, dynamic>>[];
   final proseBuf = StringBuffer();
@@ -221,6 +225,9 @@ List<Map<String, dynamic>> _extractBlocks(String content) {
 
   var i = 0;
   while (i < lines.length) {
+    final line = lines[i];
+
+    // 1) 표 감지
     final tableEnd = _tryParseTable(lines, i);
     if (tableEnd != null) {
       flushProse();
@@ -228,7 +235,37 @@ List<Map<String, dynamic>> _extractBlocks(String content) {
       i = tableEnd.nextIndex;
       continue;
     }
-    proseBuf.writeln(lines[i]);
+
+    // 2) 코드 펜스 감지
+    if (line.startsWith('```')) {
+      final lang = line.substring(3).trim().toLowerCase();
+      final fenceBody = StringBuffer();
+      var j = i + 1;
+      while (j < lines.length && !lines[j].startsWith('```')) {
+        fenceBody.writeln(lines[j]);
+        j++;
+      }
+      final closed = j < lines.length;
+      final body = fenceBody.toString().trimRight();
+      if (closed &&
+          asciiLikeLangs.contains(lang) &&
+          _hasBoxDrawing(body)) {
+        // asciiLike 펜스 + 박스 드로잉 → AsciiDiagramBlock
+        flushProse();
+        blocks.add({'type': 'asciiDiagram', 'source': body});
+        i = j + 1;
+        continue;
+      }
+      // 그 외 펜스는 원본 그대로 prose에 유지 (flutter_markdown이 코드블록으로 렌더).
+      proseBuf.writeln(line);
+      for (var k = i + 1; k <= j && k < lines.length; k++) {
+        proseBuf.writeln(lines[k]);
+      }
+      i = closed ? j + 1 : j;
+      continue;
+    }
+
+    proseBuf.writeln(line);
     i++;
   }
   flushProse();
