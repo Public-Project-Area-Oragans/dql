@@ -153,5 +153,27 @@ flowchart TD
 ''');
       expect(block['edges'], hasLength(1));
     });
+
+    test('`-->>` 시퀀스 변종 커넥터 (flowchart 안에서 오용된 케이스) 파싱', () {
+      final block = parseFlowchartSingle('''
+flowchart TD
+    A --> B
+    A -->> C
+    A -->>> D
+''');
+      final edges = block['edges'] as List;
+      expect(edges, hasLength(3));
+      for (final e in edges) {
+        expect(e['style'], 'solid');
+      }
+    });
+
+    test('`==>>`, `==>>>` 두꺼운 시퀀스 변종도 thick으로 분류', () {
+      final block = parseFlowchartSingle('''
+flowchart TD
+    A ==>> B
+''');
+      expect((block['edges'] as List).single['style'], 'thick');
+    });
   });
 }
