@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import '../../presentation/screens/book_reader_screen.dart';
+import '../../presentation/screens/debug_settings_screen.dart';
 import '../../presentation/screens/debug_telemetry_screen.dart';
 import '../../presentation/screens/game_screen.dart';
 import '../../presentation/screens/login_screen.dart';
@@ -26,6 +27,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/debug/telemetry',
       builder: (context, state) => const DebugTelemetryScreen(),
+    ),
+    GoRoute(
+      path: '/debug/settings',
+      builder: (context, state) => const DebugSettingsScreen(),
     ),
   ],
 );
