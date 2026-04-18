@@ -175,5 +175,21 @@ flowchart TD
 ''');
       expect((block['edges'] as List).single['style'], 'thick');
     });
+
+    test('인용 라벨 내부의 `()` 괄호는 조기 종료 없이 보존', () {
+      final block = parseFlowchartSingle('''
+flowchart LR
+    AuthN["인증<br/>(Authentication)<br/>누구인가?"]
+    AuthZ["인가<br/>(Authorization)"]
+    AuthN --> AuthZ
+''');
+      final labelN = (block['nodes'] as List)
+          .firstWhere((n) => n['id'] == 'AuthN')['label'] as String;
+      expect(labelN, contains('(Authentication)'));
+      expect(labelN, contains('누구인가?'));
+      final labelZ = (block['nodes'] as List)
+          .firstWhere((n) => n['id'] == 'AuthZ')['label'] as String;
+      expect(labelZ, contains('(Authorization)'));
+    });
   });
 }
