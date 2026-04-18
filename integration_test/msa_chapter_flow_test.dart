@@ -1,5 +1,6 @@
 import 'package:dol/app.dart';
 import 'package:dol/core/router/app_router.dart';
+import 'package:dol/data/models/book_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,9 +21,16 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  void mark(String step) {
+    // ignore: avoid_print
+    print('[integration-step] $step');
+  }
+
   testWidgets(
     'MSA Service Discovery 챕터 시뮬레이터 완주 → 완료 SnackBar 표시',
     (tester) async {
+      mark('begin');
+
       // 레이아웃이 800x600 뷰포트에 모두 담기지 않으므로 확장. (기본 뷰포트
       // 에서는 판정 버튼이 화면 밖으로 밀린다. 위젯 테스트 2-6b와 동일 전략.)
       tester.view.physicalSize = const Size(1280, 2000);
@@ -33,14 +41,21 @@ void main() {
       });
 
       await tester.pumpWidget(const ProviderScope(child: DolApp()));
+      mark('DolApp pumped');
+
       // allBooksProvider(Future)가 rootBundle에서 book.json을 읽어올 시간.
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      // 웹 빌드에서는 asset 로드가 네트워크 fetch 수준으로 느릴 수 있어
+      // settle 시간을 넉넉히 (위젯 테스트보다 길게).
+      await tester.pumpAndSettle(const Duration(seconds: 5));
+      mark('initial settle done');
 
       // 책 상세(챕터) 화면으로 직접 이동.
       appRouter.go(
         '/book/msa/chapter/msa-phase4-step2-service-discovery',
       );
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      mark('router.go issued');
+      await tester.pumpAndSettle(const Duration(seconds: 5));
+      mark('post-navigation settle done');
 
       // 챕터 제목이 AppBar에 표시되어야 함.
       expect(
@@ -48,10 +63,12 @@ void main() {
         findsWidgets,
         reason: 'BookReaderScreen이 해당 챕터를 로드해야 함',
       );
+      mark('chapter loaded');
 
       // 시뮬레이터 탭 진입.
       await tester.tap(find.text('⚡ 시뮬레이터'));
       await tester.pumpAndSettle();
+      mark('simulator tab active');
 
       // Override 스키마가 구조 조립 시뮬레이터로 해석되었는지 확인.
       expect(
@@ -59,6 +76,7 @@ void main() {
         findsOneWidget,
         reason: 'StructureAssemblyConfig override가 적용되어야 함',
       );
+      mark('assembly header visible');
 
       // 해법 그래프(override JSON 기준):
       //   client(0,2), registry(2,2), instance1(4,1), instance2(4,3)
@@ -67,7 +85,10 @@ void main() {
       Future<void> dropAtCell(String paletteLabel, int col, int row) async {
         final paletteFinder = find.text(paletteLabel).first;
         final targetIndex = row * 5 + col;
-        final dragTargets = find.byType(DragTarget);
+        // DragTarget without generics doesn't match `DragTarget<PaletteItem>`
+        // under strict type finder semantics — must specify the same type
+        // argument as the simulator uses.
+        final dragTargets = find.byType(DragTarget<PaletteItem>);
         final gesture = await tester.startGesture(
           tester.getCenter(paletteFinder),
         );
@@ -90,22 +111,32 @@ void main() {
       }
 
       await dropAtCell('호출 클라이언트 (order-service)', 0, 2);
+      mark('client placed');
       await dropAtCell('Service Registry', 2, 2);
+      mark('registry placed');
       await dropAtCell('서비스 인스턴스 #1', 4, 1);
+      mark('instance1 placed');
       await dropAtCell('서비스 인스턴스 #2', 4, 3);
+      mark('instance2 placed');
 
       // 엣지 5개
       await connect(
           '호출 클라이언트 (order-service)', 'Service Registry');
+      mark('edge client→registry');
       await connect('서비스 인스턴스 #1', 'Service Registry');
+      mark('edge instance1→registry');
       await connect('서비스 인스턴스 #2', 'Service Registry');
+      mark('edge instance2→registry');
       await connect(
           '호출 클라이언트 (order-service)', '서비스 인스턴스 #1');
+      mark('edge client→instance1');
       await connect(
           '호출 클라이언트 (order-service)', '서비스 인스턴스 #2');
+      mark('edge client→instance2');
 
       expect(find.text('배치 4 / 연결 5'), findsOneWidget,
           reason: '4 노드 + 5 엣지 조립 완료 상태');
+      mark('graph assembled');
 
       // 판정
       final validateBtn = find.text('⚖ 판정');
@@ -113,9 +144,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(validateBtn);
       await tester.pumpAndSettle();
+      mark('validate tapped');
 
       expect(find.text('✓ 통과!'), findsOneWidget,
           reason: 'GraphValidator가 정답 그래프로 판정해야 함');
+      mark('validation correct');
 
       // onComplete는 1초 delay 후 SnackBar 표시.
       await tester.pump(const Duration(seconds: 2));
@@ -124,6 +157,7 @@ void main() {
         findsOneWidget,
         reason: 'BookReaderScreen의 onComplete SnackBar가 표시되어야 함',
       );
+      mark('snackbar visible → test complete');
     },
   );
 }

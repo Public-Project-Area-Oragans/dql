@@ -51,12 +51,13 @@ jobs:
           chromedriver --port=4444 &
           sleep 2
 
-      - name: Run integration tests (Chrome, headless)
+      - name: Run integration tests (Chrome via chromedriver)
         run: |
           flutter drive \
             --driver=test_driver/integration_test.dart \
             --target=integration_test/msa_chapter_flow_test.dart \
             -d web-server \
             --browser-name=chrome \
-            --browser-dimension=1280,2000 \
-            --release
+            --browser-dimension="1280x2000" \
+            --headless \
+            --verbose-system-logs
