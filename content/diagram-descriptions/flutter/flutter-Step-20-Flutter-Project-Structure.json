@@ -1,4 +1,93 @@
 {
   "chapterId": "flutter-Step-20-Flutter-Project-Structure",
-  "entries": {}
+  "entries": {
+    "4487dbb837317dfda4f01fcb399b53703cce7098a331e839647162b53a8727d4": {
+      "language": "",
+      "description": "이 다이어그램은 프로젝트 구조가 부실할 때 실제로 팀이 겪는 다섯 가지 전형적 고통을 나열해 '구조화가 왜 필요한가'라는 질문에 구체적 답을 제시한다. 로직이 어디에 있는지 모르는 혼란, API 변경이 수십 개 파일을 건드리는 연쇄 수정, 서버 없이는 UI 테스트도 안 되는 결합, 신규 입사자의 긴 적응 기간, 기능 추가 시 발생하는 회귀 버그가 모두 구조 부재의 증상이다.\n\n이 증상들은 코드를 잘 짰는지가 아니라 코드를 어떻게 '배치'했는지에서 발생한다는 점이 핵심이다. 다음 소개될 Layer 기반과 Feature 기반 구조가 각기 어떤 증상을 예방하는지 이 목록을 기준으로 재조명하게 된다."
+    },
+    "5e9a13cb6cde6c1de25eb2095c8b54d439fef09a1509b1aebd2138a9c4f95280": {
+      "language": "",
+      "description": "이 다이어그램은 Flutter 프로젝트를 조직하는 두 가지 대표 전략인 Layer 기반과 Feature 기반을 나란히 비교해 초기 선택 기준을 제시한다. Layer 방식은 models·services·screens 같은 계층 폴더로 나누고, Feature 방식은 auth·product·cart 같은 기능 폴더로 나눈다. 초기 구조화 비용과 이후 확장성이 서로 상충 관계임을 보여준다.\n\n핵심 의도는 한쪽이 절대적으로 옳은 것이 아니라 팀 규모와 앱 성장 단계에 따라 선택이 달라져야 한다는 것이다. 1~3인 작은 팀에서는 Layer가 더 직관적일 수 있고, 장기 유지보수와 팀 협업이 중요해지는 순간 Feature 구조가 더 적합해진다는 판단 프레임을 제공한다."
+    },
+    "9fff39b8fd8a12c1d606140b226302d001280cb3620230d9dbc000a05a9b2397": {
+      "language": "",
+      "description": "이 다이어그램은 Step 20의 학습 범위를 트리로 정리해 Feature 기반 구조의 네 계층, 의존성 방향 원칙, core 공통 모듈이라는 세 축을 한눈에 보여준다. 각 Feature는 presentation·application·domain·data 네 계층으로 나뉘며, Presentation이 Application을 거쳐 Domain으로 의존하고 Data 역시 Domain 인터페이스만 참조하는 일방향 구조가 핵심이다.\n\n의도는 이 지도만 봐도 '어디에 무엇을 두고, 어느 방향으로 의존이 흘러야 하는지'를 한 장에 담아 초심자가 빠르게 구조를 각인할 수 있도록 돕는 것이다. 이후 코드 예제가 이 지도의 어느 칸을 구현하는지 상시 위치시킬 수 있다."
+    },
+    "334e97c3fd0bf8bef950b49cb454d6e01944c53a75204c55206d15bc61a4fe9e": {
+      "language": "",
+      "description": "이 다이어그램은 Layer 기반 구조의 전형적인 lib 디렉토리 배치를 보여준다. models·services·repositories·providers·screens·widgets·utils처럼 역할별 폴더가 나란히 놓이고, 각 폴더 안에 기능과 상관없이 모든 도메인의 파일이 혼재하는 구조다. 소규모 프로젝트에서 가장 흔히 볼 수 있는 형태다.\n\n이 배치의 이점은 새로운 파일을 어디에 둘지 결정하기 쉽고 Flutter 입문자도 직관적으로 따라갈 수 있다는 점이다. 단점은 한 기능을 수정하려면 여러 역할 폴더를 오가며 파일을 편집해야 하고, 기능이 늘어날수록 각 폴더가 비대해져 관심 기능의 파일을 찾기 어려워진다는 데 있다. 언제 Feature 방식으로 넘어가야 하는지 판단하는 기준 역할을 한다."
+    },
+    "d4f74b51c897724561347e4d740c40b895b6dda6bd9c5387ec8aea3a0142041f": {
+      "language": "",
+      "description": "이 다이어그램은 Feature 기반 구조가 실제로 어떻게 폴더로 펼쳐지는지를 auth·product·cart 같은 기능 단위로 보여준다. 각 기능 아래 다시 presentation·application·domain·data 네 계층이 완전히 동일한 형태로 반복되며, 기능이 늘어나도 이 패턴만 복제하면 되므로 구조가 예측 가능하다. 공통 인프라는 최상위 core 폴더로 분리한다.\n\n이 구조가 가르치는 핵심은 '기능 × 계층'이라는 두 축으로 코드를 조직한다는 발상이다. 한 기능을 건드릴 때 해당 기능 폴더 내부만 오가면 되므로 팀 협업 시 Git 충돌이 줄고, 완전히 다른 기능 모듈로 교체하거나 패키지로 분리하기도 쉽다. 대규모 앱의 표준 구조로 자리 잡은 이유가 여기에 있다."
+    },
+    "20a78a0893f40bea9d5deda800884a11a53d2ad6d9c09766061d52cd3c306557": {
+      "language": "",
+      "description": "이 다이어그램은 Clean Architecture식 의존성 방향 원칙을 시각적으로 못 박는다. Presentation은 Application을, Application은 Domain을, Data 역시 Domain을 향해서만 화살표가 나간다. 핵심 규칙은 Domain은 아무것도 의존하지 않는다는 것, 즉 순수 Dart 코드로만 구성되며 Flutter SDK·Dio·Hive·Firebase 같은 프레임워크 의존성이 없어야 한다는 것이다.\n\n이 규칙의 의도는 비즈니스 규칙을 외부 변화로부터 격리하는 것이다. 라이브러리를 갈아엎어도 Domain은 흔들리지 않고, 단위 테스트도 Flutter 환경 없이 순수 Dart로 실행 가능하다. 화살표 방향을 지키는 것이 곧 유지보수 가능한 아키텍처의 기초라는 메시지를 분명히 전한다."
+    },
+    "edd27ced0b20a7e4137279a96d549afb2bc544f7e188c100a2e7ea8255755473": {
+      "language": "dart",
+      "description": "이 예제는 Presentation Layer의 책임이 '상태 렌더링'에 국한되어야 한다는 원칙을 코드로 보여준다. ConsumerWidget은 Notifier가 제공하는 AsyncValue를 watch해 loading·error·data 케이스별 위젯을 선언적으로 매핑할 뿐, 데이터가 어디서 오는지 알지 못한다. Notifier 역시 build에서 UseCase를 읽어 실행만 하고 결과는 AsyncNotifier가 자동으로 AsyncValue로 감싼다.\n\n이 구조의 교훈은 UI 코드에서 Dio나 Hive를 직접 부르고 싶은 충동을 구조적으로 차단한다는 점이다. Notifier가 Repository가 아닌 UseCase를 의존하기 때문에 비즈니스 규칙이 Application Layer에 머물게 되고, Presentation은 UI 상태 기계로만 남는다."
+    },
+    "079eb6f06657f318d127cc4cc3f118ad5e3db80f7ea7d6717cb07b84a8167ce9": {
+      "language": "dart",
+      "description": "이 예제는 Application Layer의 UseCase가 어떤 모습이어야 하는지를 보여준다. GetProductListUseCase는 Repository 인터페이스를 주입받아 목록을 조회하는 동시에, 빈 카테고리를 null로 정규화하거나 재고가 없는 상품을 목록 뒤로 재배치하는 등 단일 시나리오의 비즈니스 규칙을 집중적으로 적용한다.\n\n핵심은 UseCase가 '하나의 시나리오'를 의미 있는 이름으로 캡슐화해 Presentation과 Data 사이의 번역가 역할을 한다는 점이다. 데이터 접근은 Repository에, UI 표현은 Presentation에 맡기고, 그 둘을 엮는 업무 규칙만 이 계층에 모으면 규칙이 퍼지지 않는다. 덕분에 새로운 시나리오가 생길 때마다 UseCase 파일 하나만 추가하면 된다."
+    },
+    "f7e3db06db5b1fa76365ebc0513a41764315eb76fe2b345494dbbe14accafd8d": {
+      "language": "dart",
+      "description": "이 예제는 Domain Layer의 Product Entity와 ProductRepository 추상 인터페이스가 어떻게 프레임워크로부터 완전히 격리된 순수 Dart로 구성되는지를 보여준다. Entity는 필드와 함께 isDiscounted·formattedPrice 같은 비즈니스 규칙까지 포함하고, Repository는 abstract interface class로 메서드 시그니처만 선언해 구현을 강제하지 않는다.\n\n이 설계의 의도는 두 가지다. 첫째, 규칙을 Entity 안에 두어 여러 UseCase가 같은 규칙을 중복 구현하지 않도록 한다. 둘째, Repository를 인터페이스로 두어 Domain이 API냐 DB냐를 알지 않게 하고, 구현은 Data Layer가 뒤늦게 끼워 넣는 의존성 역전 구조를 완성한다. 단위 테스트에서는 Mock 구현만 끼워도 충분하다."
+    },
+    "e50fb90630bac2c7adbc426b96a5cf3516df8141f32366973a91389d17a9be55": {
+      "language": "dart",
+      "description": "이 예제는 Data Layer의 DTO와 Repository 구현체를 한 세트로 보여준다. ProductDto는 서버 JSON 형식을 충실히 반영한 fromJson과 Entity로의 toDomain 변환을 가지며, ProductRepositoryImpl은 Remote·Local 두 DataSource를 조합해 '원격 성공 시 캐시 업데이트, 실패 시 캐시 폴백'이라는 오프라인 우선 전략을 구현한다.\n\n이 분리의 교훈은 두 가지다. 첫째, DTO와 Entity를 분리하면 서버 필드명이 바뀌어도 Domain까지 파급되지 않는다. 둘째, Repository 구현체가 Domain의 인터페이스를 implements하므로 Application Layer 테스트에서 쉽게 Mock으로 교체할 수 있다. 서버와 캐시, DTO와 Entity의 경계가 어디에 그어져야 하는지가 명확해진다."
+    },
+    "2c42ba25207aa09303a4193aadf6336129007a12c5f282c7ef0fdb579878c573": {
+      "language": "dart",
+      "description": "이 예제는 Feature 폴더 안에 두는 barrel file이 외부 코드의 import를 한 줄로 정리해 주는 방식을 보여준다. product.dart에 해당 Feature의 공개 심볼만 export 해 두면 소비 측은 개별 경로를 열거할 필요 없이 단일 import 한 줄로 필요한 것을 모두 얻을 수 있다.\n\n핵심 의도는 Feature 경계를 '외부에 무엇을 공개할지'로 관리하는 기법을 도입하는 것이다. barrel file에 등장하지 않는 파일은 사실상 Feature 내부 전용이 되어 결합도 통제가 쉬워진다. import 경로 리팩토링이 발생해도 소비 측 코드는 흔들리지 않는다는 유지보수 이점도 함께 얻는다."
+    },
+    "c3ad6adb59860581c4cc2f62e5a36f10a4551f84461f7b4f4b21f5fb952c462a": {
+      "language": "dart",
+      "description": "이 예제는 core 모듈의 두 가지 대표 구성 요소인 DioClient 싱글톤과 Failure 계열 sealed 클래스를 보여준다. DioClient는 baseUrl·타임아웃·인터셉터 같은 네트워크 인프라를 앱 전체에서 한 번만 구성해 모든 Feature가 공유하도록 하고, Failure는 네트워크·서버·캐시·권한 등 공통 에러 타입을 하나의 sealed 계층으로 정리해 어느 Feature에서도 동일한 방식으로 실패를 표현하게 한다.\n\n이 구조의 의도는 각 Feature가 자체적으로 네트워크 인프라나 에러 분류를 만들지 않도록 만드는 것이다. core는 '모두가 공유하는 뼈대'이며, 구체 Feature는 이 뼈대를 재사용할 뿐 재발명하지 않는다. sealed class 사용은 에러 케이스를 switch로 빠짐없이 처리하도록 강제해 안정성도 높여 준다."
+    },
+    "45c23f4b3ab45712f3a5bec3fe581a892aa5625808340e29de8469a7c9c4f9b0": {
+      "language": "",
+      "description": "이 다이어그램은 Airbnb 클론 같은 복잡한 앱을 Feature 기반으로 분해하는 예시를 보여준다. auth·search·listing·booking·host·message·profile이라는 일곱 개 Feature가 사용자 여정을 따라 자연스럽게 나뉘고, 지도·결제·분석 같은 공통 인프라는 core로 묶인다.\n\n의도는 Feature 분해가 단순한 폴더 구분이 아니라 사용자 경험의 단위이자 팀 배분의 단위라는 사실을 보여주는 것이다. 한 명의 팀원이 한 Feature를 온전히 소유할 수 있고, 필요하면 각 Feature를 별도 패키지로 분리해 독립 배포할 수 있는 길도 열려 있다. 큰 앱도 결국 사용자 관점의 기능 단위로 쪼개면 관리 가능해진다는 메시지를 전한다."
+    },
+    "ce3ae27169d21fada8388f14af8877933647820011e5969c02616c3d95ae0dbe": {
+      "language": "",
+      "description": "이 다이어그램은 네트워크 프로토콜을 REST에서 GraphQL로 교체해야 하는 상황을 두고, Feature+Repository 구조와 비구조화된 Layer 구조가 각각 몇 개의 파일을 건드려야 하는지를 비교해 보여준다. 잘 설계된 구조에서는 data/datasources의 한 파일만 교체하면 Domain·Application·Presentation이 모두 그대로 유지된다.\n\n이 비교의 핵심 교훈은 구조가 곧 유지보수 비용이라는 점이다. Repository 인터페이스를 경계로 삼으면 외부 라이브러리 교체가 내부 비즈니스 로직을 건드리지 않는다. 반면 화면이 API를 직접 부르는 평면 구조에서는 프로토콜 변경이 UI까지 번져 수십 개 파일을 동시에 수정해야 하는 연쇄 수정이 발생한다."
+    },
+    "331f5b63ae5000d285fc89ad4145598dceb31c8cd3f2ee18d51172e2751bcfc8": {
+      "language": "",
+      "description": "이 다이어그램은 5인 팀이 Feature 기반 구조에서 어떻게 분업하는지를 보여준다. 네 명이 각각 auth·search·listing·booking을 전담하고 한 명이 core를 책임지는 식으로 책임 소재가 폴더 단위로 명확히 나뉜다. 그 결과 각자가 자기 폴더 안에서만 작업하기 때문에 Git 충돌이 극적으로 줄고, 다른 기능의 코드를 이해하지 않고도 개발을 진행할 수 있다.\n\n핵심 의도는 아키텍처가 곧 팀 구조를 반영한다는 콘웨이의 법칙을 체감하게 하는 것이다. 폴더 경계가 모호하면 업무 경계도 모호해지고 충돌이 잦아진다. Feature 구조는 기술적 결정인 동시에 팀 생산성을 결정짓는 조직적 결정이기도 하다는 사실을 분명히 한다."
+    },
+    "fde82133b96696354081ef99a2f8b1e1b08918fe28195edadeb154ebd3790741": {
+      "language": "",
+      "description": "이 다이어그램은 기존의 Layer 구조를 한 번에 갈아엎지 않고 4단계 마이그레이션으로 Feature 구조로 전환하는 로드맵을 제시한다. 먼저 core로 공통 인프라를 분리하고, 다음으로 가장 독립적인 Feature를 하나 이동해 검증한 뒤, 나머지 Feature를 순차 이동하고, 마지막에 남은 Layer 폴더를 제거하는 순서다.\n\n핵심 의도는 리팩토링이 '전면 재작성'이 아닌 '점진적 이주'여야 한다는 실무 원칙을 보여주는 것이다. 각 단계마다 테스트로 회귀를 검증하고, 기능 개발을 병행할 수 있어야 팀이 전환 기간 동안 멈추지 않는다. 아키텍처 개선은 위험 관리와 결합될 때만 지속 가능하다는 교훈을 담고 있다."
+    },
+    "ef51c37b71fdccb2e24857fe5231976d12cba8d62f36f336e63bc46fcfba4efe": {
+      "language": "bash",
+      "description": "이 실습 조각은 Feature 기반 구조를 빠르게 생성하기 위한 셸 mkdir 스크립트다. auth·product·cart 세 Feature 각각에 presentation·application·domain·data 네 계층 하위 폴더를 한 번에 만들고, core 아래에도 network·storage·router·theme 등 표준 공통 모듈 구조를 생성한다.\n\n이 명령의 의도는 '빈 폴더 만들기'가 아니라 폴더 자체를 일종의 아키텍처 선언문으로 굳히는 것이다. 빈 구조가 먼저 존재해야 새 파일을 어디에 둘지 고민하지 않게 되고, 팀원 간에도 동일한 멘탈 모델이 형성된다. 프로젝트 초기에 5분 투자해 구조를 선언해 두는 습관이 이후 수개월의 혼란을 막아 준다."
+    },
+    "4993786f2044eac5a5b39391966e7b35e077c0255e112e825dab5702056d7ac1": {
+      "language": "bash",
+      "description": "이 실습 조각은 Feature 기반 구조가 제대로 생성됐는지 확인하는 find 명령이다. lib 하위의 모든 디렉토리를 알파벳 순으로 나열해, 앞서 만든 presentation·application·domain·data 계층과 core 하위 모듈이 빠짐없이 자리 잡았는지 육안으로 점검할 수 있다.\n\n이 작은 점검 단계의 교훈은 '구조 선언 → 검증'이라는 짧은 루프가 초기 착오를 예방한다는 점이다. mkdir 경로 하나가 빠지면 이후 파일을 엉뚱한 곳에 두게 되므로 이 한 줄로 결과를 확인한 뒤 본격적인 코딩을 시작하는 리듬이 중요하다."
+    },
+    "c8b657a795b1e929eb8bcda170f1eef236eefad224f8309e39ae286554ed21f2": {
+      "language": "dart",
+      "description": "이 실습 코드는 Feature 기반 구조의 네 계층을 한 번에 엮어 Product Domain 모델, Repository 인터페이스, DTO, 그리고 Repository 구현체까지 실제로 작성해 보는 과정을 보여준다. Entity는 isInStock·isLowStock·formattedPrice 같은 비즈니스 규칙을 직접 갖고, DTO는 toDomain으로 경계를 넘으며, Impl은 지연과 함께 Mock 데이터로 동작해 네트워크 없이 UI를 돌릴 수 있게 한다.\n\n교훈은 각 계층의 파일이 서로 독립적으로 작성·수정·교체될 수 있다는 사실이다. 나중에 Mock Impl을 Dio 기반 실제 구현체로 교체하더라도 Entity와 Repository 인터페이스, 화면 코드는 손대지 않는다. 이 작은 실습 하나가 Clean Architecture의 핵심 가치를 체감하는 지점이 된다."
+    },
+    "635cfc392c1aaaeb12b4c6e69c060e9c5578da3948a1b3b753f7127ac867f711": {
+      "language": "dart",
+      "description": "이 코드 조각은 자가 평가 Q3의 제시문으로, Repository를 통해 데이터를 가져와 할인 상품만 필터링하는 GetDiscountedProductsUseCase 클래스를 보여준다. 학습자는 이 코드가 어느 계층에 속해야 하는지를 판단해야 한다.\n\n의도는 UseCase의 정의를 단순 암기가 아니라 코드 형태로 인식하게 하는 것이다. Repository 인터페이스 의존성, 단일 execute 메서드, 그리고 '할인 상품만 남긴다'는 구체 비즈니스 규칙이라는 세 가지 특징이 모두 Application Layer의 전형적인 모양임을 스스로 확인하게 한다. 이 판단 훈련을 거치면 이후 실제 프로젝트에서 어떤 클래스를 어느 폴더에 둬야 할지 자동으로 감이 잡힌다."
+    },
+    "ae728b25cd848cc2936ad6f6f8fe8978fca1e02d9e252055684d5a4c308265d6": {
+      "language": "",
+      "description": "이 다이어그램은 자가 평가 Q4의 모범 답안으로 cart Feature의 폴더 구조를 Feature 기반 원칙에 맞게 펼쳐 보여준다. presentation·application·domain·data 네 계층이 깔끔하게 나뉘고, 각 폴더 안에 화면·위젯·Notifier·UseCase·Entity·Repository·DataSource가 자리 잡아 예상 가능한 형태를 유지한다.\n\n이 구조의 교훈은 새 Feature를 추가하더라도 동일한 골격을 재사용할 수 있다는 점이다. cart 폴더를 만든 사람이 다른 날 order Feature를 추가해도 같은 다섯 개 하위 폴더를 반복하면 되므로 어느 파일이 어디에 놓일지에 대한 고민이 사라진다. 반복되는 구조는 곧 팀이 공유하는 문법이 된다."
+    },
+    "19e201275b893ee538e381b904d89e273adf3c9d67001e8a95da53e91c9e5e3a": {
+      "language": "",
+      "description": "이 다이어그램은 자가 평가 Q5의 제시문으로, lib 루트에 api_service·home_screen·product_detail_screen·cart_screen·product·main이 모두 평면적으로 놓인 '나쁜 예'를 의도적으로 보여준다. API 요청과 파싱, 비즈니스 로직이 한 파일에 혼재하고, 화면이 API를 직접 호출하며, 기능 단위의 경계가 전혀 없다.\n\n이 제시문의 의도는 학습자가 관심사 분리, 의존성 역전, Feature 경계라는 세 가지 관점에서 구조적 문제를 진단하도록 훈련시키는 것이다. 실제 레거시 코드를 다룰 때 어디서부터 손봐야 할지 판단하는 기준을 제공하며, 단순히 '깔끔하게 만들자'는 구호가 아니라 구체 증상과 대응을 짝짓는 사고 방식을 요구한다."
+    }
+  }
 }

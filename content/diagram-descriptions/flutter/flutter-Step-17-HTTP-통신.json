@@ -1,4 +1,97 @@
 {
   "chapterId": "flutter-Step-17-HTTP-통신",
-  "entries": {}
+  "entries": {
+    "1b9b326d04de545b3faae95baa4f563d8e7b169bae5559c699b7c24e752f6517": {
+      "language": "",
+      "description": "이 다이어그램은 모바일 앱과 서버가 HTTP를 통해 데이터를 주고받는 가장 기본적인 대화 구조를 한 컷으로 정리한다. 앱이 특정 리소스를 요청하면 서버는 데이터베이스를 조회해 JSON으로 응답하고, 앱은 그 JSON을 Dart 객체로 변환한 뒤 UI에 반영한다는 순환이 왜 모든 네트워킹 학습의 출발점이 되는지를 보여주려는 의도다.\n\n핵심은 HTTP 통신이 단순히 한 번의 요청/응답으로 끝나는 것이 아니라, 요청 송신·서버 처리·응답 수신·파싱·렌더링이라는 네 단계를 거쳐야 한다는 점이다. 이 흐름을 먼저 이해해야 Dio 사용법이나 인터셉터·에러 처리 같은 세부 기능이 각 단계 어디에 붙는지 자연스럽게 감이 잡히고, 실무에서 네트워크 이슈가 발생했을 때 어느 단계에서 문제가 생겼는지 분리해 생각할 수 있게 된다."
+    },
+    "daf30a8d50137c15dd18871db96eeacc1b638611649badd8c7eff2a77c8b7e25": {
+      "language": "",
+      "description": "이 다이어그램은 Flutter 앱의 HTTP 통신 학습 범위를 한 장의 개념 지도로 묶어 보여준다. 최상위에 REST API와 Dio, JSON↔Dart 모델 변환, GraphQL 기초라는 네 축을 두고, 각 축 아래 HTTP 메서드와 상태 코드, BaseOptions와 인터셉터, fromJson/toJson 같은 세부 주제들이 어떻게 분기되는지를 트리 형태로 정리한다.\n\n이 지도의 학습 목적은 개별 API 호출 예제를 배우기 전에 전체 숲을 먼저 보여 주는 것이다. REST 기본기를 알아야 Dio가 왜 필요한지 이해할 수 있고, Dio를 익혀야 인터셉터의 의미가 살아나며, 모델 변환을 거쳐야 GraphQL이 해결하려는 over-fetching 문제가 왜 발생하는지 연결된다. 학습자는 이 구조를 기준으로 자신이 어느 지점을 공부하고 있는지 상시 점검할 수 있다."
+    },
+    "7e262dbcde3c514de077ef8b438acb571ae828e44e68a79a67749c6f2784e7bb": {
+      "language": "",
+      "description": "이 표는 CRUD의 네 가지 행위를 HTTP 메서드와 URL 규약에 매핑해 REST API의 핵심 관례를 한눈에 정리한다. 생성은 POST, 조회는 GET, 수정은 PUT 또는 PATCH, 삭제는 DELETE로 대응되며, 동일한 리소스 경로에서 메서드만 바뀌는 방식으로 각기 다른 의미의 요청을 표현할 수 있다는 사실을 보여준다.\n\n특히 전체 목록과 단일 리소스 조회가 경로 파라미터 유무로 구분되고, 전체 수정과 일부 수정이 PUT과 PATCH로 나뉘는 부분은 실무에서 흔히 혼동되는 지점이다. 이 매핑표는 HTTP 메서드가 단순한 통신 수단을 넘어 자원을 식별하고 조작 의도를 표현하는 계약 언어라는 REST의 설계 철학을 간결하게 전달하려는 의도를 담고 있다."
+    },
+    "0b5bcf65b5d96ce4c58794dac6283d3e1caf48f1fee9fb59be0e8cc741c8c005": {
+      "language": "dart",
+      "description": "이 예제는 앱 전체에서 단 하나의 Dio 인스턴스를 공유하도록 만든 싱글톤 구조를 제시한다. 생성자를 private으로 막고 factory 패턴으로 동일한 인스턴스를 반환하면서, 내부 _init 메서드에서 baseUrl·타임아웃·공통 헤더 같은 기본 옵션을 한 번에 설정하고 인증·로깅·에러 처리 인터셉터를 일괄 등록한다.\n\n핵심 의도는 API 호출 지점마다 Dio를 새로 만들어 설정이 중복되거나 인터셉터가 누락되는 실수를 방지하는 것이다. 또한 baseUrl이 바뀌는 환경(dev·staging·prod) 전환이 한 지점 수정만으로 끝나고, 토큰 갱신 같은 공통 로직이 모든 요청에 자동 적용된다. 실무 앱에서 네트워크 레이어의 일관성과 유지보수성을 확보하는 가장 기본적인 패턴으로 자리 잡은 이유를 구체적으로 보여준다."
+    },
+    "af6d7b5797297fbde31b5fd999fb114645aa63cf797d39fae913a2dade35bbe9": {
+      "language": "dart",
+      "description": "이 예제는 Dio의 모든 핵심 HTTP 메서드를 Repository 패턴 안에서 실무 수준으로 정리해 보여준다. 페이지네이션 쿼리를 포함한 목록 GET, 경로 파라미터를 사용한 단일 GET, 바디로 데이터를 보내는 POST·PUT·PATCH, 응답이 필요 없는 DELETE, 그리고 FormData와 MultipartFile을 이용한 파일 업로드까지 CRUD 전 범위를 한 클래스 안에 묶어 제시한다.\n\n의도는 두 가지다. 첫째, queryParameters·data·path 파라미터를 각각 언제 어떻게 쓰는지 비교함으로써 Dio API 표면의 용도를 체계적으로 이해하게 한다. 둘째, 응답 데이터를 곧바로 Product 모델의 fromJson으로 변환해 도메인 객체를 반환함으로써, UI 계층이 JSON 구조를 직접 다루지 않게 격리하는 레이어드 아키텍처의 필요성을 자연스럽게 드러낸다."
+    },
+    "774293e6be375c97d45c64bf0834c4243cda2aa99b9744ee63f67d54a1b57707": {
+      "language": "dart",
+      "description": "이 예제는 서버 JSON을 Dart 모델로 변환하는 정석 패턴을 하나의 완결된 클래스로 보여준다. 모든 필드는 final로 선언해 불변 객체를 만들고, fromJson 팩토리에서 각 JSON 키를 안전하게 캐스팅하며, toJson으로 직렬화도 대칭적으로 제공한다. 특히 숫자 필드는 int와 double을 모두 수용하도록 num을 거쳐 toDouble 하는 기법, nullable 필드의 `as String?` 처리, 리스트 요소의 개별 캐스팅 같은 실전 디테일을 담고 있다.\n\n또한 copyWith 메서드를 통해 불변 객체를 부분만 수정한 사본으로 만드는 패턴을 결합해, 상태관리 레이어에서 상품을 업데이트할 때 기존 인스턴스를 훼손하지 않도록 설계한다. 이 구조는 freezed 같은 코드 생성 도구를 도입하기 전에 왜 그런 보일러플레이트가 필요한지 이해하기 위한 기준선 역할을 한다."
+    },
+    "847542ebfb6bf91e3938cfbcdff0e630115569b91b080b502a87a649c45bd975": {
+      "language": "dart",
+      "description": "이 예제는 중첩된 객체와 배열이 섞인 JSON을 Dart 모델로 안전하게 재귀 파싱하는 패턴을 보여준다. 주문 JSON 안에 포함된 사용자 객체는 User.fromJson으로, 항목 배열은 각 요소를 OrderItem.fromJson으로 매핑해 리스트로 변환하는 식으로, 상위 모델이 하위 모델의 파싱을 위임하는 구조다.\n\n핵심 의도는 복잡한 계층 데이터를 평평하게 꺼내 쓰기보다, 서버의 구조를 그대로 Dart 타입으로 투영해 도메인 레이어가 타입 안전하게 동작하도록 만드는 것이다. 각 모델이 자기 자신만 파싱할 책임을 가지므로 단위 테스트하기 쉽고, 서버 응답 구조가 바뀌어도 해당 모델만 수정하면 영향 범위가 국한된다는 점이 이 패턴이 실무에서 선호되는 이유다."
+    },
+    "f4a094a9be00b17a9bcaa18b5d8270d1b718970a92d5b37d66e26291f68aa23f": {
+      "language": "",
+      "description": "이 다이어그램은 Dio 요청이 앱 코드에서 서버를 거쳐 다시 앱 코드로 돌아오는 사이, 어떤 인터셉터가 어느 시점에 개입하는지를 파이프라인 형태로 정리한다. 요청이 나갈 때는 RequestInterceptor가 토큰 헤더 같은 공통 설정을 주입하고, 응답이 돌아오면 ResponseInterceptor가 일괄 가공하며, 예외가 발생하면 ErrorInterceptor가 토큰 갱신이나 에러 포맷 변환을 수행한다.\n\n핵심은 인터셉터가 '요청/응답의 공통 관심사를 한 지점으로 모으는 장치'라는 점이다. 파이프라인을 시각화함으로써 학습자는 특정 로직을 어느 훅에 붙여야 하는지, 그리고 next/resolve/reject 중 어느 것을 호출해야 원하는 흐름이 만들어지는지 감각적으로 이해하게 된다. 이는 이후 AuthInterceptor·ErrorInterceptor 구현 예제를 읽을 때의 골격이 된다."
+    },
+    "11fce8590d91cda35ac0c8a79ee8f2b14fbf557607899e9032611f49ccd87d95": {
+      "language": "dart",
+      "description": "이 예제는 Dio 인터셉터로 구현한 실무용 인증 흐름을 보여준다. onRequest에서는 저장된 액세스 토큰이 있으면 Authorization 헤더에 자동 첨부해 모든 API 호출에 인증을 적용하고, onError에서는 401 응답을 감지해 리프레시 토큰으로 새 액세스 토큰을 얻은 뒤 실패했던 요청을 재시도해 사용자가 로그아웃 없이 계속 사용할 수 있도록 한다.\n\n의도는 토큰 갱신 로직을 화면 코드에서 완전히 분리하는 것이다. 어떤 화면이 어떤 API를 부르든 401만 발생하면 한 지점에서 재시도가 이루어지며, 갱신 실패 시에는 저장소를 비우고 로그인 화면으로 유도한다. 이 패턴은 대규모 앱에서 인증 관련 버그와 중복 코드를 극적으로 줄이는 표준 설계로 통한다."
+    },
+    "1c10d6b31400d9cd12875bb19ad92b24ae9d33c3712eed2fc580a7b8d65e3c76": {
+      "language": "dart",
+      "description": "이 예제는 개발 중 네트워크 동작을 한눈에 파악할 수 있도록 요청 메서드와 URL, 바디, 응답 코드, 에러 정보를 로그로 찍는 간단한 로깅 인터셉터를 보여준다. onRequest에서 출발 메서드와 URI, onResponse에서 상태 코드와 경로, onError에서 예외 타입과 메시지를 출력하며, 각각 next를 호출해 기존 파이프라인을 방해하지 않는다는 것이 핵심이다.\n\n이 코드의 교육적 가치는 인터셉터가 요청을 가로채기만 하는 것이 아니라, 파이프라인의 투명성을 높이는 관찰 도구로도 활용될 수 있음을 보여 주는 데 있다. 실무에서는 debugPrint 대신 logger 패키지나 원격 로깅 백엔드로 연결해, 운영 환경의 네트워크 이슈를 추적 가능하도록 확장하는 기반 패턴이 된다."
+    },
+    "249a1cf0e6ec69712ad73a39f2b9d2934edae927df2af2f83e3026e3526382bd": {
+      "language": "dart",
+      "description": "이 예제는 Dio에서 발생하는 다양한 예외를 애플리케이션 고유의 AppError 타입으로 변환해 상위 계층이 네트워크 세부사항을 신경 쓰지 않도록 만드는 인터셉터다. DioExceptionType 별로 타임아웃·네트워크 오류를 구분하고, 서버 응답이 왔을 때는 상태 코드를 switch로 분기해 400·401·403·404·422·500 각각에 맞는 의미 있는 에러 객체를 생성한다.\n\n의도는 UI가 DioException을 직접 다루지 않고 도메인 의미를 지닌 에러만 받아 처리하게 만드는 것이다. 예를 들어 401은 로그인 화면 이동, 422는 폼 유효성 표시처럼 에러별 UX를 선언적으로 설계할 수 있게 된다. Dart 3의 switch 식과 record 패턴을 활용한 현대적 코드 스타일도 함께 보여 주는 역할을 한다."
+    },
+    "243651e700b1bb8ba53eb2f714b9412cfecfd75d8b7860e1710900af5f99eb06": {
+      "language": "dart",
+      "description": "이 예제는 네트워크 에러를 Repository 계층과 UI 계층에서 각기 다른 관심사로 처리하는 이중 구조를 보여준다. Repository는 DioException을 catch해 TimeoutException·NetworkException·NotFoundException 같은 도메인 예외로 번역하고, UI는 이 도메인 예외만 받아 각 타입에 맞는 사용자 메시지나 화면 이동 로직을 실행한다.\n\n이 분리의 교훈은 명확하다. 하위 계층에서 상태 코드나 Dio 타입을 UI에 노출하면 화면 코드가 프로토콜 세부사항에 오염되지만, 예외를 변환해 주면 UI는 비즈니스 의미만 다루면 된다. 또한 finally 블록에서 로딩 플래그를 해제하고 FormatException 같은 파싱 실패까지 고려함으로써, try/catch 구조가 어떻게 실전 안정성과 가독성을 동시에 달성하는지 모범적으로 제시한다."
+    },
+    "2fec8ebd81c1e052520e475d55e9b436a5896d4920e234be5c0f00793503024f": {
+      "language": "",
+      "description": "이 다이어그램은 REST와 GraphQL이 동일한 요구사항을 얼마나 다르게 처리하는지 대조해 보여 준다. REST는 사용자와 포스트를 얻기 위해 두 번 요청해야 하고, 응답에는 phone이나 address처럼 당장 필요하지 않은 필드까지 포함되기 쉽다. GraphQL은 한 쿼리에서 필요한 필드만 선언적으로 지정하고 중첩된 관련 데이터까지 한 번에 받아올 수 있다.\n\n이 대비는 Over-fetching과 Under-fetching이라는 REST의 두 가지 고질적 문제를 시각적으로 드러낸다. 학습자는 GraphQL의 매력이 단순한 유행이 아니라 데이터 조회 효율성과 클라이언트별 맞춤 응답이라는 구체적 문제를 해결하는 데 있다는 점을 이해하게 되고, 어떤 프로젝트에 GraphQL을 도입해야 의미가 있는지 판단 기준을 갖추게 된다."
+    },
+    "b6ce0a44766f2460ea10c2ade49a50afef3bb7ec4e2a5318ff74d7869b56ab10": {
+      "language": "yaml",
+      "description": "이 설정 조각은 Flutter 프로젝트에서 GraphQL을 사용하기 위해 pubspec.yaml에 추가해야 하는 최소 의존성을 보여준다. ferry는 Flutter 친화적인 GraphQL 클라이언트로 쿼리 타입 생성과 캐시 관리를 담당하고, gql_http_link는 실제 HTTP 전송을 맡는 링크다.\n\n핵심 의도는 REST에서는 Dio 한 패키지면 충분하던 것과 달리, GraphQL 생태계에서는 클라이언트와 전송 계층이 별도 패키지로 분리되어 있음을 학습자에게 각인시키는 것이다. 또한 버전 제약은 의존성 충돌이 잦은 GraphQL 도구 체인에서 특히 중요하므로, pubspec에 명시하는 습관이 안정적인 개발 환경을 유지하는 출발점임을 알려 준다."
+    },
+    "f222c5fee6566c33df96af937976990f703b571a01ea7672d68abc116e0faa50": {
+      "language": "dart",
+      "description": "이 예제는 ferry로 GraphQL 쿼리를 실행하는 전체 흐름을 보여준다. 먼저 필요한 필드만 명시한 쿼리 문자열을 정의하고, 인증 헤더를 포함한 HttpLink로 엔드포인트를 연결한 뒤 캐시와 함께 Client 인스턴스를 만든다. 그 다음 생성된 Req 객체에 변수 값을 채워 request 스트림을 구독하고 에러 유무를 점검해 데이터만 도메인 객체로 꺼내 쓰는 구조다.\n\n의도는 GraphQL의 선언적 쿼리와 Dart의 타입 안전성을 결합하는 방식을 구체적으로 체감하게 하는 것이다. 쿼리와 변수가 하나의 Req 객체로 묶이고, 응답은 Stream으로 도착해 캐시 업데이트와 UI 반영이 자연스럽게 연결된다. REST의 단순한 요청/응답 모델과 달리 GraphQL은 상시 구독 가능한 데이터 채널에 가깝다는 사상을 보여준다."
+    },
+    "488d1f08ea7e46fa71f36050ed333e992c00fe8db592e0b8e106e665bedc81e5": {
+      "language": "",
+      "description": "이 다이어그램은 실무 Flutter 앱이 네트워크 요청을 처리하기 위해 어떻게 여러 계층을 쌓는지 보여준다. UI 위젯이 직접 Dio를 부르지 않고, ViewModel/Notifier, Repository, DataSource, Dio+Interceptor라는 단계별 책임 분담을 거쳐 서버에 도달하며, 응답은 그 반대 순서로 도메인 모델이 되어 다시 UI로 돌아온다.\n\n이 계층화의 의도는 변경 지점을 분리하는 것이다. UI는 상태만 관심 있고, ViewModel은 비즈니스 흐름, Repository는 캐시 전략과 에러 번역, DataSource는 실제 API 계약, Dio는 전송 세부사항을 각각 담당한다. 한 계층만 교체하거나 테스트할 때 다른 계층이 영향을 받지 않도록 설계되었음을 독자가 체감하게 하는 것이 이 그림의 목적이다."
+    },
+    "5204d8e89b0f3deb9466ea7736e7c9d31e228f05f796a1948ffb887fa972c1d2": {
+      "language": "dart",
+      "description": "이 예제는 앞선 레이어드 아키텍처 다이어그램을 실제 Dart 코드로 구현한 종합 예시다. RemoteDataSource는 오직 Dio로 JSON DTO를 가져오는 역할만 맡고, Repository는 두 DataSource(remote·local)를 조합해 네트워크 실패 시 캐시로 폴백하는 전략을 구현하며, Riverpod AsyncNotifier가 UI와 연결되는 상태 노출 창구 역할을 한다.\n\n이 조합이 가르치는 핵심은 관심사의 분리다. DTO는 서버 계약을 충실히 반영하고 도메인 객체 Product는 앱 내부에서만 쓰이며 toDomain으로 경계를 넘나든다. 덕분에 서버 필드명이 바뀌어도 DTO만 수정하면 되고, 오프라인 지원이 필요해지면 Repository에서 캐시 정책만 손보면 된다. refresh 메서드는 AsyncValue.guard로 에러를 안전하게 래핑해 UI가 선언적으로 로딩·실패를 표현할 수 있음을 보여 준다."
+    },
+    "4b21943a5f7f8e0c53d418b2844a882dd6a9fca1a252802592ed1a1e48766a87": {
+      "language": "dart",
+      "description": "이 예제는 대용량 목록을 효율적으로 다루기 위한 커서 기반 페이지네이션을 Repository와 Riverpod Notifier로 구현한 패턴이다. 서버는 현재 페이지의 items와 함께 next_cursor와 hasMore를 내려주고, 클라이언트는 nextCursor를 저장해 두었다가 loadMore 호출 시 다음 요청의 쿼리 파라미터로 그대로 전달한다.\n\n의도는 오프셋 기반 페이지네이션이 가진 중복·누락 문제를 해결하면서 무한 스크롤 UX를 깔끔하게 지원하는 구조를 보여 주는 것이다. Notifier 내부에서 hasMore 플래그로 마지막 페이지 도달 여부를 판단하고, AsyncData에 기존 리스트와 새 페이지를 이어 붙여 상태를 갱신한다. UI 측에서는 단순히 스크롤 말미에서 loadMore를 호출하면 되므로, 비즈니스 로직과 화면 로직이 깔끔하게 분리된다."
+    },
+    "075d55a20cc7f282a138314ee23dc65aceda30ece947be72e766a0ac91d6aa37": {
+      "language": "dart",
+      "description": "이 예제는 이미지 파일을 서버로 업로드하는 전 과정을 한 함수 안에 정리해 보여준다. 먼저 5MB 상한 검증으로 불필요한 실패를 조기에 차단하고, FormData와 MultipartFile로 multipart/form-data 요청 바디를 만든 뒤 contentType과 파일명을 직접 지정해 서버가 이미지를 제대로 식별하도록 한다.\n\n특히 onSendProgress 콜백으로 현재까지 전송된 바이트와 전체 바이트를 받아 백분율 진행률을 산출하는 부분은 큰 파일 업로드에서 UX의 핵심이 된다. 이 패턴은 단순히 API 호출 예제가 아니라, 입력 검증·바이너리 전송·진행률 피드백이라는 업로드 UX의 세 축을 하나의 함수로 묶어 실무 코드가 어떤 모양이어야 하는지 표준을 제시하려는 의도를 가진다."
+    },
+    "0f1b63a00d4dc2b1075e99034bc9667c9df2bbc2e307aae8d65a8648d21f61cd": {
+      "language": "dart",
+      "description": "이 실습 코드는 JSONPlaceholder 공개 API를 상대로 Dio·fromJson·FutureBuilder·에러 처리·재시도를 모두 연결한 완결된 작은 앱이다. 모델은 불변 Post 클래스로 정의하고, Repository는 Dio BaseOptions와 DioException 분기 에러 핸들러를 갖추며, UI는 StatefulWidget에서 Future를 initState에 보관해 불필요한 재호출을 막는다.\n\n의도는 앞선 이론 조각들이 실제로는 하나의 흐름으로 어떻게 엮이는지 보여 주는 것이다. 학습자는 목록 GET, 생성 POST, 재시도 setState, SnackBar 피드백 같은 실무 패턴을 한 화면에서 체험하며, 네트워킹이 단독 기능이 아니라 FutureBuilder와 에러 처리, 사용자 상호작용이 결합된 UX 문제라는 관점을 얻게 된다."
+    },
+    "a65d0388f5a64b5b80c2606afe1e343a17b4720483248c9db19d83e00a54c807": {
+      "language": "yaml",
+      "description": "이 설정 조각은 JSONPlaceholder 실습 앱이 의존하는 최소 패키지를 pubspec.yaml로 지정한다. 캐럿 버전 제약을 사용해 5.4.0 이상, 다음 메이저 버전 미만의 Dio를 허용함으로써, 보안 패치와 마이너 기능 추가는 받아들이되 호환성이 깨지는 업그레이드는 명시적 개입 없이는 이뤄지지 않도록 한다.\n\n의도는 실습 예제를 돌리기 위한 기본 요구사항을 분명히 밝히는 데 있으며, 동시에 Flutter 프로젝트에서 외부 HTTP 기능을 의존성으로 추가할 때 어떤 형태의 선언이 표준인지 보여 준다. 작은 조각이지만 pubspec이 프로젝트의 재현 가능한 환경을 만드는 출발점임을 학습자에게 상기시키는 역할을 한다."
+    },
+    "45ea4c7e07502acf521c39c4c0d745263b10b6eef421cf96c92d852205e3d144": {
+      "language": "json",
+      "description": "이 JSON 샘플은 자가 평가 문항의 입력 자료로, 실제 서버가 내려줄 법한 상품 레코드 하나를 묘사한다. id는 int, price는 소수점 없는 숫자로 표현되어 있고, is_available 같은 snake_case 키와 boolean 값, 태그 리스트까지 포함해 서버 응답에서 자주 마주치는 다양성을 한 덩어리 안에 집약했다.\n\n학습자는 이 구조를 Dart 모델로 파싱하는 fromJson을 직접 작성하면서, num·toDouble 변환의 필요성, 서버의 snake_case와 Dart의 camelCase를 잇는 매핑, 리스트 요소의 개별 캐스팅 같은 실무 고려사항을 차례로 경험하게 된다. JSON 예시가 단순한 데이터 덩어리가 아니라, 모델 클래스 설계 관점에서 무엇을 결정해야 하는지 돌아보게 만드는 교육적 장치라는 점이 핵심이다."
+    },
+    "6ccc676fc2617e1ebd69f9cf28640a97d2d222f41161e98e4598e3cb8c87733a": {
+      "language": "dart",
+      "description": "이 코드 조각은 앞서 제시된 JSON을 파싱하는 fromJson 팩토리 생성자의 모범 답안이다. 모든 필드를 final로 잡은 Course 클래스에서 id와 title은 기본 캐스팅, price는 num을 거쳐 toDouble, is_available은 bool, tags는 List를 순회하며 각 요소를 String으로 캐스팅한 뒤 List<String>으로 정규화하는 전형적인 처리 흐름을 담고 있다.\n\n이 답안이 가르치려는 핵심은 두 가지다. 첫째, 필드 타입이 런타임에 어떻게 오는지 항상 의심하고 안전 변환을 습관화해야 한다는 것이다. 둘째, snake_case 서버 필드를 Dart의 camelCase 프로퍼티로 매핑하는 경계가 fromJson 안에 명확히 자리잡아야 UI 코드가 서버 규약을 몰라도 된다는 점이다. 이를 통해 학습자는 모델 설계의 표준 리듬을 체득하게 된다."
+    }
+  }
 }
