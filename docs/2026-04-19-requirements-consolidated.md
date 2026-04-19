@@ -176,15 +176,71 @@
 
 ---
 
+### 1.8 요구 R7 — 이론 파트 콘텐츠 재구성 (2026-04-19 추가)
+
+**사용자 지시 (2026-04-19)**:
+
+- 원본 `docs-source/` 레포에서 각 문서를 다시 가져와 작업.
+- ASCII 및 Mermaid 블록을 **일반 문장 텍스트로 대체**해 이론 파트를 완전히 교체.
+- **이론 파트에는 소스코드가 존재하면 안 됨.**
+- 소스코드는 **차후 추가될 시뮬레이터 파트**에서 시뮬레이터 인터랙션과 함께 팝업/보조 패널로 표기.
+
+**영향 범위**:
+
+- `tools/content_builder.dart` 출력 스키마 변경:
+  - `theory.sections[].blocks` 에서 asciiDiagram / flowchart / sequence / mindmap / table / raw 제거. `prose` 만 남김.
+  - `theory.codeExamples` 제거.
+- Chapter JSON 에 신설 필드 `simulatorContent.codeSnippets: List<{language, code, description}>` — 시뮬레이터 인터랙션과 병행 표시용.
+- 5 카테고리 전체 book.json 재빌드 필요 (181 챕터).
+- `docs-source/` submodule 은 최신 revision 으로 업데이트 후 재빌드.
+
+**시뮬레이터 파트 인터랙션 보존 (중요)**:
+
+- 시뮬레이터 파트의 기존 인터랙션(CodeStep, StructureAssembly 등)은 **모두 유지**.
+- 이론 파트에서 옮겨온 코드 스니펫은 시뮬레이터 화면 내 **팝업 다이얼로그** 또는 **보조 패널(side panel)** 로 표시.
+- 시뮬레이터가 "읽기 전용"으로 격하되지 않음. 코드는 참고용 + 인터랙션은 주체.
+
+**비목표**:
+
+- docs-source 원본 markdown 수정 금지. 변환은 빌드 파이프라인에서만.
+- 이론 파트의 prose 언어 자동 재생성(AI 기반) 금지. 기존 prose 만 유지.
+- 다이어그램이 있던 자리는 "[원본: github link]" placeholder prose 삽입.
+
+**전제 조건**:
+
+- R6 (fix-9) 해결 후 착수. UI 회귀 없이 데이터 파이프라인 + 시뮬레이터 코드 패널 변경.
+
+---
+
+### 1.7 결함 R6 — 분관 책장 첫 탭 시 전체 카테고리 노출 (filter autoDispose 회귀)
+
+**사용자 재확인 (2026-04-19)**: "msa 분관에 들어가서 책장을 열었더니 java, mysql, dart, flutter 가 다 보이는게 문제. msa 분관이면 오직 msa 의 책 목록만 나와야 한다."
+
+**근본 진단**:
+
+- `lib/domain/providers/game_providers.dart` 의 `@riverpod class QuestBoardFilterCategory` 는 **autoDispose 기본값**.
+- `lib/presentation/screens/game_screen.dart:40-44` `onShelfTappedCallback` 은 `.set(category)` 직후 `.open()` 호출.
+- `.set()` 시점에 이 provider 를 `ref.watch` 하는 위젯이 아직 렌더되지 않음 → listener 0 → autoDispose 가 state 재초기화 → 곧 이어 `QuestBoardOverlay` 가 렌더되며 `ref.watch(filterCategoryProvider)` 호출 시 **filterCategory == null** 관찰 → 전체 5 카테고리 노출.
+- 재진입 시(이미 listener 상주) 는 정상 동작하기 때문에 사용자가 "첫 진입만 전체, 재진입 시 필터 적용" 로 관찰한 현상과 일치.
+
+**해결 방향 (fix-9)**:
+
+- `QuestBoardFilterCategory`, `QuestBoardOpen`, `CurrentWingId`, `CurrentScene` 을 `@Riverpod(keepAlive: true)` 로 전환. UI 세션 상태이므로 autoDispose 불필요.
+- `dart run build_runner build --delete-conflicting-outputs` 로 `.g.dart` 재생성 (gitignored, CI 재생성).
+- widget/integration test: shelf 탭 직후 **첫 render** 에서 filterCategory 가 즉시 해당 category 로 적용됨을 회귀 가드.
+
+---
+
 ## 2. 요구사항 명세 (신규 UI 사양)
 
-### 2.1 분관 책장 동작 (R0 + R4)
+### 2.1 분관 책장 동작 (R0 + R4 + R6)
 
 - 분관 입장 → 책장 클릭 → QuestBoard overlay 가 열림
 - 해당 분관 담당 카테고리의 **모든 책의 모든 챕터**가 flat list 로 즉시 노출
 - 책 단위 헤더 없음 (또는 1~2 px 구분선 수준)
 - "이번 분관 퀘스트" 섹션은 유지 (NPC-6)
 - 중앙 홀에서 board 를 연 경우(없다면 제거 검토) 에만 전체 5 카테고리 노출
+- **첫 탭에서도 레이스 0, autoDispose 간섭 0** — 예: MSA 분관 → MSA 책장 탭 → MSA 챕터만. Java/Dart/Flutter/MySQL 혼재 금지. 재탭/재진입 동작과 일관되게 **1회 탭으로 확정**. (R6)
 
 ### 2.2 NPC 대화 오버레이 (R1)
 
@@ -214,25 +270,53 @@
 
 ## 3. 재작업 실행 계획
 
-### 3.1 PR 분할 (제안)
+### 3.1 PR 분할 (2026-04-19 업데이트)
 
-| PR | 범위 | 우선순위 | 난이도 |
+| PR | 범위 | 우선순위 | 난이도 | 상태 |
+|---|---|---|---|---|
+| fix-5 (R1) | DialogueOverlay ❓ 질문 탭 상시 노출 | 높음 | S | ✅ PR #62 merged |
+| fix-6 (R0+R4+R3) | QuestBoard 책장 평탄화 + divider + 이모지 제거 | 높음 | M | ✅ PR #63 merged |
+| fix-4a (R2 기반) | JetBrainsMono 번들 + fontFamily 교체 | 중간 | S | ✅ PR #60 merged |
+| fix-4b (R2 모델) | `ContentBlock.boxDiagram` + BoxNode/BoxEdge + renderer 스켈레톤 | 낮음 | S | ✅ PR #65 merged |
+| fix-4c (R2 렌더) | `AsciiGridDiagram` CustomPaint 그리드 드로잉 | 중간 | M | ✅ PR #66 merged — 테두리는 복구, 내부 한글 컬럼 정렬 미해결 |
+| **fix-9 (R6)** | `QuestBoardFilterCategory` 등 UI 세션 state 를 `@Riverpod(keepAlive: true)` 로 전환 — autoDispose 로 인한 첫-탭 필터 소실 해결 | **최고** | S | ⏳ 대기 |
+| **fix-4-escalation (R2 조건부)** | `tools/content_builder.dart` 의 `_extractBlocks` 에서 asciiDiagram / raw 블록을 emit 하지 않도록 strip — 이론 탭에서 ASCII 박스 노출 자체 제거 | 조건부 | XS | ⏳ fix-9 후 판단 |
+| release | develop → master 묶음 | — | XS | — |
+
+### 3.2 착수 순서 (현재)
+
+1. ✅ R1, R0, R3 해결 완료 (fix-5, fix-6)
+2. ✅ R2 부분 완화 (fix-4a/4b/4c) — 테두리 복구, 내부 컬럼 미해결
+3. **지금: fix-9 (R6 근본)** — 첫-탭 필터 autoDispose 해결
+4. fix-9 배포 후 내가 headed gstack-browse 재검증 → 사용자 확인
+5. R2 잔여 처리:
+   - (A) fix-4-escalation 승인 시 ASCII 블록 strip
+   - (B) 사용자가 현 상태 수용 시 종결
+6. release PR → 배포 검증 → 최종 확인
+
+### 3.4 R7 실행 계획 (fix-10 ~ 10e, fix-9 이후)
+
+| PR | 범위 | 의존 | 난이도 |
 |---|---|---|---|
-| fix-5 (R1) | DialogueOverlay 탭 2개 상시 표시 + activeNpcId 없어도 ❓ 질문 렌더 가능하도록 리팩터 | 높음 — NPC 학습 기능 회귀 | S |
-| fix-6 (R0, R4) | QuestBoard 첫 진입 시 필터 적용 보장 + `_FlatBookSection` 헤더 제거, 분관 내 모든 챕터 평탄 노출 | 높음 | M |
-| fix-7 (R3) | 책 타이틀 이모지 📖 통일 (filterCategory null/not-null 양 경로) | 낮음 | XS |
-| fix-8 (R2 진단) | gstack-browse connect 또는 사용자 브라우저 캡처로 JetBrainsMono 실 적용 시각 확인 + line height/letter spacing 튜닝 | 중간 | S |
-| fix-4b 이후 | ASCII → 구조화 위젯 본 이주 | R2 근본 해결 | L |
-| release | develop → master 묶음 | — | XS |
+| fix-10a | content_builder `_extractBlocks` 를 prose-only 로 제한. asciiDiagram / flowchart / sequence / mindmap / table / raw 블록 strip. `theory.codeExamples` 필드 제거 | fix-9 머지 | M |
+| fix-10b | 제거된 다이어그램 자리에 "[원본: {github link}]" placeholder prose 삽입 | fix-10a | S |
+| fix-10c | Chapter JSON 스키마에 `simulatorContent.codeSnippets: List<{language, code, description}>` 추가 + content_builder 가 MD 의 코드 펜스를 해당 필드로 수집. freezed 모델 확장 + build_runner | fix-10a | M |
+| fix-10d | 시뮬레이터 UI 에 **코드 스니펫 팝업/보조 패널** — CodeStep / StructureAssembly 등 기존 인터랙션 위에 "코드 보기" 토글 버튼 → 다이얼로그 또는 side panel 로 codeSnippets 표시 | fix-10c | M |
+| fix-10e | docs-source submodule 최신 revision 으로 update + 전체 재빌드 + 5 카테고리 배포 검증 | fix-10a~d | S |
 
-### 3.2 착수 순서
+**검증 포인트**:
 
-1. **본 요구사항 문서 사용자 승인**
-2. fix-5 (질문 탭 회귀) — 가장 회귀성 높음
-3. fix-6 (책장 UX) — 실사용 임팩트 큼
-4. fix-7 (이모지) — 한 줄 수정
-5. fix-8 (폰트 시각 확인) — 결과에 따라 fix-4b 진입 결정
-6. release PR → 내가 배포 검증 → 사용자 최종 확인
+- 이론 탭 진입 시 `<pre>`, `<code>`, 다이어그램, 표 블록 0개 (prose 만).
+- 시뮬레이터 탭에 codeSnippets 표시 UI (팝업 또는 side panel) 존재.
+- **시뮬레이터 인터랙션 회귀 0** — CodeStep 재생, StructureAssembly 드래그 등 기존 동작 유지.
+- content/books/<cat>/book.json 의 모든 chapter.theory.sections[].blocks type 이 "prose" 로만 채워짐.
+
+**리스크 & 완화**:
+
+- prose 만 남기면 학습 가치 급감 우려 → placeholder 링크 + 향후 prose 재작성 백로그 관리.
+- 시뮬레이터 인터랙션은 **반드시 유지**. 코드는 부가 참고 요소로만 편입.
+
+---
 
 ### 3.3 검증 프로토콜 재확인 (각 PR 후)
 
@@ -258,7 +342,42 @@
 
 ---
 
-## 5. 참조
+## 5. R2 ASCII 박스 에스컬레이션 결정 조건 (2026-04-19 확정)
+
+### 5.1 현재 상태 (fix-4c 실측)
+
+헤드 Chrome `gstack-browse connect` 로 MSA `msa-roadmap` "문서 구성 원칙" 박스 관찰 결과:
+
+- ✅ 상단 `┌─...─┐` / 하단 `└─...─┘` / 좌/우 `│` **테두리 복구**.
+- ❌ 내부 `│` 세로 구분자 컬럼 정렬 **여전히 깨짐**. 한글 글리프가 JetBrainsMono 에 없어 시스템 CJK 폰트(Malgun Gothic 등)로 fallback 되며 advance metric 이 `cellWidth × 2` 와 불일치 → 중앙 정렬 오프셋 누적.
+
+### 5.2 사용자 지시 (2026-04-19 원문)
+
+> "4b로 진입하여 작업하고 다시 확인하되 그래도 완전히 수정이 반영되지 않을시 이론파트에서 ascii를 사용하는 부분 또는 이를 변환한 부분을모두 문서에서 제거"
+
+### 5.3 에스컬레이션 단계
+
+1. **1차 (완료)**: fix-4a JetBrainsMono 번들 — 테두리 일부 복구.
+2. **2차 (완료)**: fix-4c CustomPaint 그리드 드로잉 — 테두리 완전 복구, 내부 컬럼 미해결.
+3. **3차 (대기, 사용자 승인 필요)**: fix-4-escalation — `tools/content_builder.dart` `_extractBlocks` 에서 `type == 'asciiDiagram'` / `type == 'raw'` 블록 emit 금지. 이론 탭에서 ASCII 박스 영역 자체가 사라짐 (5 카테고리 합계 527 + 20 = 547 블록 제거). Mermaid 파서 경로(flowchart/sequence/mindmap/table) 는 영향 없음.
+
+### 5.4 결정 게이트
+
+- fix-9 배포 후 R6 해결 확인 → 사용자에게 "R2 잔여 컬럼 정렬 문제로 fix-4-escalation 진행할지" 명시적 승인 요청.
+- 승인 시에만 `_extractBlocks` 수정 + CI + 배포.
+- docs-source 원본 markdown 은 **건드리지 않음** — 언제든 revert 가능.
+
+### 5.5 R7 (§1.8) 과의 관계
+
+R7 의 fix-10a 가 이론 섹션의 asciiDiagram / raw / flowchart / sequence / mindmap / table 블록까지 전부 strip 하므로, **fix-4-escalation 과 동일 효과를 더 넓은 범위에서 달성**한다. 따라서:
+
+- fix-9 완료 → R7(fix-10) 진입 선택 시 fix-4-escalation 은 **중복 → skip**.
+- R7 보류 상태에서는 fix-4-escalation 만 별도로 갈지도 유효한 선택지.
+- R7 를 진행하기로 확정된 이후에는 fix-4-escalation 대기 항목 제거.
+
+---
+
+## 6. 참조
 
 - `docs/2026-04-18-session-handoff.md` — 직전 세션 핸드오프
 - `docs/2026-04-18-phase-plan.md` — P0 단계 정의
