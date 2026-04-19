@@ -1,0 +1,101 @@
+{
+  "chapterId": "flutter-Step-05-StatelessWidget-vs-StatefulWidget",
+  "entries": {
+    "3a0e14e1a1a21a1db509ca437c20e5ce546348b16648aed1a9cd67ea7da32756": {
+      "language": "",
+      "description": "Flutter에서 모든 Widget이 불변이라는 원칙 아래에서도 동적인 UI를 구현하기 위해 두 가지 Widget 타입이 존재한다. StatelessWidget은 생성 후 변경되지 않는 정적인 UI를 담당하며, 부모 Widget으로부터 받은 데이터만을 화면에 표시하는 단순하고 가벼운 구조다. 반면 StatefulWidget은 내부 상태를 관리하기 위해 별도의 State 객체를 분리하여, 자체적으로 변하는 데이터를 보유할 수 있게 한다.\n\n이러한 이원화 구조를 통해 불변성의 원칙을 지키면서도 setState() 호출을 통해 Widget을 다시 그리고 UI를 업데이트하는 메커니즘이 가능해진다. 단순한 정보 표시는 StatelessWidget으로 가볍게 처리하고, 사용자 입력이나 시간 경과에 따라 변해야 하는 UI는 StatefulWidget의 생명주기 관리를 통해 구현함으로써 효율적이고 유연한 앱 개발이 가능하다."
+    },
+    "481ebfd2a00f04c03d072f0bd85666ac51ca6e0af2e82fcadeb9ba07f0c1f70b": {
+      "language": "",
+      "description": "Flutter에서 불변 Widget으로 상태 변화를 구현하는 핵심 메커니즘을 보여준다. StatefulWidget은 UI를 정의하는 설정 객체일 뿐 실제 상태를 가지지 않으며, 대신 createState() 메서드를 통해 상태를 관리할 별도의 State 객체를 생성한다. 이렇게 역할을 분리함으로써 Widget의 불변성을 유지하면서도 상태 변화에 따른 UI 업데이트를 가능하게 한다.\n\nrebuild가 발생할 때마다 StatefulWidget은 새로운 인스턴스로 재생성되지만, createState()는 처음 한 번만 호출되어 동일한 State 객체가 Element와 함께 생존한다. 따라서 State 객체에 저장된 데이터는 rebuild 사이에 유지되고, build() 메서드를 통해 현재 상태에 맞는 Widget Tree를 새로 구성하여 화면에 반영한다. 이는 \"설정은 버리지만 상태는 보존한다\"는 원리로, 불변성과 상태 관리라는 두 가지 요구사항을 동시에 만족하는 설계이다."
+    },
+    "c1060ddbc9f8508bcfc7447d3ab8acaa6123b288af13286916bb57b5c96f3416": {
+      "language": "",
+      "description": "Flutter에서 모든 Widget이 불변이라는 제약 속에서 동적인 UI를 구현하기 위해, 프레임워크는 Widget을 두 가지 종류로 분류한다. StatelessWidget은 상태 변화가 없는 순수한 UI 표현에 사용되며 build() 메서드만 구현하면 되지만, StatefulWidget은 변경 가능한 상태를 관리해야 하는 경우에 사용된다. StatefulWidget의 핵심은 불변인 Widget 자체와 가변인 상태 데이터를 의도적으로 분리하는 것으로, createState() 메서드를 통해 별도의 State 객체를 생성한다.\n\nState 객체는 단순한 데이터 저장소가 아니라 Widget의 생명주기 전반을 관리하는 역할을 한다. initState()에서 초기화되어 didChangeDependencies(), build(), didUpdateWidget() 등의 생명주기 메서드를 거쳐 dispose()에서 정리되는 과정을 거친다. 개발자는 State 객체의 프로퍼티에 변경 가능한 상태 데이터를 저장하고, setState()를 호출하여 상태 변화를 프레임워크에 알린다. 이렇게 하면 Widget은 여전히 불변성을 유지하면서도 State 객체의 상태 변화에 따라 UI가 동적으로 재구성될 수 있다."
+    },
+    "e31720d581731e19f99a2809f82803b758c0eaa2b9b1df031644a606866911a2": {
+      "language": "dart",
+      "description": "StatelessWidget에서 상태 변경 없이 외부로부터 받은 데이터만으로 UI를 구성하는 방식을 보여준다. `final`로 선언된 `name`과 `backgroundColor` 같은 프로퍼티는 한 번 생성되면 변하지 않으며, 이렇게 불변으로 유지되는 입력값들이 `build()` 메서드에서 UI 렌더링의 유일한 근거가 된다. 이는 같은 입력에 항상 같은 출력이 나오는 순수 함수의 특성을 따르므로, 플러터가 언제 다시 그려야 할지 판단하기가 단순하고 예측 가능하다.\n\n생성자에서 `required`와 기본값을 활용한 선택적 매개변수 패턴도 함께 제시하는데, 이는 위젯을 유연하게 재사용하면서도 필수 데이터는 반드시 전달받도록 강제하는 설계 원칙을 드러낸다. 결과적으로 StatelessWidget은 단순한 구조 덕분에 버그가 적고 성능 최적화가 용이하여, 변경이 필요 없는 정적 UI 요소들을 표현할 때 가장 효율적인 선택이 된다."
+    },
+    "dae2c9a10530130d405590e662cfbca68f2bdfde07f76a9ca97d13bb904fc7a4": {
+      "language": "dart",
+      "description": "StatefulWidget은 시간에 따라 변할 수 있는 상태를 관리해야 할 때 사용하는 위젯이다. 이 예제는 StatefulWidget의 핵심 구조를 보여주는데, 불변 설정값을 담는 Widget 클래스와 가변 상태를 관리하는 State 클래스로 분리되어 있다. Widget 클래스는 부모로부터 받은 `label`과 `initialValue` 같은 설정값만 저장하는 불변 객체이고, State 클래스에서는 `_count` 같은 변경 가능한 상태를 보관하며 `setState()` 호출로 그 변화를 UI에 반영한다.\n\nState 클래스의 생명주기 메서드들이 중요한 역할을 한다. `initState()`에서 초기 상태를 설정하고, `_increment()`와 같은 메서드에서 상태 변경이 발생하면 반드시 `setState()` 콜백 안에서 처리해야 프레임워크가 rebuild를 트리거한다. 마지막으로 `dispose()`에서 리소스를 정리함으로써 메모리 누수를 방지한다. 이러한 구조를 통해 상태 변화에 반응하는 동적인 UI를 효율적으로 구현할 수 있다."
+    },
+    "0760ade9ad7c8424e623bb252b643afd66862d817880cb69bd7c1017de590417": {
+      "language": "",
+      "description": "StatefulWidget은 Widget과 State를 명확히 분리함으로써 Flutter의 효율적인 렌더링 메커니즘을 구현한다. Widget은 불변의 설정값만 보유하는 경량 객체로서 부모의 rebuild 시 자주 재생성되어도 성능 영향이 최소화되며, 반면 State는 실제 상태 데이터와 생명주기 메서드를 담당하면서 Element 트리 상에서 지속적으로 유지된다. 이러한 분리를 통해 부모 Widget이 rebuild되더라도 State 객체는 살아있어서 카운터나 애니메이션 컨트롤러 같은 가변 상태가 손실되지 않는다.\n\n이 구조는 선언형 UI 프레임워크의 핵심 철학을 반영한다. 개발자는 UI 설정(key, label 등)과 내부 상태(count, controller 등)를 분리하여 생각함으로써, 어떤 부분이 자주 변해서 rebuild를 유발하는지, 어떤 부분이 안정적으로 유지되어야 하는지를 명확히 인식하게 된다. 결과적으로 필요한 부분만 효율적으로 업데이트하면서도 상태 손실 없이 안정적인 앱을 구축할 수 있다."
+    },
+    "250ac462ede0e7c6fd18eb10886a08e366ae1056e54c484e108e77909c1eb4bd": {
+      "language": "",
+      "description": "StatefulWidget의 생명주기는 Widget이 화면에 나타나서 사라질 때까지의 전체 과정을 관리한다. 처음 트리에 추가될 때는 createState()로 상태 객체를 생성하고, initState()에서 초기화 작업을 단 한 번만 수행한다. 이후 build()를 통해 UI를 구성하는데, 부모 Widget이 재빌드되거나 setState()가 호출될 때마다 UI가 다시 그려진다. 이 과정에서 didUpdateWidget()은 부모로부터 새로운 설정값을 받았을 때만 실행되어 변경사항을 감지할 수 있다.\n\nWidget이 화면에서 제거될 때는 두 단계로 나뉜다. deactivate()는 Widget이 트리에서 일시적으로 제거될 때 호출되며(다른 위치로 이동할 수도 있음), dispose()는 완전히 제거되어 더 이상 사용되지 않을 때 호출되어 타이머나 애니메이션 같은 리소스를 정리한다. 각 단계를 정확히 이해하면 언제 데이터를 초기화하고, 언제 리소스를 해제해야 하는지 명확하게 결정할 수 있다."
+    },
+    "8ffde7e2cc221b2cd3371726a21ad50faa40e33122f6aae767c4000ee6b69d96": {
+      "language": "dart",
+      "description": "StatefulWidget이 위젯 트리에 처음 삽입될 때, 프레임워크는 `createState()` 메서드를 정확히 한 번만 호출하여 상태 객체를 생성합니다. 이 메서드는 Widget 클래스와 State 클래스를 연결하는 일회성 진입점으로, 이후 위젯이 rebuild되더라도 이미 생성된 State 인스턴스는 유지됩니다. 따라서 이 메서드는 단순히 State 객체를 반환하는 것만을 역할로 하며, 초기화 로직이나 복잡한 처리는 State의 `initState()`에서 담당해야 합니다.\n\n이러한 설계는 StatefulWidget이 가진 핵심 가치—상태의 지속성—을 가능하게 합니다. Widget 객체 자체는 불변이며 언제든 재생성될 수 있지만, 한 번 생성된 State는 위젯이 트리에서 제거될 때까지 존재하므로, 상태 데이터와 생명주기를 안전하게 유지할 수 있습니다."
+    },
+    "7e4241b4bbe9c9823c62ff4fe39f8f5ebaf5afca690adb23357dee5d6b97038c": {
+      "language": "dart",
+      "description": "initState()는 StatefulWidget이 생성된 직후 단 한 번만 실행되는 초기화 메서드로, 여기서 상태 변수를 초기화하고 리소스를 할당해야 한다. 이 메서드는 Widget 트리가 완전히 구성되기 전의 단계이므로, 애니메이션 컨트롤러 생성, 스트림 구독, 초기값 설정 같이 외부 의존성이 없는 기본적인 초기화 작업에 적합하다. 반드시 super.initState()를 먼저 호출해야 프레임워크의 필수 설정이 완료된다.\n\n반면 Theme.of(context)나 Navigator.of(context) 같이 위젯 트리의 다른 부분에 의존하는 작업은 initState()에서 피해야 한다. 이 시점에는 위젯 트리가 아직 구성 중이므로 상위 위젯을 찾을 수 없어 런타임 오류가 발생할 수 있다. 트리 기반의 작업이 필요하면 didChangeDependencies()나 build() 이후 콜백에서 수행하는 것이 안전하다."
+    },
+    "6679ecba363bc6bc2d5b0bed2f1ceac6098aebcdab3fa41badec9bf172410bc3": {
+      "language": "dart",
+      "description": "`didChangeDependencies()` 메서드는 StatefulWidget이 의존하는 InheritedWidget(테마, 미디어 쿼리, 언어 설정 등)의 값이 변경될 때마다 자동으로 호출되는 생명주기 콜백이다. initState() 직후에도 한 번 실행되므로, 상위 계층의 의존성이 준비된 이후 필요한 초기화 작업을 여기서 수행할 수 있다. 이 예제는 현재 화면의 로케일(언어 설정)을 Context를 통해 안전하게 조회하는 방법을 보여준다.\n\ninitState()에서는 BuildContext를 이용한 트리 탐색이 위험하지만, didChangeDependencies()에서는 Element가 완전히 트리에 연결된 후이므로 Theme.of(), Navigator.of(), Localizations.localeOf() 같은 context 기반 API를 안전하게 사용할 수 있다. 따라서 부모 위젯의 설정값이나 전역 상태에 의존하는 초기화 로직이 필요할 때 이 메서드를 활용하면 생명주기의 정확한 타이밍을 보장하면서 안정적인 코드를 작성할 수 있다."
+    },
+    "30e801303ed0a6f950b5b4f04ef080ade72eb1fc2f7bc9e72c9255ddf1627540": {
+      "language": "dart",
+      "description": "`build()` 메서드는 StatefulWidget의 UI를 매번 새로 그리는 핵심 메서드이며, 여기서는 순수 함수 원칙을 따라야 한다는 점을 강조하고 있다. 즉, 동일한 상태가 주어지면 항상 동일한 위젯 트리를 반환해야 하고, 메서드 실행 중에 부수 효과(네비게이션, setState 호출, 외부 상태 변경 등)를 일으키면 안 된다는 의미다. 이는 Flutter 프레임워크가 여러 번 build()를 호출할 수 있기 때문인데, 만약 build() 내에서 상태를 변경한다면 예측 불가능한 동작이 발생한다.\n\n또한 build() 메서드는 성능이 중요하므로 무거운 연산이나 비동기 작업은 피해야 한다. 복잡한 계산이 필요하면 initState()나 다른 생명주기 메서드에서 미리 처리하고, build()에서는 이미 준비된 데이터만 활용하여 빠르게 UI를 구성해야 한다. 예제의 `Text('$_count')`처럼 단순히 상태 값을 읽어 위젯을 구성하는 것이 올바른 패턴이다."
+    },
+    "8722c89948e057ab272fe1bd830055545d2c89081f71fd4416118f5524b801cf": {
+      "language": "dart",
+      "description": "StatefulWidget의 생명주기에서 `didUpdateWidget()` 메서드는 부모 위젯이 재빌드되어 새로운 프로퍼티 값을 전달받을 때 호출되는 중요한 콜백이다. 이 메서드는 이전 Widget 인스턴스(`oldWidget`)와 현재 Widget 인스턴스(`widget`)를 비교하여, 실제로 의미 있는 설정값 변화가 있을 때만 State를 업데이트하도록 유도한다. 예제에서는 부모로부터 받은 `initialValue` 프로퍼티가 변경되었는지 검사한 후, 값이 달라진 경우에만 `setState()`를 호출하여 내부 상태(`_count`)를 재설정하는 방식을 보여준다.\n\n이는 불필요한 상태 업데이트를 방지하고 위젯의 독립성을 유지하는 핵심 패턴이다. 부모가 다시 그려지더라도 모든 자식의 상태를 무조건 초기화하지 않으면서도, 실질적인 입력값 변화에는 반응하는 선택적 동기화를 구현할 수 있게 해준다. 이러한 세밀한 제어는 성능 최적화와 UI 예측 가능성을 동시에 달성하는 데 중요하다."
+    },
+    "adfad9f909d23c4b6689d5d69f9cf1e785f16c115a6c5062fc1c75c502263061": {
+      "language": "dart",
+      "description": "`deactivate()` 메서드는 StatefulWidget이 위젯 트리에서 일시적으로 제거되는 순간을 감지하는 생명주기 훅이다. 이는 부모 위젯이 자식을 삭제하거나, GlobalKey를 통해 위젯이 트리의 다른 위치로 이동할 때 발생한다. 이 시점에서 상태 객체는 여전히 존재하지만, 더 이상 화면에 렌더링되지 않는 중간 상태에 있다.\n\n실무에서 `deactivate()`는 자주 오버라이드되지 않는다. 리소스 정리가 필요한 경우라도 `dispose()`가 더 확실한 선택지이기 때문이다. 다만 위젯이 트리에서 제거되었다가 동일한 상태 객체로 복구될 가능성이 있을 때—예를 들어 GlobalKey를 사용하여 위젯을 이동시키는 경우—이 메서드가 유용하다. 이 경우 임시로 활동을 중지했다가 `build()`가 다시 호출되면서 재개하는 흐름을 제어할 수 있다."
+    },
+    "2a366f6c952e48aca40b417e06fc4405627cb4a1216b927eab4e44edaaa0f99c": {
+      "language": "dart",
+      "description": "StatefulWidget의 생명주기에서 가장 마지막 단계인 `dispose()` 메서드는 Widget이 트리에서 완전히 제거될 때 호출되며, 이때 수동으로 할당한 모든 리소스를 정리하는 것을 목적으로 한다. AnimationController, StreamSubscription, TextEditingController, FocusNode, ScrollController 등 Flutter에서 제공하는 많은 리소스들은 명시적으로 해제하지 않으면 메모리 누수나 예상치 못한 동작을 야기하므로, 이 예제는 각 리소스 타입별로 `dispose()` 메서드를 호출하여 체계적으로 정리하는 방식을 보여준다.\n\n중요한 점은 자신의 리소스들을 모두 정리한 후 반드시 `super.dispose()`를 마지막에 호출해야 한다는 것이다. 이 순서를 지키지 않으면 부모 클래스의 정리 로직이 제대로 실행되지 않아 예기치 않은 오류가 발생할 수 있다. 따라서 이 예제는 StatefulWidget을 안전하게 종료하기 위한 필수적인 정리 패턴을 제시하며, 모든 상태 관리 Widget 개발에서 반복되어야 하는 중요한 관례를 강조한다."
+    },
+    "8798fcd55792536b302cc727219369e89da9ab2b396ad84068ed64d6aed675ca": {
+      "language": "dart",
+      "description": "`setState()` 메서드의 실제 동작 원리를 이해하는 것이 StatefulWidget을 올바르게 사용하는 핵심이다. 이 예제는 `setState()`가 단순히 변수 값을 바꾸는 것이 아니라, 두 가지 단계를 거쳐 화면 갱신을 트리거한다는 점을 보여준다. 먼저 전달받은 콜백 함수를 실행하여 실제 상태를 변경하고, 그 다음 프레임워크에 이 State 객체의 Element를 \"rebuild가 필요한 상태\"로 표시하는 것이다. 이 표시 과정(`markNeedsBuild()`)이 있어야만 다음 프레임 렌더링 타이밍에 `build()` 메서드가 다시 호출된다.\n\n따라서 `setState()`를 호출한다고 해서 즉각적으로 UI가 변경되는 것이 아니며, 프레임워크의 렌더링 스케줄에 따라 약간의 지연이 발생한다. 이러한 메커니즘을 이해하면 `build()` 내에서 `setState()`를 호출하면 안 되는 이유(무한 루프), `dispose()` 후 `setState()` 호출이 위험한 이유(`mounted` 확인 필요), 그리고 비동기 작업 완료 후 상태 갱신할 때의 주의사항들이 자연스럽게 납득된다."
+    },
+    "daaea553f392bcb74888c40b57982ec74737380cffa5e86bdc7e8cc704d5fe8f": {
+      "language": "dart",
+      "description": "`setState()` 메서드는 단순한 상태 변경 함수가 아니라, Flutter 프레임워크에 다음 프레임에서 `build()` 메서드를 다시 실행하도록 지시하는 스케줄링 메커니즘이다. 따라서 상태 변수를 직접 수정하는 것만으로는 UI가 갱신되지 않으며, 반드시 `setState()` 콜백 내에서 상태를 변경해야 프레임워크가 이를 감지하고 화면을 다시 렌더링한다.\n\n또한 비동기 작업이나 외부 콜백에서 `setState()`를 호출할 때는 Widget이 여전히 활성 상태인지 확인하는 `mounted` 플래그를 반드시 검증해야 한다. `dispose()` 후에 `setState()`를 호출하면 오류가 발생하기 때문에, 네트워크 요청이나 타이머 같은 비동기 작업이 완료된 후 결과를 반영할 때는 먼저 `if (!mounted) return;`으로 Widget의 생존 여부를 확인한 뒤 상태를 업데이트해야 한다."
+    },
+    "1bca029802dca904e0d6fbe2f25ec6ceb65170f888497ce8e188a3c922b6c6c0": {
+      "language": "",
+      "description": "이 다이어그램은 Flutter 앱 설계에서 상태 관리의 위치가 얼마나 중요한지를 대비시킨다. 좌측의 \"좋지 않은 구조\"는 각 ProductCard가 독립적으로 StatefulWidget을 사용하여 자신의 상태를 관리하는 모습인데, 이렇게 하면 여러 카드 간의 데이터 동기화가 어렵고 코드가 산재되어 유지보수가 복잡해진다. 반면 우측의 \"좋은 구조\"는 상태 관리를 최상위 부모인 ProductListPage에서 집중식으로 처리하고, 각 ProductCard는 StatelessWidget으로 단순화하여 부모로부터 데이터를 프로퍼티로만 받는 모습을 보여준다.\n\n이는 상태 관리의 집중화 원칙을 강조하며, 실무에서 코드의 복잡성을 줄이고 버그를 방지하는 핵심 설계 패턴임을 전달한다. StatelessWidget으로 충분한 상황까지 StatefulWidget을 사용하면 불필요한 생명주기 관리와 메모리 오버헤드가 발생하므로, 진정으로 상태 변화가 필요한 최상위 컴포넌트에만 StatefulWidget을 두고 하위 UI 요소들은 단순한 데이터 표현 계층으로 구성해야 한다는 실용적 지침을 제시한다."
+    },
+    "b354140e23faf3fb53cacabcbf76f17196ae25ec4d3662924886946a20fbd45c": {
+      "language": "dart",
+      "description": "Flutter에서 상태 관리 위젯의 생명주기와 애니메이션 제어의 올바른 패턴을 보여주는 사례다. `AnimationController`는 디스플레이의 수직 동기화(vsync) 신호를 받아 매 프레임마다 애니메이션 값을 업데이트하는데, 이 객체를 언제 만들고 언제 정리할지가 중요하다. `initState()`에서 초기화하는 이유는 위젯이 생성될 때 정확히 한 번만 컨트롤러를 만들어야 하고, `SingleTickerProviderStateMixin`을 통해 `vsync` 파라미터로 상태 객체 자신을 전달할 수 있기 때문이다.\n\n`dispose()`에서 컨트롤러를 명시적으로 해제하는 것은 애니메이션이 계속 실행되거나 메모리에 남아있는 메모리 누수를 방지하기 위한 필수 단계다. 이 패턴은 생명주기의 시작과 끝을 대칭적으로 관리함으로써, 애니메이션이 필요한 동안만 리소스를 점유하고 위젯이 제거될 때 깔끔하게 정리되도록 보장한다."
+    },
+    "b81d75dbb069743cb9298aca41cccfc3c7770f198bc518e30212e66bb78cb5df": {
+      "language": "dart",
+      "description": "이 예제는 비동기 작업 완료 후 상태 갱신 시 발생할 수 있는 오류를 방지하는 핵심 패턴을 보여준다. HTTP 요청처럼 시간이 걸리는 작업에서 응답을 받기 전에 Widget이 화면에서 제거될 수 있는데, 이 상황에서 `setState()`를 호출하면 이미 존재하지 않는 객체에 대해 상태 변경을 시도하게 되어 오류가 발생한다. `mounted` 속성은 Widget이 현재 위젯 트리에 살아있는지를 나타내므로, 비동기 작업이 완료된 후 `setState()`를 호출하기 전에 반드시 이 값을 확인해야 한다.\n\n이 패턴은 Lifecycle 관리의 실전적 사례로, `mounted` 확인을 통해 위젯의 생명주기와 비동기 작업의 시간차를 조율하는 방법을 강조한다. 단순히 데이터를 로드하는 것뿐 아니라, 로드된 데이터를 안전하게 UI에 반영하는 책임감 있는 코드 작성이 필수적임을 보여주며, 이는 메모리 누수나 런타임 오류 없이 안정적인 Flutter 애플리케이션을 구축하기 위한 필수 기초다."
+    },
+    "7f50eb618231ab7e9768ac08aaf4eaed138122902270e6fc9973392f88d8957d": {
+      "language": "dart",
+      "description": "StatefulWidget의 생명주기 메서드 중 `didUpdateWidget()`을 활용하여 부모 Widget으로부터 전달받는 속성(여기서는 `userId`)의 변경을 감지하고, 실제로 값이 달라진 경우에만 필요한 작업을 수행하는 패턴을 보여준다. 이는 불필요한 재계산이나 네트워크 요청을 방지하면서도 부모의 상태 변화에 자식 Widget이 적절히 반응하도록 하는 효율적인 구조다.\n\n특히 사용자 프로필 조회처럼 입력값 변화에 따라 데이터를 다시 로드해야 하는 상황에서, 매번 업데이트될 때마다 무조건 요청하는 것이 아니라 실제 의미 있는 변화가 있을 때만 작동하도록 제어하는 것의 중요성을 강조한다. 이러한 조건부 갱신 패턴은 앱 성능 최적화와 에러 방지의 기초가 되는 생명주기 관리 기법이다."
+    },
+    "cd72e6c2da3537a716815de34b5d194bfb87c8ad42af6fa27ac4f33e8467977b": {
+      "language": "dart",
+      "description": "이 예제는 Flutter의 StatefulWidget 생명주기를 실제 동작을 통해 이해하도록 설계되었다. 카운터 위젯을 동적으로 추가/제거하는 버튼과 카운트를 증가시키는 버튼을 제공하면서, 각 상황에서 initState, didChangeDependencies, didUpdateWidget, build, deactivate, dispose 등 여섯 가지 핵심 생명주기 메서드가 어떤 순서로 호출되는지 콘솔 로그로 추적할 수 있도록 한다.\n\n학습자는 \"카운터 증가\" 버튼을 누를 때는 build만 반복 호출되고, \"카운터 제거\" 버튼으로 위젯을 언마운트할 때는 deactivate와 dispose가 순차적으로 호출되며, 다시 \"카운터 추가\"할 때는 initState부터 시작된다는 점을 직접 관찰함으로써 상태 관리와 리소스 정리의 중요성을 체험하게 된다. 이는 단순한 이론 설명보다 실제 실행 결과를 통해 생명주기의 흐름과 각 메서드의 역할을 직관적으로 습득하게 하는 교육적 의도를 담고 있다."
+    },
+    "dbdd1bd49b433b228a9f55bd5c36fab93defbbc920510577288e44738f9630a3": {
+      "language": "dart",
+      "description": "이 예제는 StatefulWidget의 생명주기 메서드를 올바르게 활용하지 못할 때 발생하는 흔한 실수들을 보여준다. 구체적으로, initState에서 context 접근을 시도하거나, build 메서드 내부에서 직접 setState를 호출하거나, 초기화된 자원을 정리하지 않는 패턴의 문제점을 다룬다. 학습자는 이 코드의 세 가지 오류를 찾아 수정함으로써 생명주기의 각 단계별 역할과 제약사항을 구체적으로 이해하게 된다.\n\n이를 통해 initState는 자원 초기화에만 사용하고 context 탐색은 build 메서드나 didChangeDependencies에서 해야 함을, build 메서드는 순수한 UI 구성에만 집중해야 함을, 그리고 TextEditingController 같은 외부 자원은 반드시 dispose 메서드에서 정리해야 한다는 StatefulWidget 상태 관리의 핵심 원칙을 학습한다."
+    },
+    "3b524aaaec96455e75a97b64e52a471cfed58ef983dfe18fcd1babd5c2326b8e": {
+      "language": "dart",
+      "description": "이 예제는 StatefulWidget의 생명주기 메서드를 올바르게 사용하는 방법을 가르친다. 특히 각 메서드가 호출되는 시점과 용도를 구분하는 것이 핵심이다. `initState()`에서는 기본 상태 초기화와 컨트롤러 생성을, `didChangeDependencies()`에서는 Theme이나 InheritedWidget 같은 의존성을 안전하게 읽기를, `build()`에서는 UI 구성만 담당하고, `dispose()`에서는 리소스 정리를 하도록 책임을 분리하는 것이다.\n\n더 나아가 이 코드는 상태 변경의 **발생 위치**를 강조한다. `setState()`는 build() 메서드 내에서 호출해서는 안 되며, 오직 사용자 입력이나 콜백 같은 **이벤트 핸들러에서만** 호출되어야 한다는 원칙을 보여준다. 이를 통해 학습자는 Flutter의 생명주기 구조가 단순한 메서드 모음이 아니라, 초기화→의존성 해결→렌더링→정리의 논리적 흐름임을 이해하게 된다."
+    },
+    "7aeffb8df19c821860b213bd6cf60b7264db2c9a5829c2714e7be6bebb01f432": {
+      "language": "dart",
+      "description": "이 예제는 Flutter에서 장기간 실행되는 리소스(AnimationController)를 안전하게 관리하는 방법을 보여준다. StatefulWidget이 생성될 때 `initState()`에서 컨트롤러를 초기화하고, 위젯이 트리에서 제거될 때 `dispose()`에서 명시적으로 해제해야 메모리 누수를 방지할 수 있다는 점이 핵심이다. 특히 `super.dispose()`를 마지막에 호출하는 순서가 중요한데, 이는 자신의 리소스를 먼저 정리한 후 프레임워크가 State 전체를 정리하도록 하기 위함이다.\n\n또한 `SingleTickerProviderStateMixin`을 사용하여 애니메이션의 프레임 타이밍을 State 인스턴스와 동기화함으로써, State의 생명주기에 완전히 종속된 리소스 관리를 구현한다. 이렇게 함으로써 비동기 작업 중 위젯이 제거되거나 상태가 변할 때 발생할 수 있는 오류(\"setState() called after dispose()\")를 원천적으로 차단하고, 앱의 성능 저하를 초래할 수 있는 좀비 리소스가 메모리에 남지 않도록 보장한다."
+    }
+  }
+}
