@@ -47,6 +47,21 @@ sealed class ContentBlock with _$ContentBlock {
   const factory ContentBlock.mindmap({required MindmapNode root}) =
       MindmapBlock;
 
+  /// fix-4b: ASCII 박스 드로잉을 파싱한 구조화 박스 다이어그램.
+  ///
+  /// `tools/content_builder.dart` 의 ASCII 박스 파서가 `┌─┐│└┘` 패턴을
+  /// 인식해 bounding box 노드 + 방향성 엣지로 추출. 렌더는 `BoxDiagramWidget`
+  /// 이 Flutter 네이티브 `Container` + `CustomPaint` 로 그린다.
+  ///
+  /// 파서 실패 시엔 여전히 `AsciiDiagramBlock` 이 폴백으로 남을 수 있다
+  /// (fix-4a 의 JetBrainsMono 폰트가 보증).
+  const factory ContentBlock.boxDiagram({
+    required List<BoxNode> nodes,
+    required List<BoxEdge> edges,
+    required int cols,
+    required int rows,
+  }) = BoxDiagramBlock;
+
   /// 미지원/파서 실패 폴백. 원본 소스를 monospace로 렌더.
   const factory ContentBlock.raw({
     required String language,
@@ -104,4 +119,37 @@ abstract class MindmapNode with _$MindmapNode {
 
   factory MindmapNode.fromJson(Map<String, dynamic> json) =>
       _$MindmapNodeFromJson(json);
+}
+
+/// fix-4b: BoxDiagramBlock 의 노드. 파서가 ASCII 박스의 bounding box 를
+/// 문자 그리드 좌표 (col, row) + (widthCells, heightCells) 로 기록.
+@freezed
+abstract class BoxNode with _$BoxNode {
+  const factory BoxNode({
+    required String id,
+    required String label,
+    required int col,
+    required int row,
+    required int widthCells,
+    required int heightCells,
+    @Default('rect') String shape, // rect | rounded | diamond
+  }) = _BoxNode;
+
+  factory BoxNode.fromJson(Map<String, dynamic> json) =>
+      _$BoxNodeFromJson(json);
+}
+
+/// fix-4b: BoxDiagramBlock 의 엣지. 파서가 `─│▶◀▼▲` 커넥터를 trace 해서
+/// from / to 노드 id + 방향 화살표를 기록.
+@freezed
+abstract class BoxEdge with _$BoxEdge {
+  const factory BoxEdge({
+    required String from,
+    required String to,
+    @Default('→') String arrow, // → ← ↑ ↓ ↔
+    @Default('') String label,
+  }) = _BoxEdge;
+
+  factory BoxEdge.fromJson(Map<String, dynamic> json) =>
+      _$BoxEdgeFromJson(json);
 }
