@@ -50,8 +50,9 @@ master ← develop ← feature/task-XX-*
 
 ## 참조 문서
 
-- [**세션 핸드오프 (2026-04-19)**](docs/2026-04-19-session-handoff.md) — **새 세션 진입 시 최우선 읽기. 직전 세션 결과 + 오픈 PR (#74 #75 #76) + 사용자 작업 항목 (API 키 revoke / credit 재충전) + 다음 Task.**
-- [세션 핸드오프 (2026-04-18)](docs/2026-04-18-session-handoff.md) — 직전 세션
+- [**세션 핸드오프 (2026-04-20)**](docs/2026-04-20-session-handoff.md) — **새 세션 진입 시 최우선 읽기. subagent describer 파이프라인 + fix-10b 캐시 ~3,126 entries 누적 + art-2 MERGED + 잔량 24 chapter.**
+- [세션 핸드오프 (2026-04-19)](docs/2026-04-19-session-handoff.md) — 직전 세션
+- [세션 핸드오프 (2026-04-18)](docs/2026-04-18-session-handoff.md) — 직직전 세션
 - [**로드맵 피벗 (2026-04-18)**](docs/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계 P0 · 순차 로드맵. Phase 2 §10 게이트 대체.**
 - [**Phase 계획**](docs/2026-04-18-phase-plan.md) — P0~P3 단계별 산출물·전환 기준·잔여 태스크 (P0-5 NPC 보강 포함)
 - [**Task 워크플로**](docs/2026-04-18-task-workflow.md) — 브랜치→커밋→PR→머지→릴리즈 표준 절차
