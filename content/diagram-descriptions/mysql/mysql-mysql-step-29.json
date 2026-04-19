@@ -1,4 +1,161 @@
 {
   "chapterId": "mysql-mysql-step-29",
-  "entries": {}
+  "entries": {
+    "d8ace74d58e0b6bbd6989ac3dd3d1a175e0eb83361a524fca9c37a950a105cee": {
+      "language": "",
+      "description": "이 단원은 전체 29 Steps 로드맵의 마지막 단계로, Source-Replica 복제 구조를 설명하고 Binary Log 기반 비동기 복제의 동작 원리를 이해하며 읽기·쓰기 분리 전략이 트래픽 부하에 미치는 영향을 분석하고 커넥션 풀 설정이 백엔드 성능에 미치는 영향까지 평가할 수 있는 수준을 목표로 한다. 단일 DB 운영을 넘어 고가용성·부하 분산·안전한 백업을 아우르는 아키텍처 관점을 마지막으로 완성하려는 설계다."
+    },
+    "aa033dd63fc7101e7181fc152b75c2c2ff4f5c2a6bd0b55554e2cb3036c0e092": {
+      "language": "",
+      "description": "스타트업이 MAU 1만에서 100만까지 성장하면서 단일 서버가 맞닥뜨리는 세 가지 한계(읽기 부하 집중, 단일 장애점, 백업 중 성능 저하)를 구체적 수치와 함께 보여 준다. 초당 200건의 쓰기와 3,000건의 읽기가 한 서버에 집중되면 쓰기 쿼리까지 대기하기 시작하고, 한 대 장애가 곧 전체 서비스 중단이 되며, mysqldump 실행 중에도 응답 지연이 발생한다. 복제라는 해결책이 왜 필연적으로 등장하는지 현실적인 성장 곡선 위에서 설득력 있게 제시한다."
+    },
+    "84151dbcef571ad513d1980faab3e75681dd558e82ae9b42e58292889340af0b": {
+      "language": "",
+      "description": "복제가 단순히 데이터를 두 곳에 두는 장치가 아니라 고가용성·부하 분산·안전한 백업이라는 세 가지 근본 목적을 동시에 달성하는 아키텍처 도구임을 정리한다. Replica를 Standby로 두면 Source 장애 시 빠른 Failover가 가능하고, 읽기 쿼리를 Replica로 보내면 Source는 쓰기에 집중할 수 있으며, Replica에서 백업을 수행하면 Source 성능에 영향을 주지 않는다. 하나의 기법이 여러 운영 과제를 동시에 해결한다는 점에서 복제의 가치가 분명해진다."
+    },
+    "ad7f2b2a15bc1d27b6e9c5eb7a6bf8f41f116a1637813a000a05bd95892fa527": {
+      "language": "",
+      "description": "복제 구성 요소(Source·Replica·Binary Log·Relay Log)의 역할을 정확한 용어로 정의한다. Source는 쓰기를 받고 Binary Log를 생성해 여러 Replica에게 변경 사항을 전달하며, Replica는 받은 로그를 Relay Log에 임시 저장한 뒤 SQL Thread가 그것을 읽어 실제로 적용한다. Binary Log가 복제의 원본 소스이고 Relay Log가 각 Replica 내부의 작업 큐라는 구조를 명확히 하면, 이후 복제 지연 분석이나 Failover 전략을 설명할 때 어느 지점에 문제가 있는지 정확히 짚을 수 있게 된다."
+    },
+    "24410ecec74f4d33e567cd87422254ce5d868e5642b873933443a43ab4b6bc62": {
+      "language": "",
+      "description": "쓰기 요청이 Source 한 대로 모이고 Binary Log가 세 Replica(읽기·읽기·백업)로 분기되는 전형적 1:N 복제 아키텍처를 박스와 화살표로 시각화한다. 읽기 요청이 두 Replica에 분산되는 모습과 별도 백업 전용 Replica가 존재한다는 점을 한 그림에 담아, 복제가 단순 이중화가 아니라 역할 분리의 토대임을 직관적으로 보여 준다. 이후 실전 사례에서 이 구조가 어떻게 확장되는지 논의할 때 반복 참조되는 기본 도형이다."
+    },
+    "687f20a60de247d96107574b0fbf5255b1b57e53de8b88c1a213027464399054": {
+      "language": "",
+      "description": "기본 설정인 비동기 복제의 동작 방식을 풀어 설명한다. Source는 COMMIT 즉시 클라이언트에 응답하고 Replica 적용 여부는 확인하지 않으며, Replica는 자신의 처리 속도대로 Binary Log를 받아 적용한다. 덕분에 Source 성능에 영향이 없지만, 장애 순간 Replica에 아직 적용되지 않은 변경분이 손실될 수 있다는 위험도 함께 있다. 성능과 내구성 사이의 절충이 비동기 복제의 본질임을 분명히 한다."
+    },
+    "d788e045b6c67a59a0c258ac65f886f23572e0ec4117548e997d0d78dd5a4478": {
+      "language": "",
+      "description": "반동기 복제는 Source가 COMMIT 후 최소 한 대의 Replica로부터 수신 확인을 받을 때까지 기다렸다가 클라이언트에 응답함으로써 데이터 손실 위험을 크게 줄인다. 대신 Replica 지연 시 Source의 응답 속도도 함께 느려질 수 있어 rpl_semi_sync_master_timeout으로 최대 대기 시간을 제한하는 식의 운영 조율이 필요하다. 비동기와 동기의 중간 지점에 자리한 이 방식은 데이터 중요도에 따라 단계적 안전 수준을 선택할 수 있게 해 준다."
+    },
+    "71e932ac117c0ab955531f3f4475ea87f5030288dfcbc974bee041843eba707c": {
+      "language": "",
+      "description": "Paxos 기반 분산 합의 프로토콜을 활용한 Group Replication과 InnoDB Cluster를 소개한다. 단일 Primary 혹은 다중 Primary 모드를 제공하며 자동 Failover가 내장되어 있어 전통적 Source-Replica 구성보다 고가용성 측면에서 훨씬 강하다. 대신 구성 복잡도가 올라가고 운영 난이도가 높아지므로 고가용성이 진짜로 최우선 요구인 환경에서 신중히 선택해야 한다. 복제 방식이 세 단계(비동기·반동기·분산 합의)로 성숙되어 왔음을 한눈에 보여 준다."
+    },
+    "4b02563585a98bdc9a4b4776a0124bb5a5c1c86625122fb97f140c20902a7c44": {
+      "language": "sql",
+      "description": "Source와 Replica의 상태를 각각 확인하는 SQL 명령 세트다. Source 측에서는 server_id·log_bin·binlog_format·SHOW MASTER STATUS로 현재 기록 위치를 파악하고, Replica 측에서는 SHOW REPLICA STATUS로 Replica_IO_Running, Replica_SQL_Running, Seconds_Behind_Source, Last_Error 같은 핵심 필드를 점검한다. 이 명령들은 복제 정상 여부를 실시간으로 진단하는 기본 도구이며, 운영 환경에서 매일 확인해야 할 최소 관측 루틴이다."
+    },
+    "05478c9000be88989106d756b3a52c546df48fb7c3fdbc68d6cf0396e1edf3a0": {
+      "language": "",
+      "description": "복제 동작을 Source와 Replica의 세 스레드(Binlog Dump·I/O·SQL)로 분해하여 단계별로 추적한다. Source의 Binlog Dump Thread가 Binary Log를 Replica의 I/O Thread로 밀어 보내면, I/O Thread가 이를 Relay Log에 쌓고, SQL Thread가 Relay Log의 쿼리를 실제로 실행해 데이터를 반영한다. 복제 지연이 발생할 때 어느 단계의 병목인지 판단하는 사고 틀이 여기서 만들어지며, 이후 SQL Thread 성능 튜닝이나 병렬 복제 같은 주제와 자연스럽게 연결된다."
+    },
+    "e3298a629c229bbeb6a5278967c41bc5d50e5a3dacb37f3ddc788ac730c87b07": {
+      "language": "",
+      "description": "읽기·쓰기 분리의 핵심 원칙을 한 줄로 요약한다. 쓰기는 Source, 읽기는 Replica로 보내는 단순한 규칙이며 일반적 서비스의 읽기:쓰기 비율이 9:1에서 20:1 수준이라는 점을 감안하면 읽기 부하를 분산하는 것만으로 Source의 부담이 대폭 줄어든다. 이 비율이 아키텍처 설계에서 왜 Replica 수평 확장이 가장 비용 대비 효과가 큰 개선인지 정량적으로 뒷받침한다."
+    },
+    "ceb40c7308c4364b4ff9765240c76fb45d4cef95f91b53dbdfbe0fc9c33747bd": {
+      "language": "yaml",
+      "description": "Spring Boot의 application.yml에 쓰기용과 읽기용 두 개의 DataSource를 분리해 선언하는 설정 예시다. write는 Source 주소와 app_user 계정을, read는 Replica 주소와 readonly_user 계정을 사용해 물리적으로 다른 경로를 확보한다. 환경 변수로 비밀번호를 주입받도록 만들어 보안까지 고려했으며, 이 설정이 이후 AbstractRoutingDataSource와 결합되어 트랜잭션 속성에 따라 자동 라우팅되는 기반이 된다."
+    },
+    "990ddf757108f6ce433a8b40e65ac678b8b756dde8e5158f36a2232c83975576": {
+      "language": "java",
+      "description": "AbstractRoutingDataSource를 확장해 @Transactional(readOnly) 속성에 따라 read 또는 write 데이터소스를 자동 선택하는 ReplicationRoutingDataSource 구현과 이를 활용하는 서비스 코드 예시다. 읽기 전용 메서드는 Replica로, 쓰기 메서드는 Source로 자동 분기되므로 애플리케이션 코드에서 DB 선택 로직을 복잡하게 관리할 필요가 없어진다. 선언적 트랜잭션 설정과 인프라 수준 분기가 어떻게 깨끗하게 결합되는지 보여 주는 모범 패턴이다."
+    },
+    "dc76dd7bf5e10696eaefaabbdaf055b05254c63d83a277401977a52b4c538864": {
+      "language": "",
+      "description": "Read-Your-Writes 불일치의 전형적 시나리오를 시간축으로 풀어 낸다. t=0에 Source에 주문을 INSERT하고 즉시 응답을 받은 뒤 t=1에 Replica로 주문 목록을 조회하면, t=2 시점에도 복제가 완료되지 않아 방금 만든 주문이 목록에 보이지 않는다. 이 문제를 해결하기 위해 쓰기 직후 즉시 조회는 Source로 강제 라우팅하거나 세션 일관성 전략을 쓰거나 반동기 복제로 지연 자체를 줄이는 세 가지 접근법이 제시된다. 복제가 완벽한 분리가 아니라는 현실적 함정을 가르친다."
+    },
+    "1fc5012a8dc7578285b9ae88e2ec541b7a808604ae875aff8d160a96ee9f1270": {
+      "language": "",
+      "description": "DB 연결 생성이 왜 비싼 작업인지를 네 단계(TCP 3-way Handshake·인증·세션 초기화·권한 확인)로 분해해 설명한다. 연결 한 번에 10~100ms가 걸리는데 초당 1,000건의 API 요청이 각각 새 연결을 만든다면 연결 생성만으로 50초가 소비될 수 있다는 극단적 계산이 제시된다. 이 비용을 피하기 위해 커넥션 풀이 왜 표준 도구가 되었는지가 숫자로 설명되며, 이후 HikariCP 설정의 정당성으로 이어진다."
+    },
+    "edb5dac835ebf2539ebf16f28d1a7dd0ba4dfb82d36b42df07a7259aa6c3edf7": {
+      "language": "",
+      "description": "커넥션 풀이 미리 N개의 연결을 만들어 두고 요청마다 빌려주고 반납받는 구조임을 도식적으로 설명한다. 대여·반납이 마이크로초 단위로 끝나기 때문에 실질적으로 연결 생성 비용이 0에 수렴하며, 풀 크기가 곧 동시에 처리할 수 있는 쿼리 수라는 사실까지 연결된다. 이 단순한 자원 공유 구조 하나로 DB 연결의 경제성을 완전히 바꿀 수 있다는 관점이 명확해진다."
+    },
+    "977d6d92afc3afca8d88d8ee3c2544b443e5e5343fd579bf26de487a2294b60a": {
+      "language": "yaml",
+      "description": "Spring Boot의 HikariCP 설정 YAML이다. maximum-pool-size와 minimum-idle로 풀 크기를 제어하고 connection-timeout으로 대기 한계를 두며 idle-timeout·max-lifetime·pool-name으로 연결 수명과 가시성을 관리한다. 특히 max-lifetime을 DB의 wait_timeout보다 작게 설정해야 stale connection이 생기지 않는다는 원칙을 예시 안에 녹여 두어, 설정값 각각이 어떤 장애를 예방하는지 설명 가능한 형태로 제시된다."
+    },
+    "78542cbbd390465c64a108d657f8f252ba0405bb119993791014d268a1926f6e": {
+      "language": "",
+      "description": "HikariCP의 권장 풀 크기 공식(CPU 코어 수 × 2 + 유효 디스크 스핀들 수)과 실무 경험 법칙을 함께 소개한다. 8코어 SSD 서버라면 17 정도가 출발선이며, 풀 크기를 무작정 키우면 DB의 컨텍스트 스위칭 오버헤드가 폭증해 Thread Hell이 발생한다는 경고도 함께 담는다. max_connections는 앱 서버 수×pool size에 여유분을 더해 설정해야 한다는 관계식까지 제시하여 풀 크기·DB 설정·앱 서버 수가 하나의 설계 방정식임을 보여 준다."
+    },
+    "a5aa64dbcab5a83bd8c594f819ed23e31fa7a1b19c0d27b6d1ad84225df3fea5": {
+      "language": "",
+      "description": "풀 고갈 시나리오를 구체적 상황으로 재현한다. 풀 크기 10에 100건 동시 요청이 들어오면 10건만 처리되고 나머지 90건은 connection-timeout까지 대기하다 예외를 던진다. 이런 상황에 대한 네 가지 대응(느린 쿼리 개선으로 반납 속도 올리기, 풀과 max_connections 동반 증가, 앱 서버 수평 확장, 읽기·쓰기 풀 분리)은 근본 원인이 어디에 있는지에 따라 달라지며, 단일 처방이 아닌 조합 전략이 필요함을 알려 준다."
+    },
+    "b4f6ffc15c838c3f886aa30b403550ec877d3bd36a51655c6196e59d9112c341": {
+      "language": "",
+      "description": "전통적 Binary Log 위치(log_file·log_pos) 방식과 GTID 방식을 대비한다. 전자는 파일명과 오프셋으로 복제 지점을 추적해 Failover 시 수동 조정이 까다롭지만, GTID는 트랜잭션마다 source_uuid:tx_id 형태의 전역 ID를 부여해 어느 트랜잭션까지 적용되었는지 명확히 추적한다. 결과적으로 GTID는 자동 위치 동기화·설정 단순화·HA 도구 연동이라는 실질적 이점을 가져다주며, 현대적 복제 운영의 사실상 기본이 되었다."
+    },
+    "7df24aa1265176a0b357f27cf148c255ac5f48016abe60e72171d50316112446": {
+      "language": "",
+      "description": "서비스 규모에 따른 DB 아키텍처 진화 로드맵을 단일 서버→Source+Replica→다중 Replica→Sharding→클라우드 관리형의 다섯 단계로 단계적 다이어그램과 함께 정리한다. 각 단계가 어느 규모(MAU)에서 적합한지 감이 잡히도록 숫자를 함께 제시하여, 학습자가 작은 규모부터 시작해 어떤 시점에 어떤 아키텍처로 전환해야 하는지 판단할 수 있는 프레임을 갖게 된다. 성급한 복잡화가 아닌 성장에 따른 점진적 확장이 원칙임을 보여 준다."
+    },
+    "00b90fe24e8d90fec99f16d6bf3c1f1e3c2961cca367e743c878da68184cdd70": {
+      "language": "",
+      "description": "블랙프라이데이 트래픽 급증 시나리오를 제시한다. 평소 대비 수십 배로 늘어난 SELECT와 DML 부하 때문에 단일 서버 CPU가 100% 포화되고 응답 시간이 10초를 넘어가는 위기에서, 이어지는 네 단계의 해결 과정(Replica 추가·인덱스 추가·커넥션 풀 최적화·Redis 캐시 도입)이 어떻게 누적적으로 문제를 완화하는지 보여 주는 실전 사례의 도입이다. 단일 도구가 아니라 여러 기법의 조합으로 대규모 이벤트를 버틴다는 현실적 관점을 심어 준다."
+    },
+    "716ffda1b78aa90307c1d6ac909e2f449ab85e03a352a872a2d9125eaca06dd9": {
+      "language": "sql",
+      "description": "Replica에서 SHOW REPLICA STATUS로 복제 상태를 확인하고 Replica_IO_Running, Replica_SQL_Running, Seconds_Behind_Source, Last_Error를 해석하는 진단 루틴이다. Seconds_Behind_Source가 0에 가까우면 정상, 5초 이상이면 경보, 60초 이상이면 심각 단계, NULL이면 복제 중단이라는 구체적 임계값이 함께 제시된다. Performance Schema의 replication_applier_status_by_worker까지 활용하면 복제 지연의 원인을 세밀하게 추적할 수 있다는 확장 경로도 함께 안내된다."
+    },
+    "9fb7b670a9f915fccffc1a2972b25974dffaafc63eaa27e22b6eb61d49e49e10": {
+      "language": "sql",
+      "description": "복제 지연을 해소하는 세 가지 접근을 실제 설정·운영 기법으로 제시한다. 첫째, replica_parallel_workers를 CPU 코어 수에 맞게 키워 병렬 복제를 활성화한다. 둘째, Source에서 대용량 UPDATE를 1,000건 단위처럼 잘게 나눠 Replica가 한 번에 처리할 작업량을 줄인다. 셋째, Replica 서버의 IOPS를 높이는 하드웨어 업그레이드를 고려한다. 복제 지연은 원인이 여럿이므로 애플리케이션·설정·하드웨어 세 축에서 동시에 점검해야 한다는 시야를 갖게 한다."
+    },
+    "7250afc0b8df832b1a9acc2bc1460ef76a51b16a671aebcb0f731001ba50f0d7": {
+      "language": "",
+      "description": "애플리케이션과 DB 사이에 ProxySQL을 두어 SELECT는 Replica로, DML은 Source로 투명하게 라우팅하는 아키텍처를 소개한다. 애플리케이션 코드 변경 없이 규칙 기반 라우팅을 구현할 수 있고 커넥션 풀 관리·장애 감지·자동 Failover까지 ProxySQL이 담당한다. BEGIN 이후 모든 쿼리를 Source로 보내 트랜잭션 일관성을 유지하는 섬세한 규칙까지 예시로 제시하여, 프록시 계층이 단순 분기가 아니라 트래픽 관리의 지능 허브가 될 수 있음을 보여 준다."
+    },
+    "63deab0bb24c055c294a220553ed784383ce0ddfbf5e5b88cf3650068d99e8bb": {
+      "language": "sql",
+      "description": "단일 서버 환경에서도 복제의 전제 조건인 Binary Log 설정·현재 위치·파일 목록·이벤트 내용을 확인해 보는 실습 쿼리다. log_bin과 binlog_format, server_id를 먼저 점검하고 SHOW MASTER STATUS로 현재 기록 위치를, SHOW BINARY LOGS로 파일 목록을, SHOW BINLOG EVENTS로 실제 기록된 이벤트를 확인한다. replica·slave 관련 변수까지 함께 조회하여, 이미 복제 아키텍처의 기반이 로컬에 잠재되어 있음을 학습자가 직접 느끼게 한다."
+    },
+    "35143537e98952158df383c3b6263c325306e81867bf44b7e246dba9a8203b8d": {
+      "language": "sql",
+      "description": "현재 서버의 max_connections, Threads_connected, Max_used_connections, Threads_running, Connection_errors_max_connections를 UNION ALL로 묶어 한 테이블에 보여 주는 연결 현황 대시보드다. 이어지는 쿼리에서는 Threads_connected를 max_connections로 나눠 연결 사용률을 퍼센트로 계산해, 임계치 대비 여유가 얼마나 남았는지 한눈에 파악할 수 있게 한다. 운영 중 언제든 돌려 볼 수 있는 커넥션 상태 점검 도구 세트다."
+    },
+    "2c98647c6f48eb9d43499e526aa7ac2d4502d065cf3bf2fd72625e85ee0bc6f1": {
+      "language": "sql",
+      "description": "앱 서버 3대·풀 크기 10 같은 가정 위에서 필요한 max_connections를 40 정도로 잡는 식의 아키텍처 설계 계산을 직접 해 보는 실습이다. PROCESSLIST를 USER·HOST·DB로 그룹화해 연결 수가 많은 쪽부터 정렬해 보면 어떤 애플리케이션·어떤 계정이 연결 예산을 가장 많이 쓰는지 즉시 알 수 있다. 설계 수치와 실제 사용 분포를 연결해 보는 작업이 커넥션 풀 관리의 기본 감각이 된다."
+    },
+    "7751369ce43fcd0e6852d0e9dd19e81b590732d687ea892bfbc51cbf463c76b1": {
+      "language": "java",
+      "description": "HikariCP 설정 두 벌(A: 문제 있음, B: 개선됨)을 나란히 제시하고 학습자가 직접 문제점을 찾도록 유도하는 코드 비교 실습이다. 문제 설정은 maximumPoolSize 200과 maxLifetime 1시간이, 개선 설정은 10·30분 수명·keepalive 30초 같은 조정을 포함한다. 단순 옵션 나열이 아니라 어떤 값이 어떤 장애를 예방하거나 악화시키는지를 생각하게 만들어, 설정 하나하나가 실제 운영 품질에 직결된다는 감각을 체득시킨다."
+    },
+    "59945fe28377f7413f5af19f0c6ac6c21033f92eb1420b5df249f022d4bdc393": {
+      "language": "",
+      "description": "앞선 HikariCP 설정 A·B의 문제점과 개선점을 해설한다. maxPoolSize 200은 MySQL max_connections 151 기본값 이하에서는 아예 연결 불가이고, 동시에 너무 많은 스레드가 몰려 Thread Hell을 초래할 수 있다. maxLifetime 1시간은 DB wait_timeout과의 관계를 잘못 이해한 설정이며, stale connection 방지를 위해 wait_timeout보다 여유 있게 작게 두어야 한다. 설정 B는 이 모든 교훈을 반영한 형태로, 이론을 실제 값으로 번역하는 모범 답안 역할을 한다."
+    },
+    "067207d092b145978780421bbe342150c11cda8f02ff8e476fe2ab312e8058e2": {
+      "language": "",
+      "description": "첫 번째 퀴즈는 복제 동작 3단계의 핵심 용어를 빈칸으로 채우게 한다. Binary Log에 변경 기록이 남고, Replica의 I/O Thread가 이를 받아 Relay Log에 저장하며, SQL Thread가 Relay Log의 쿼리를 실제 실행한다는 흐름이 학습자의 머릿속에 선명하게 자리 잡아야 이후 복제 지연·Failover·GTID 같은 응용 주제를 이해할 수 있다. 단원 핵심 구조를 마지막으로 확인하는 간결한 문제다."
+    },
+    "f47a24e576e21ae88addf60dbf25d78f8d0864d5bea7a96e7fe2aecd84aac117": {
+      "language": "",
+      "description": "두 번째 퀴즈는 비동기 복제의 즉시 적용 여부, Replica의 쓰기 제약, 커넥션 풀 크기의 임계, HikariCP maxLifetime과 wait_timeout의 관계, Seconds_Behind_Source=0의 의미 같은 다섯 가지 주장을 O·X로 판단하게 한다. 복제·커넥션 풀 영역에서 가장 자주 오해되는 지점들을 집약적으로 짚어, 학습자가 단순 문법이 아니라 동작 의미를 정확히 이해하고 있는지 검증한다."
+    },
+    "b760d053c710d4f9f0bc11eb36b5f84baef355c3712d9a3f0bb742a00385e6e4": {
+      "language": "",
+      "description": "세 번째 퀴즈는 세 가지 아키텍처 상황(SELECT 부하 집중·복제 지연으로 인한 Read-Your-Writes 버그·앱 서버 수×풀 크기 합이 max_connections를 초과)을 제시하고 각각에 맞는 대응을 분석하도록 요구한다. 단일 원칙이 아닌 문제 유형에 따라 Replica 추가·Source 강제 라우팅·풀 크기 조정 같은 서로 다른 처방이 필요하다는 사실을 학습자가 스스로 판단해 내게 한다. 아키텍처 감각을 종합적으로 점검하는 사고 실험이다."
+    },
+    "bdedf03ae3e585d3e51fa64e5e778f9a23ca90ee0386fbe1671fe54161bed2c7": {
+      "language": "",
+      "description": "네 번째 퀴즈의 모범 답안에서 Hikari 공식(CPU 코어 수×2+스핀들 수)을 8코어 SSD 기준으로 적용해 17 정도가 출발선이라는 계산을 보여 준다. 그러나 5대 앱 서버에 균등 배분하면 대당 3~4개로 너무 작을 수 있으므로, 실무에서는 5~10 정도로 시작해 부하 테스트로 검증하는 접근이 권장됨을 함께 제시한다. 공식은 출발점일 뿐 최종값은 측정으로 정해야 한다는 엔지니어링 태도를 가르친다."
+    },
+    "b294ce9307a1f816da337b52d4ff1858009814b92d8dbf93d94e7f65b8b44cce": {
+      "language": "",
+      "description": "퀴즈 4의 max_connections 설계 답안으로, 앱 서버 수×풀 크기에 DBA·모니터링·배치 등을 위한 여유분 20을 더해 70~100 수준으로 잡는 계산식을 제시한다. 커넥션 풀이 아무리 잘 설정되어도 DB 측 한계를 초과하면 Too many connections 에러가 반드시 따라오므로, 앱 측과 DB 측 설정이 한 쌍처럼 움직여야 한다는 관점을 다시 한번 못 박는다. 단일 서버 튜닝에서 벗어나 전체 스택의 용량 계획이 필요하다는 교훈이다."
+    },
+    "fdac6f2667d4e38205123841fe21cfe0c22da29476a1d52d5167b44e471fe8ba": {
+      "language": "",
+      "description": "Phase 7 전체(권한·백업·로그·복제)를 한 장으로 정리한 회고 그림이다. 네 Step이 각각 침해 예방·사후 복원·실시간 관측·내결함성이라는 상호 보완 관계로 엮여 있음을 한 번 더 상기시키며, 마지막 단원이 전체 Phase의 정점이자 마무리라는 위상을 강조한다. 학습자가 커리큘럼 전체 여정의 끝자락에서 스스로 얼마나 먼 길을 왔는지 조감할 수 있게 만드는 장치다."
+    },
+    "37984afc136803128ac18c623ca35db985e881f23bbcf368092734fa152fee0a": {
+      "language": "",
+      "description": "전체 29 Steps, 7 Phase 로드맵을 표로 일괄 정리해 학습자가 여기까지 도달하며 다룬 주제의 폭과 깊이를 한눈에 보여 준다. 기초 RDBMS 개념에서 출발해 SQL 문법·JOIN·서브쿼리·모던 SQL·정규화·인덱스·EXPLAIN·트랜잭션·프로시저·트리거·권한·백업·로그·복제까지 이어지는 방대한 여정이 일목요연하게 복원된다. 단지 학습의 끝이 아니라 지금까지 쌓은 자산의 지도를 손에 쥐여 주는 마무리 도구다."
+    },
+    "0fb13b23937e57bd1d5f38752852992a35d1862d9384b6118bf5fea949e6f582": {
+      "language": "",
+      "description": "29 Steps 이후 더 탐구할 심화 주제를 네 갈래(고급 아키텍처·관련 기술 스택 연계·데이터 엔지니어링·심화 DBA)로 제시한다. Sharding·InnoDB Cluster·Aurora 같은 고급 아키텍처, Redis·Kafka·Elasticsearch 같은 스택 연계, 데이터 웨어하우스와 컬럼형 OLAP, 그리고 Query Optimizer·OS 수준 I/O 튜닝 같은 DBA 심화까지 다양한 길이 이어진다. 학습을 끝이 아니라 시작으로 위치시키며 다음 단계로의 호기심을 자극한다."
+    },
+    "768d23bfd8a802a3dcaf8cca7aa35f4968d45188d9e480bae4bda53a2cc36487": {
+      "language": "",
+      "description": "데이터베이스는 모든 소프트웨어의 심장이라는 격언으로 시작해, 이 로드맵이 단순한 SQL 학습이 아니라 데이터가 어떻게 저장·보호·설계·조회·운영되는지를 원리부터 이해하는 과정이었음을 되짚는다. 다음 단계로 실제 코드를 짜고 프로덕션을 운영하며 장애를 경험할 것을 권하며, 그 순간에 비로소 여기서 배운 지식이 진짜 경험이 된다는 메시지로 학습 여정을 마무리한다. 커리큘럼의 마지막 문장이자 학습자에게 남기는 출정의 격려다."
+    }
+  }
 }
