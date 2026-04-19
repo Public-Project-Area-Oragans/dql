@@ -1,4 +1,25 @@
 {
   "chapterId": "msa-phase12-step6-observability",
-  "entries": {}
+  "entries": {
+    "c522ece1479a5a8dfe390f124c816ed744868d6cc5fe501226e357d4c0a332f1": {
+      "language": "mermaid",
+      "description": "이 다이어그램은 2. Observability 아키텍처 단원에서 관측 가능성을(를) 시각적으로 정리한다. 본문 서술만으로는 놓치기 쉬운 구성 요소 사이의 관계를 한눈에 잡도록 정리한 그림이다. 구성 요소로 K8s Cluster, 서비스 Pod, order-service + Micrometer + OTel Agent, Logging 등이 등장하여 역할 분담과 호출 방향을 드러낸다.\n\n독자가 그림을 직접 보지 못하더라도, 관측 가능성이(가) 어떤 문제를 풀기 위해 등장했는지와 구성 요소들이 서로 책임을 어떻게 분담하는지를 이해할 수 있어야 한다. 2. Observability 아키텍처 주제가 전체 흐름 중 어느 단계에 해당하는지, 앞뒤 절과 어떤 방식으로 연결되는지를 함께 짚으며 읽는 것이 중요하다."
+    },
+    "54b3e1e267ecd891c72133f9410036b70fb8925bb56befb748eb04b85ed5a027": {
+      "language": "yaml",
+      "description": "이 설정 조각은 2. Observability 아키텍처 단원에서 관측 가능성을(를) yaml 형태로 재현하기 위한 예제 코드 조각이다. 앞선 서술은 \"2.1 통합 docker-compose (Observability 스택)\" 내용을 다루며, 이 예제 코드은(는) 그 개념을 구체적인 문법으로 표현해 독자에게 감을 잡게 한다. 핵심 식별자로 services, Logging, loki, image 등이 등장하며, 각 토큰은 실제 운영 환경에서 그대로 혹은 약간의 수정으로 재사용되는 포인트다.\n\n코드를 외우기보다 관측 가능성이(가) 실제 코드·설정에서 어떻게 드러나는지 이해하고 같은 패턴을 재사용할 수 있도록 의도에 집중하는 것이 중요하다."
+    },
+    "445c2f9505aec8fe784e6e59d0c36a1dd0400f46bd9f4dbd0dd726a49df59e1d": {
+      "language": "",
+      "description": "이 도식은 2. Observability 아키텍처 단원에서 관측 가능성을(를) 시각적으로 정리한다. 앞선 서술은 \"2.1 통합 docker-compose (Observability 스택) 2.2 Grafana 대시보드 구성\" 맥락을 짚으며, 여기서 그 개념이 실제로 어떻게 구성되는지 도식으로 풀어 보여준다.\n\n독자가 그림을 보지 못해도 관측 가능성이(가) 어떤 문제를 해결하려 하며 각 구성 요소가 무엇을 담당하는지 이해할 수 있어야 한다."
+    },
+    "79694151d649380ac97b627b4ae0ab05228d22c47603202e55c15002a10672bc": {
+      "language": "yaml",
+      "description": "이 예시는 2. Observability 아키텍처 단원에서 관측 가능성을(를) yaml 형태로 재현하기 위한 예제 코드 조각이다. 앞선 서술은 \"2.1 통합 docker-compose (Observability 스택) 2.2 Grafana 대시보드 구성 2.3 SLO\" 내용을 다루며, 이 예제 코드은(는) 그 개념을 구체적인 문법으로 표현해 독자에게 감을 잡게 한다. 핵심 식별자로 prometheus-rules, yml, groups, name 등이 등장하며, 각 토큰은 실제 운영 환경에서 그대로 혹은 약간의 수정으로 재사용되는 포인트다.\n\n코드를 외우기보다 관측 가능성이(가) 실제 코드·설정에서 어떻게 드러나는지 이해하고 같은 패턴을 재사용할 수 있도록 의도에 집중하는 것이 중요하다."
+    },
+    "14d32ac0b58d1763128827ac81729db66626ebf6893dd51688d3c44fd48ba288": {
+      "language": "",
+      "description": "이 개념도는 2. Observability 아키텍처 단원에서 관측 가능성을(를) 시각적으로 정리한다. 앞선 서술은 \"2.1 통합 docker-compose (Observability 스택) 2.2 Grafana 대시보드 구성 2.3 SLO\" 맥락을 짚으며, 여기서 그 개념이 실제로 어떻게 구성되는지 도식으로 풀어 보여준다.\n\n독자가 그림을 보지 못해도 관측 가능성이(가) 어떤 문제를 해결하려 하며 각 구성 요소가 무엇을 담당하는지 이해할 수 있어야 한다."
+    }
+  }
 }
