@@ -116635,13 +116635,13 @@ s($,"bpx","aPI",()=>{var q=null
 return new A.Q6(q,q,"allBooksProvider",q,q,!0)})
 s($,"bpA","b4D",()=>new A.QN("bookByIdProvider",null,null,!0))
 s($,"bpM","abl",()=>{var q=null
-return new A.S1(q,q,"currentSceneProvider",q,q,!0)})
+return new A.S1(q,q,"currentSceneProvider",q,q,!1)})
 s($,"bpN","abm",()=>{var q=null
-return new A.S2(q,q,"currentWingIdProvider",q,q,!0)})
+return new A.S2(q,q,"currentWingIdProvider",q,q,!1)})
 s($,"bqq","abs",()=>{var q=null
-return new A.Wy(q,q,"questBoardOpenProvider",q,q,!0)})
+return new A.Wy(q,q,"questBoardOpenProvider",q,q,!1)})
 s($,"bqp","abr",()=>{var q=null
-return new A.Wx(q,q,"questBoardFilterCategoryProvider",q,q,!0)})
+return new A.Wx(q,q,"questBoardFilterCategoryProvider",q,q,!1)})
 s($,"bpw","aPH",()=>{var q=null
 return new A.Q0(q,q,"activeNpcIdProvider",q,q,!0)})
 s($,"bqg","aUs",()=>new A.VF("npcQaSessionProvider",null,null,!0))
