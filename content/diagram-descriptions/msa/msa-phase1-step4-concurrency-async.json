@@ -1,4 +1,133 @@
 {
   "chapterId": "msa-phase1-step4-concurrency-async",
-  "entries": {}
+  "entries": {
+    "c3b85608521391d648c85daba4e42a0f4af5cbe630c06f26891cf0d835ce934e": {
+      "language": "mermaid",
+      "description": "Phase 1의 네 Step이 어떻게 이어져 Step 4(동시성)의 토대가 되는지를 시각화한 개념 지도다. 네트워크에서 배운 프로세스·격리가 백엔드의 요청 처리 모델로 이어지고, DB 트랜잭션·락에서 얻은 동시 접근 통제 감각이 곧 Thread·Lock·비동기·이벤트 루프 같은 단일 JVM 수준 동시성 개념으로 자연스럽게 확장됨을 보여 준다. 독자에게 Step 4가 고립된 주제가 아니라 이전 학습의 합산점이며, 이후 분산 동시성을 이해할 전제 단계임을 각인시키는 목적의 그림이다."
+    },
+    "abfb54fbc1a8f3fa6e5216bd1cfac45e0ae1cde39a21b96edb85f1a3bd5a6143": {
+      "language": "mermaid",
+      "description": "Step 4에서 다룰 주요 개념을 세 갈래(동시성 기초 · 비동기 모델 · 리액티브/이벤트)로 나누고, 이들이 모두 MSA의 분산 동시성 문제(분산 락·Saga·Kafka Consumer)로 수렴한다는 학습 로드맵을 한눈에 보여 준다. Thread·락·CAS 같은 저수준 원시에서 CompletableFuture를 거쳐 Reactive Streams·Event Loop까지 이어지는 위계를 제시함으로써, 각 소절이 왜 이 순서로 배치되었는지와 어떤 MSA 문제에 연결되는지를 독자가 스스로 예측할 수 있도록 돕는 문서 내비게이션 역할을 한다."
+    },
+    "6fca1d15acf26e54a4e8ff472f3278da52ef6a7b0d404b0edeb0378a5431165c": {
+      "language": "mermaid",
+      "description": "Tomcat 기반 Thread Pool이 요청을 처리하는 전형적 흐름을 그려 '1 요청 = 1 스레드' 모델의 동작과 한계를 체감하게 한다. 요청이 Pool의 여유 스레드에 배정돼 비즈니스 로직을 수행하고 응답을 돌려주는 기본 경로와, Pool이 포화되면 대기열에서 대기하다가 스레드가 반납될 때 비로소 처리되는 지연 경로를 대비시켜 보여 준다. 이 그림은 이후 Bulkhead와 Circuit Breaker가 왜 필요한지, 즉 외부 호출로 인한 스레드 고갈이 어떻게 MSA 전체 장애로 번지는지 설명하는 후속 논의의 밑그림을 제공한다."
+    },
+    "1a249607e74ea475036e9843a7b75b4755ce4c29fa048473226104c9510e6da2": {
+      "language": "mermaid",
+      "description": "같은 공유 자원을 여러 스레드가 다툴 때 '충돌이 자주 날 것'이라 가정하는 비관적 락과 '드물 것'이라 가정하는 낙관적 락이 각각 어떤 시간 축에서 동작이 달라지는지를 두 흐름으로 대비해 보여 준다. 비관적 락은 자원 접근 전 잠금을 걸어 직렬화하고, 낙관적 락은 작업 후 버전 비교로 충돌을 감지해 재시도로 해소한다는 핵심 차이를 제시한다. 이 사고 방식이 단일 JVM의 synchronized·CAS에서 DB의 SELECT FOR UPDATE·@Version을 거쳐 분산 락까지 동일하게 반복된다는 점을 독자에게 각인시키는 것이 목적이다."
+    },
+    "ae98a9dc9fbaa8f148453ce0f510e8cfcfa118330bbde8fe6f0e90e54efc3b51": {
+      "language": "mermaid",
+      "description": "Callback → Future → CompletableFuture → Reactive Streams로 이어지는 비동기 프로그래밍 모델의 진화 축을 각 단계의 '해결하고자 한 문제'와 함께 순차적으로 배치한 개념 계보도다. 콜백 지옥에서 결과 객체화로, 블로킹 get의 한계에서 논블로킹 체이닝으로, 다시 대량 스트림과 역압 제어의 필요로 이어지는 흐름을 보여 준다. 독자가 현대 자바 비동기 API를 단순한 기술 나열이 아닌 '앞선 모델의 약점을 보완한 결과물'로 이해하도록 설계된 그림으로, 이후 CompletableFuture와 Reactive Streams를 배우는 동기를 부여한다."
+    },
+    "02b378b3f14adac05f69d098ad1bd1049cee653df13fb2bcae4f3e1055790554": {
+      "language": "mermaid",
+      "description": "단일 스레드 기반 Event Loop가 I/O 작업을 커널에 위임하고 완료 콜백으로 돌려받는 비동기 처리 구조와, 생산자가 소비자보다 빠를 때 메모리 고갈을 막는 Backpressure 개념을 나란히 배치해 논블로킹 I/O와 흐름 제어가 짝을 이루는 이유를 설명한다. Event Loop는 대기 없는 처리로 동시 연결을 늘리고, Backpressure는 Subscriber가 자신이 감당할 수량을 거꾸로 요청해 과부하를 예방한다. 두 메커니즘이 결합해야 Reactive Streams 기반 MSA가 높은 처리량과 안정성을 동시에 얻을 수 있다는 설계 통찰을 전달한다."
+    },
+    "845e74a68e9c8c6ad0e316807d6a1b1119f03157154e5b7271f9535b69c41333": {
+      "language": "mermaid",
+      "description": "자주 혼동되는 동시성·병렬성·비동기 세 용어의 정의와 실행 양상을 분리해 각 개념의 핵심 질문을 구분시키는 교육용 비교도다. 동시성은 단일 CPU로도 여러 작업을 구조적으로 다루는 능력, 병렬성은 멀티 코어에서 물리적으로 함께 실행하는 것, 비동기는 작업 완료를 기다리지 않고 다른 일을 진행하는 것이라는 본질적 차이를 CPU 실행 축과 응답 대기 축으로 풀어 보여 준다. MSA 맥락에서 이 구분을 흐릿하게 두면 왜 Tomcat 스레드 풀이나 Kafka 이벤트 발행을 잘못 설계하게 되는지까지 연결해 이해시키려 한다."
+    },
+    "7806e6036af09fc83dcd41eb616548de5f03f51fe91aa142b83b87a9f351984b": {
+      "language": "mermaid",
+      "description": "프로세스와 스레드의 메모리 구조 차이를 시각적으로 대비해 'MSA 컨테이너 = 격리된 프로세스, 내부 요청 처리 = 스레드' 라는 매핑을 직관화한다. 각 프로세스가 독립된 Code·Data·Heap 공간을 갖고 스레드는 같은 Heap을 공유하지만 Stack만 자기 것을 갖는다는 구조를 그려 준다. 이를 통해 프로세스 간 통신에는 IPC가 필요하고 장애가 전파되지 않는 반면, 스레드 간 공유 변수는 직접 접근 가능하나 동기화가 필수이며 한 스레드의 crash가 프로세스 전체를 내릴 수 있다는 사실을 자연스럽게 연결해 준다."
+    },
+    "f1e55e3185d0f3557f6e0e7e5e0b590d0fc86cfedfeb99884098a45608930759": {
+      "language": "mermaid",
+      "description": "Spring MVC/Tomcat 기반 서비스에서 요청이 스레드 풀로 배정돼 Controller→Service→Repository→DB로 이어지는 전형적 호출 사슬과, 동시 요청이 풀 크기를 초과했을 때 대기열에 쌓여 Thread Starvation으로 수렴하는 실패 경로를 함께 보여 준다. 이는 다른 서비스 호출이 느려질 때 블로킹 스레드들이 풀을 잠식하며 서비스 전체가 응답 불능에 빠지는 MSA 흔한 장애 패턴을 설명하기 위한 설계다. 독자가 Circuit Breaker·Bulkhead·비동기 통신이 왜 필연인지 스스로 도출하도록 돕는 근거 그림이다."
+    },
+    "f36d83e16fc9b8ee99b91f16b1ec0205041fca9ebc63e21157da7ddd56e194f4": {
+      "language": "mermaid",
+      "description": "OS 커널이 실행 중이던 Thread A를 중단하고 Thread B로 전환할 때 PCB/TCB에 레지스터·스택 상태를 저장·복원하고 TLB를 플러시하는 실제 과정을 단계별로 풀어 보여 준다. 타임슬라이스 만료나 I/O 대기가 트리거가 되며, 상태 전환 자체에 수 마이크로초의 직접 비용이 들고 캐시 미스라는 간접 비용이 뒤따른다는 사실을 각인시킨다. 이 그림은 이후 '왜 스레드를 무한히 늘리면 오히려 처리량이 떨어지는가' 를 설명하는 논거가 되어, Thread Pool 사이징과 Event Loop 모델의 존재 이유를 납득시키는 전제로 쓰인다."
+    },
+    "f0388b3f478e1eb348d29a7f45c0cdb41e39d608f77c5657a391a62204352a3c": {
+      "language": "mermaid",
+      "description": "스레드 수가 적을 땐 처리량이 낮다가 CPU 코어 수 근처에서 최적점을 찍고, 과다해지면 Context Switching 비용이 처리량을 역전시켜 감소하는 U자형 관계를 도식화한다. 이에 따라 CPU-bound 작업은 코어 수 + 1, I/O-bound 작업은 대기 비율을 반영해 더 크게 잡는 사이징 공식을 함께 제시한다. Tomcat의 기본 200이라는 숫자가 절대적 정답이 아니며, 워크로드 특성에 맞춰 튜닝해야 한다는 실전 감각을 전달하는 것이 이 그림의 교육적 목적이다. 이후 Event Loop가 등장하는 필연을 설명할 때의 기준선이 된다."
+    },
+    "749011d4c045be83d8479c81bcf50e27bbc2a85501de1c3aaaca4005c1e3835a": {
+      "language": "mermaid",
+      "description": "synchronized로 보호된 카운터 증가 연산에서 두 스레드가 모니터 락을 놓고 직렬화되는 시간 순서를 시퀀스로 보여 준다. Thread A가 락을 쥐고 count를 0→1로 바꾸는 동안 Thread B는 대기하고, A가 락을 해제하면 비로소 B가 락을 획득해 1→2로 증가시키는 흐름이 핵심이다. 이 그림은 Java의 모니터 락이 '블록 범위에 묶여 자동 해제되지만 타임아웃도 인터럽트도 허용하지 않는 단순·강제성 높은' 동기화 프리미티브임을 체감시키며, 이후 ReentrantLock이 왜 필요한지 대비 근거를 마련한다."
+    },
+    "09137a956a498ad63add27c1ae666215a65318063acd468dcec36a7ae8f55a7d": {
+      "language": "mermaid",
+      "description": "synchronized와 ReentrantLock의 특성을 평면적으로 대조해 단순한 동기화냐, 타임아웃·공정성·다중 Condition 같은 세밀한 제어가 필요하냐로 선택 기준을 분기시키는 의사결정 그림이다. synchronized는 블록 종료 시 자동 해제라는 안전성이 장점이지만 tryLock이나 lockInterruptibly를 쓸 수 없고, ReentrantLock은 유연성이 높은 대신 finally에서 수동 해제 책임이 따른다는 트레이드오프를 명시한다. 이 설계 사고가 이후 Redis SETNX 기반 분산 락의 API를 설계할 때도 그대로 재현된다는 점을 암시한다."
+    },
+    "7251afbe061b4c90eb15091fa92cb25e6c18d98b901d669c2c7fb527a835c7bf": {
+      "language": "mermaid",
+      "description": "같은 카운터를 두 스레드가 CAS로 갱신할 때 기대값 비교가 어떻게 원자적 성공/실패를 구분하는지를 시퀀스로 보여 준다. A가 10→11을 CAS로 성공시키면 B의 10→11 시도는 메모리 값이 이미 11이어서 실패하고, B는 다시 현재값을 읽어 11→12로 재시도해 성공하는 패턴이다. 이 반복되는 read-modify-CAS 루프가 락 없이도 원자성을 확보하는 메커니즘이며, CPU의 CMPXCHG 명령어가 뒷받침한다는 점을 독자에게 각인시켜 AtomicInteger, JPA @Version 낙관적 락의 근간을 설명할 발판을 만든다."
+    },
+    "5e16392c4ac449110d7c8d24858c61a9e56f3c2ea332ef07946e81950cefcacd": {
+      "language": "mermaid",
+      "description": "Callback에서 Reactive Streams까지 비동기 모델이 단계마다 무엇을 개선해 왔는지를 문제-해결 쌍으로 배치한 진화 계보다. Callback은 깊은 중첩과 에러 추적의 어려움을 낳았고, Future는 get 호출에서 다시 블로킹되며 합성이 어려웠다. CompletableFuture는 논블로킹 체이닝과 예외 처리로 이를 해결했으나, 대량 스트림과 흐름 제어에는 Reactive Streams의 Publisher-Subscriber와 Backpressure가 필요했다. 이 서사는 현대 비동기 API가 한 번에 생긴 게 아니라 앞 세대의 구체적 고통에서 태어났다는 관점을 독자에게 심어 준다."
+    },
+    "06b8a0dc51a7b86820e9b872d0abcc6dbdbec15c4f58d12f58d87170ae241783": {
+      "language": "mermaid",
+      "description": "CompletableFuture API를 생성·체이닝·합성·에러 핸들링·타임아웃의 다섯 범주로 묶어 학습 순서를 제시한다. supplyAsync/runAsync로 비동기 작업을 시작하고 thenApply/thenCompose/thenAccept로 결과를 이어 받으며, thenCombine·allOf·anyOf로 여러 작업을 합성하고, exceptionally·handle로 실패를 흡수하며, Java 9+의 orTimeout·completeOnTimeout으로 무한 대기를 차단하는 흐름이다. 이 분류는 실무에서 어떤 API를 언제 꺼내 써야 하는지 감각을 잡아 주고, MSA의 병렬 호출·Fallback·타임아웃 설계 패턴과 직접 연결되도록 구성되어 있다."
+    },
+    "f1766d2181cef66f9925136e4c6e37b310db2ce60bd30516a91923fd14c2eb71": {
+      "language": "mermaid",
+      "description": "주문 상세 조회에서 user·order·point 세 서비스를 순차로 부를 때 응답 시간이 합산돼 600ms가 나오는 구조와, 동일한 호출을 CompletableFuture.allOf로 병렬화해 가장 느린 호출 시간인 300ms로 수렴시키는 구조를 나란히 보여 준다. 두 경로의 시각적 대비를 통해 '서비스가 많아질수록 순차 호출의 비용은 선형으로 커지지만 병렬 호출은 최대 응답 시간에 수렴한다'는 MSA 통신 설계의 근본 원리를 체감시키려는 목적이다. 뒤이어 타임아웃과 Fallback이 결합돼야 진짜 실전 설계가 된다는 논의를 끌어낸다."
+    },
+    "c3e665546554f3c7e6c41326bedf1712f8e7bc8c464239c9f68b4f625bd25dee": {
+      "language": "mermaid",
+      "description": "Publisher와 Subscriber가 onSubscribe로 구독을 맺고 Subscriber가 request(n)으로 감당 가능한 수량을 먼저 요청한 뒤에야 Publisher가 onNext로 데이터를 내려주는 Reactive Streams의 프로토콜을 시퀀스로 풀어 Backpressure의 작동 지점을 시각화한다. 3개를 요청한 뒤 2개를 추가 요청하고 마지막에 onComplete로 스트림이 종료되는 과정은, 소비자가 주도권을 쥐고 속도를 제어한다는 이 패러다임의 핵심을 드러낸다. 콜백·Future와 달리 '데이터 흐름 자체가 협상 대상'이 되는 구조적 전환임을 각인시키는 그림이다."
+    },
+    "47ed9274a5f4785a0a82be989024d2c92d5c35e278d5f99468c30dbd1291601e": {
+      "language": "mermaid",
+      "description": "생산자가 10,000/s로 발행하는데 소비자는 1,000/s밖에 처리하지 못할 때 버퍼가 무한 증가해 결국 OOM으로 치닫는 실패 구조를 먼저 보여 주고, 이를 방지할 네 가지 전략(버퍼 제한+드롭, request(n), Rate Limiting, 배치 처리)을 대안으로 제시한다. 단순히 '백프레셔가 좋다'로 끝내는 것이 아니라, 어떤 상황에선 손실을 감수하는 드롭이 합리적이고 어떤 경우엔 Consumer 주도 요청이, 또 어떤 경우엔 Rate Limiting이나 배치 집약이 최적인지를 구분해 MSA의 Kafka·WebFlux·Gateway 설계에 적용할 수 있는 판단 기준을 전달한다."
+    },
+    "9c83141b1f142f71d81470ac12e96a125c7ff4059cc180a424bb3fb21d4d3997": {
+      "language": "mermaid",
+      "description": "Spring MVC/Tomcat의 Thread-per-Request 모델과 Netty·WebFlux·Node.js의 Event Loop 모델을 같은 축에서 비교해 '대기하는 동안 스레드를 점유하는가'라는 핵심 질문으로 두 아키텍처를 가른다. 전자는 요청 수 = 스레드 수라는 제약으로 동시 연결 수 상한이 낮고, 후자는 단일 또는 소수 스레드가 이벤트 큐를 돌며 I/O 대기 없이 다음 작업을 처리해 소수 스레드로 대량 연결을 감당한다. 이 대비가 이후 Spring MVC vs WebFlux 선택 기준을 설명하는 전제이자, 비동기·논블로킹 설계의 존재 이유를 납득시키는 핵심 그림이다."
+    },
+    "f6dbdd50e464c046c6980ac4400c8693264c7609428f018c8d6fccee7759e99d": {
+      "language": "mermaid",
+      "description": "모든 서비스를 WebFlux로 통일하는 안티패턴을 경계시키면서, '대부분은 Spring MVC로 충분하고 특수 요구사항에만 WebFlux를 도입하라'는 실무 가이드라인을 분기도로 정리한다. API Gateway, 실시간 스트리밍, 다수 서비스를 병렬 합성하는 BFF처럼 고동시 연결과 비동기 합성이 본질인 영역은 WebFlux의 이점이 크지만, JPA·JDBC 같은 블로킹 라이브러리를 쓰는 일반 CRUD 서비스에서는 오히려 성능이 악화될 수 있다는 트레이드오프를 명시한다. 팀 학습 비용과 생태계 호환성까지 고려해 기술 선택을 해야 한다는 엔지니어링 판단 기준을 전달하는 것이 목적이다."
+    },
+    "5352417558fd426f341ff6d58949335c7a3abb46f9a1a5a62d5c656d5183afc7": {
+      "language": "mermaid",
+      "description": "payment-service의 응답 지연이 시간이 흐르며 order-service의 Tomcat 스레드 풀을 잠식해 10초·30초·60초 시점마다 남은 가용 스레드가 급격히 줄고 결국 쇼핑몰 전체가 응답 불능에 빠지는 연쇄 장애 시나리오를 시간축으로 보여 준다. 근본 원인을 '동기 블로킹 호출·타임아웃 부재·Bulkhead 미적용' 세 축으로 분해하고, 해결책으로 타임아웃·Circuit Breaker·Bulkhead·비동기 전환을 제시함으로써 Phase 4의 Resilience 패턴과 Phase 5의 비동기 통신이 왜 필연인지 독자가 스스로 납득하게 만드는 장애 서사 그림이다."
+    },
+    "fbac16c3f92c6bb8395ae5f937e4d28d61b719f60dffad33715ce24348c6ea79": {
+      "language": "mermaid",
+      "description": "재고가 5개인 상품에 세 개의 주문 스레드가 동시에 접근해 각자 '5개 있음'을 읽고 동시에 3개씩 차감을 시도한 결과, DB 상의 최종 재고는 2로 남지만 실제로는 9개가 판매되어 4개만큼 초과 판매되는 Race Condition의 전형적 실패 시나리오다. SELECT-검증-UPDATE가 원자적으로 보호되지 않을 때 발생하는 이 현상은 MSA의 재고·포인트·잔액 차감처럼 수치 무결성이 핵심인 도메인에서 왜 단순 동시 요청만으로도 시스템이 무너지는지를 극적으로 보여 주며, 다음 해결 비교표(비관적·낙관적·분산 락)의 동기를 제공한다."
+    },
+    "01a43a66bc3fb4cc81f6369b681954626b2cc01c89c64e974666eb5d761325d2": {
+      "language": "mermaid",
+      "description": "재고 음수 문제를 해결하는 세 접근(비관적 락·낙관적 락·분산 락)을 같은 문제 위에 나란히 올려 각 전략의 작동 방식과 비용을 대비한다. SELECT FOR UPDATE는 행을 잠가 다른 스레드를 대기시키고, @Version 기반 낙관적 락은 UPDATE 시점의 버전 일치 여부로 충돌을 감지해 재시도로 해소하며, Redis 분산 락은 여러 서비스 인스턴스 간 공유 자원 보호까지 확장한다. 이 그림은 단일 JVM 락이 분산 환경에서 무력해지는 이유와, 동시성 제어 설계가 JVM → DB → 분산 시스템으로 어떻게 계단식으로 진화하는지를 하나의 사례로 꿰어 보여 주려 한다."
+    },
+    "90e18336f26f7b721cc37892faba980412978b1c261fb78588d253c797743b9b": {
+      "language": "mermaid",
+      "description": "주문 상세 API에서 order DB 조회 뒤 user·product 서비스를 차례로 부르던 560ms짜리 순차 구조와, 두 서비스를 CompletableFuture로 병렬 실행해 allOf.join으로 합성한 뒤 응답을 조립하는 360ms짜리 병렬 구조를 같은 그림 안에서 대비한다. 여기에 2초 타임아웃과 Fallback이 추가돼야 네트워크 지연이나 서비스 장애에도 API가 안전하게 응답한다는 실전 설계 요소를 함께 강조한다. 이 사례는 앞서 학습한 CompletableFuture API가 구체적으로 어떤 수치 개선을 만드는지 체감시키는 목적의 전형적 Before/After 그림이다."
+    },
+    "a740628d4852d477ba59330c193f990c3f463f0912ba76fa08927816926fcaab": {
+      "language": "mermaid",
+      "description": "order-service가 한 주문에 대한 '생성→결제→배송' 이벤트를 Kafka에 발행했을 때 각각 다른 파티션에 쓰여져, notification-service가 결제 완료를 먼저 수신하고 주문 생성은 나중에 받아 사용자에게 잘못된 순서의 알림이 가는 실패 시나리오를 시퀀스로 제시한다. Kafka는 토픽이 아닌 파티션 단위로만 순서를 보장한다는 사실이 핵심이며, 이는 orderId를 Partition Key로 사용해 같은 주문의 이벤트를 같은 파티션에 고정시키는 설계로만 해결된다는 점을 독자에게 각인시킨다. 비동기 메시징에서 '순서는 공짜가 아니다'라는 교훈을 전하는 그림이다."
+    },
+    "2d022bb5983194eafc80be99ddc5f71411ff7737637125e513e7cc5b14110075": {
+      "language": "java",
+      "description": "연습 문제의 출발점이 되는 순차 구현 예시로, 주문 상세 조회에서 userService와 productService를 차례로 호출한 뒤 결과를 조립한다. 두 호출이 각각 300ms와 200ms를 소비하므로 전체 응답 시간이 500ms 이상으로 단순히 누적된다는 점이 이 코드의 약점이다. 이어지는 정답에서 이를 CompletableFuture의 병렬 실행과 타임아웃·Fallback으로 리팩터링해 응답 시간을 가장 느린 호출에 수렴시키는 사고 훈련을 유도한다. 학습자가 순차 블로킹 코드의 비용을 직관적으로 인식하고 비동기 전환의 필요성을 체감하도록 설계된 출발점 샘플이다."
+    },
+    "8d740d88a6431b3ff39335702d5d6ba707b32e75002864f87071a15acea15bd3": {
+      "language": "java",
+      "description": "앞선 순차 코드를 supplyAsync로 비동기 실행하고 orTimeout으로 2초 상한을 걸며 exceptionally로 Fallback 값을 반환한 뒤, allOf(...).join()으로 두 작업의 완료를 기다려 결과를 조립하는 실전 비동기 리팩터링 샘플이다. 이 구조는 응답 시간을 가장 느린 호출에 맞추고, 한 서비스가 실패해도 unknown 형태의 기본값으로 안전하게 응답을 돌려주는 탄력성을 확보한다. 학습자가 CompletableFuture의 핵심 API를 단일 유스케이스에 모두 적용해 보며 MSA의 병렬 호출 + 타임아웃 + Fallback 패턴을 체화하도록 설계된 교과서적 정답 코드다."
+    },
+    "005f684212d514959e1868077a90c968ee875b6ee343fb83ef03cf71ee1f260e": {
+      "language": "java",
+      "description": "counter++을 두 스레드가 10만 번씩 증가시키면 기대값 20만과 실제 결과가 매번 달라지는 Race Condition을 직접 체험하게 하는 데모 코드다. counter++은 read-modify-write 세 단계이며 그 사이에 다른 스레드의 개입이 일어나면 증가가 유실된다는 원리를 실행 결과로 확인시키려 한다. 뒤이어 제시될 synchronized 메서드와 AtomicInteger의 incrementAndGet이 동일한 프로그램을 안전하게 만드는 두 가지 해결 경로임을 대비해 이해시키는 출발점 샘플이며, 학습자가 이론으로만 배운 Race Condition을 눈으로 확인하게 만드는 중요한 교보재다."
+    },
+    "6f026b4204636c41db6ed322a903c6df8df4ba0e038646acfdfff595f1eda4dc": {
+      "language": "java",
+      "description": "이전 Race Condition 데모에서 비원자적 증가 연산을 synchronized 메서드로 감싸 한 번에 한 스레드만 increment를 실행하도록 직렬화하는 가장 단순한 해결 방법을 보여 준다. 모니터 락이 읽기·증가·쓰기 세 단계를 하나의 원자 연산처럼 묶어 주므로 두 스레드의 증가가 더 이상 유실되지 않는다. 다만 락 경합이 잦으면 처리량이 떨어지고 타임아웃이 불가능하다는 한계가 있어, 다음 수정안인 CAS 기반 AtomicInteger와 대비할 수 있도록 의도적으로 간결하게 제시된 비교 기준 코드다."
+    },
+    "4657d245113a0b2af9954eedf35e884d4d0f8188186593a3cbece05af9125a11": {
+      "language": "java",
+      "description": "synchronized 대신 AtomicInteger의 incrementAndGet을 사용해 동일한 카운터 증가 문제를 락 없이 해결하는 CAS 기반 구현이다. 내부적으로 CPU의 CMPXCHG 명령어가 '기대값이 현재 값과 같으면 새 값으로 교체'를 원자적으로 수행하므로, 경합이 낮을 때 락 오버헤드 없이 빠르게 값을 증가시킬 수 있다. 앞선 synchronized 해법과 비교해 데드락이 불가능하다는 장점은 명확하지만 경합이 심할 때 재시도 비용이 커진다는 트레이드오프를 학습자가 직접 감각으로 확인하도록 대비 배치된 코드 샘플이다."
+    },
+    "6ecc902679d3bda788ba3d58fe7a51611cd03d7fa399af69692e1beeecff9827": {
+      "language": "java",
+      "description": "두 개의 외부 서비스 호출을 supplyAsync로 각각 비동기 실행한 뒤 thenCombine으로 결과를 합쳐 '누가 무엇을 주문했다'는 문장으로 조립하는 CompletableFuture 기초 실습 코드다. user는 300ms, product는 200ms가 걸리도록 sleep으로 지연시켰지만 두 작업이 병렬로 흐르므로 전체 소요는 약 300ms로 수렴하며, 순차 호출이었다면 500ms가 걸렸을 작업이 단축됨을 콘솔 출력으로 직접 측정하게 한다. 이는 앞 연습 문제의 정답 코드 이면에 깔린 원리를 최소 예제로 체감시켜 MSA 병렬 호출 감각을 익히게 하는 마무리용 데모다."
+    }
+  }
 }
