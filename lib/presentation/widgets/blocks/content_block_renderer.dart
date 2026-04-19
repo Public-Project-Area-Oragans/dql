@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/content_block.dart';
+import 'ascii_grid_diagram.dart';
 import 'flowchart_widget.dart';
 import 'mindmap_widget.dart';
 import 'sequence_widget.dart';
@@ -41,7 +42,10 @@ class ContentBlockRenderer extends StatelessWidget {
         ),
       RawBlock(:final source) => _MonospaceScroll(source: source),
       final TableBlock t => TableBlockWidget(block: t),
-      AsciiDiagramBlock(:final source) => _MonospaceScroll(source: source),
+      // fix-4c/4d: CustomPaint 그리드 드로잉으로 ASCII 박스 정렬 보장.
+      // 과거 _MonospaceScroll (SelectableText) 경로는 한글+ASCII 혼재 시
+      // 글리프 metric 충돌로 `┌─┐│└┘` 테두리가 소실되는 문제가 있었다.
+      AsciiDiagramBlock(:final source) => AsciiGridDiagram(source: source),
       final FlowchartBlock f => FlowchartWidget(block: f),
       final SequenceBlock s => SequenceWidget(block: s),
       final MindmapBlock m => MindmapWidget(block: m),

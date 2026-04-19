@@ -1,4 +1,5 @@
 import 'package:dol/data/models/content_block.dart';
+import 'package:dol/presentation/widgets/blocks/ascii_grid_diagram.dart';
 import 'package:dol/presentation/widgets/blocks/content_block_renderer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,7 +25,7 @@ void main() {
     });
   });
 
-  Future<TextStyle> _styleOf(
+  Future<TextStyle> _selectableStyleOf(
     WidgetTester tester,
     ContentBlock block,
   ) async {
@@ -38,21 +39,31 @@ void main() {
     return selectable.style!;
   }
 
-  group('ContentBlockRenderer — monospace fallback 전파', () {
-    testWidgets('AsciiDiagramBlock 은 JetBrainsMono + kMonospaceFallback',
+  group('ContentBlockRenderer — 블록 타입별 렌더 디스패치', () {
+    testWidgets(
+        'AsciiDiagramBlock 은 AsciiGridDiagram(CustomPaint) 로 그려진다 (fix-4c)',
         (tester) async {
-      final style = await _styleOf(
-        tester,
-        const ContentBlock.asciiDiagram(
-          source: '┌──┐\n│ A │\n└──┘',
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: ContentBlockRenderer(
+            block: const ContentBlock.asciiDiagram(
+              source: '┌──┐\n│ A │\n└──┘',
+            ),
+          ),
         ),
-      );
-      expect(style.fontFamily, kMonospaceFamily);
-      expect(style.fontFamilyFallback, kMonospaceFallback);
+      ));
+      await tester.pumpAndSettle();
+
+      // fix-4c: SelectableText 경로는 이제 AsciiDiagramBlock 에 쓰이지 않는다.
+      expect(find.byType(SelectableText), findsNothing);
+      expect(find.byType(AsciiGridDiagram), findsOneWidget);
+      // CustomPaint 가 그리드에 ASCII 각 글리프를 찍는다.
+      expect(find.byType(CustomPaint), findsWidgets);
     });
 
-    testWidgets('RawBlock 도 동일 fallback 적용', (tester) async {
-      final style = await _styleOf(
+    testWidgets('RawBlock 은 여전히 SelectableText monospace fallback',
+        (tester) async {
+      final style = await _selectableStyleOf(
         tester,
         const ContentBlock.raw(
           language: 'gantt',
