@@ -120,14 +120,14 @@ class _DebugSettingsScreenState
               obscureText: _obscure,
               style: const TextStyle(
                 color: AppColors.parchment,
-                fontFamily: 'monospace',
+                fontFamily: 'JetBrainsMono',
                 fontSize: 13,
               ),
               decoration: InputDecoration(
                 hintText: 'sk-ant-...',
                 hintStyle: TextStyle(
                   color: AppColors.parchment.withValues(alpha: 0.4),
-                  fontFamily: 'monospace',
+                  fontFamily: 'JetBrainsMono',
                 ),
                 filled: true,
                 fillColor: AppColors.deepPurple,

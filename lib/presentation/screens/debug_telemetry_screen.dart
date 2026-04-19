@@ -71,7 +71,7 @@ class DebugTelemetryScreen extends ConsumerWidget {
             '${e.type}  ·  ${e.chapterId}',
             style: const TextStyle(
               color: AppColors.parchment,
-              fontFamily: 'monospace',
+              fontFamily: 'JetBrainsMono',
               fontSize: 13,
             ),
           ),
@@ -79,7 +79,7 @@ class DebugTelemetryScreen extends ConsumerWidget {
             e.at.toIso8601String(),
             style: const TextStyle(
               color: AppColors.gold,
-              fontFamily: 'monospace',
+              fontFamily: 'JetBrainsMono',
               fontSize: 11,
             ),
           ),

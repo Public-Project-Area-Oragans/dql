@@ -67,3 +67,10 @@ flutter:
     - content/books/flutter/book.json
     - content/books/mysql/book.json
     - content/books/msa/book.json
+  fonts:
+    # fix-4a: ASCII 박스 드로잉·코드 블록 열 정렬을 브라우저·OS 독립적으로
+    # 보장하기 위해 JetBrains Mono 를 번들링. SIL Open Font License 1.1.
+    # https://github.com/JetBrains/JetBrainsMono
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/JetBrainsMono-Regular.ttf
