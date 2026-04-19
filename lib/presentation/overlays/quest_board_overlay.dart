@@ -103,43 +103,38 @@ class QuestBoardOverlay extends ConsumerWidget {
                         )
                       else
                         for (final book in books)
-                          ExpansionTile(
-                            title: Text(
-                              book.title,
-                              style:
-                                  const TextStyle(color: AppColors.parchment),
-                            ),
-                            subtitle: Text(
-                              '${(book.totalProgress * 100).toInt()}% 완료',
-                              style: TextStyle(
-                                color: AppColors.gold.withValues(alpha: 0.7),
-                                fontSize: 12,
+                          // 분관 책장에서 열렸으면(filterCategory != null) 책
+                          // 목록을 펼친 상태로 평탄하게 노출한다. 중앙 홀에서
+                          // 연 경우만 ExpansionTile 로 접어 둔다(5 카테고리
+                          // 동시 노출 시 길이 제어용).
+                          if (filterCategory != null)
+                            _FlatBookSection(
+                              book: book,
+                              onChapterSelected: onChapterSelected,
+                            )
+                          else
+                            ExpansionTile(
+                              title: Text(
+                                book.title,
+                                style: const TextStyle(
+                                    color: AppColors.parchment),
                               ),
+                              subtitle: Text(
+                                '${(book.totalProgress * 100).toInt()}% 완료',
+                                style: TextStyle(
+                                  color:
+                                      AppColors.gold.withValues(alpha: 0.7),
+                                  fontSize: 12,
+                                ),
+                              ),
+                              children: book.chapters
+                                  .map((ch) => _ChapterRow(
+                                        book: book,
+                                        chapter: ch,
+                                        onChapterSelected: onChapterSelected,
+                                      ))
+                                  .toList(),
                             ),
-                            children: book.chapters.map((ch) {
-                              return ListTile(
-                                title: Text(
-                                  ch.title,
-                                  style: TextStyle(
-                                    color: ch.isCompleted
-                                        ? AppColors.steamGreen
-                                        : AppColors.parchment,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                leading: Icon(
-                                  ch.isCompleted
-                                      ? Icons.check_circle
-                                      : Icons.circle_outlined,
-                                  color: ch.isCompleted
-                                      ? AppColors.steamGreen
-                                      : AppColors.gold,
-                                  size: 18,
-                                ),
-                                onTap: () => onChapterSelected(book.id, ch.id),
-                              );
-                            }).toList(),
-                          ),
                     ],
                   );
                 },
@@ -233,6 +228,96 @@ class _QuestTile extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// 분관 책장에서 열린 QuestBoard 용. 책 타이틀은 작은 섹션 헤더로만 두고
+/// 챕터를 펼친 상태로 평탄하게 노출한다 (ExpansionTile 클릭 불필요).
+class _FlatBookSection extends StatelessWidget {
+  final Book book;
+  final void Function(String bookId, String chapterId) onChapterSelected;
+
+  const _FlatBookSection({
+    required this.book,
+    required this.onChapterSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 4, 12, 6),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '📖 ${book.title}',
+                    style: const TextStyle(
+                      color: AppColors.parchment,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  '${(book.totalProgress * 100).toInt()}% 완료',
+                  style: TextStyle(
+                    color: AppColors.gold.withValues(alpha: 0.7),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          for (final ch in book.chapters)
+            _ChapterRow(
+              book: book,
+              chapter: ch,
+              onChapterSelected: onChapterSelected,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ChapterRow extends StatelessWidget {
+  final Book book;
+  final Chapter chapter;
+  final void Function(String bookId, String chapterId) onChapterSelected;
+
+  const _ChapterRow({
+    required this.book,
+    required this.chapter,
+    required this.onChapterSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      dense: true,
+      visualDensity: VisualDensity.compact,
+      title: Text(
+        chapter.title,
+        style: TextStyle(
+          color: chapter.isCompleted
+              ? AppColors.steamGreen
+              : AppColors.parchment,
+          fontSize: 13,
+        ),
+      ),
+      leading: Icon(
+        chapter.isCompleted ? Icons.check_circle : Icons.circle_outlined,
+        color:
+            chapter.isCompleted ? AppColors.steamGreen : AppColors.gold,
+        size: 18,
+      ),
+      onTap: () => onChapterSelected(book.id, chapter.id),
     );
   }
 }
