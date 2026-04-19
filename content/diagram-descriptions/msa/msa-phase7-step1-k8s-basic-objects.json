@@ -1,4 +1,141 @@
 {
   "chapterId": "msa-phase7-step1-k8s-basic-objects",
-  "entries": {}
+  "entries": {
+    "d12a1dfe0f9f7eae67b96b229c7f637dd4906ae71385e5f9098dc5f0753fd587": {
+      "language": "mermaid",
+      "description": "Phase 2의 Docker 원시 요소(컨테이너·볼륨·네트워크)와 Phase 4의 MSA 인프라 조각(Gateway·Discovery·Config·Resilience)이 어떻게 Kubernetes라는 단일 플랫폼으로 수렴하는지를 보여준다. 학습자에게 '왜 K8s가 MSA의 사실상 표준인가'라는 문서 도입부의 질문에 답하기 위해, 이전에 따로 구축했던 인프라들이 K8s에서는 Pod·Service·ConfigMap·Probe 같은 기본 오브젝트로 이미 통합되어 있다는 관점 전환을 제공한다. 개별 도구의 연결 관계가 아니라, Phase가 진행될수록 인프라 책임이 애플리케이션에서 플랫폼으로 이동한다는 학습 로드맵의 흐름을 전달하려는 의도다."
+    },
+    "8a568ebb038c48e837b5b3623280eb63ee4632d6c302c0b12fee70ef25d6da5f": {
+      "language": "mermaid",
+      "description": "이 Step에서 다룰 K8s 기초 오브젝트를 워크로드·네트워킹·설정·스토리지 네 개의 관심사 축으로 묶어 개념 지도를 제시한다. 학습자가 개별 용어를 외우기 전에 '어떤 문제 영역이 어떤 오브젝트 군으로 해결되는가'라는 분류 프레임을 먼저 손에 쥐도록 돕는다. 워크로드 하위의 Pod→ReplicaSet→Deployment 계층이나, 네트워킹의 Service 세부 타입처럼 포함 관계 자체가 이후 본문의 학습 순서를 암시하는 목차 역할을 겸한다."
+    },
+    "7243bc99c8cd16c9a610737f2365845d79fe734c0f58e7597e12a5daf5f95b45": {
+      "language": "mermaid",
+      "description": "여러 Pod가 ReplicaSet 하나에 묶이고 그 ReplicaSet이 다시 Deployment 아래에 종속된다는 상향식 계층 구조를 시각화한다. '왜 실무에서 Pod나 ReplicaSet을 직접 만들지 않고 Deployment만 작성하면 되는가'를 설명하기 위한 그림이며, 각 계층이 떠맡는 책임(최소 실행 단위, 복제본 수 유지, Rolling Update와 Rollback)이 위로 갈수록 누적된다는 점을 전달하려 한다. 개발자가 한 단계만 선언해도 하위 모든 관리가 자동화된다는 K8s 선언적 모델의 핵심을 이 그림이 요약한다."
+    },
+    "830bbb1440ab4143029a130eed3612f832015291f9b79d11b759fb0f43308fef": {
+      "language": "mermaid",
+      "description": "외부 클라이언트 → Ingress → Service → Pod의 요청 경로와, CoreDNS가 Service 이름을 ClusterIP로 해석해 주는 보조 경로를 한 화면에 배치해 K8s 네트워킹의 전형을 보여준다. L7 경로 기반 라우팅은 Ingress가, L4 로드밸런싱은 Service가, 이름 해석은 CoreDNS가 각자 맡는다는 역할 분담을 시각적으로 학습시키는 것이 목적이다. Spring Cloud Gateway/Eureka를 K8s가 플랫폼 수준에서 대체하는 구조라는 맥락과 연결해 읽도록 구성되어 있다."
+    },
+    "bdbc3550af3142dc61c54bf301ddabb3f5f954cd94d0d8b6965882a8d7242488": {
+      "language": "mermaid",
+      "description": "ConfigMap(비민감 설정)과 Secret(민감 데이터)가 동일한 두 가지 경로—환경변수 주입(envFrom)과 볼륨 마운트(volumeMount)—로 Pod 컨테이너에 도달한다는 구조를 보여준다. 값의 종류에 따라 리소스 타입만 바꾸면 되고, 주입 방식은 공통이라는 대칭성을 강조함으로써, '설정을 어떻게 외부화할 것인가'라는 추상적 질문을 두 축의 결정(민감성×주입 방식)으로 단순화해 준다. 볼륨 마운트가 런타임 파일 갱신을 허용한다는 후속 설명으로 자연스럽게 연결되는 서사적 디딤돌이다."
+    },
+    "0f13625b8ff23baea1cad48cd3b76654f270a5e91f8d9940b71adb19d6c11d25": {
+      "language": "mermaid",
+      "description": "개발자는 PVC로 '용량과 접근 모드'만 선언하고, 클러스터 관리자는 StorageClass로 프로비저닝 규칙을 정의하며, 그 사이에서 K8s가 실제 PV를 동적으로 만들어 PVC에 바인딩한다는 역할 분리를 그려 낸다. 이 분리 설계의 교육적 핵심은 스토리지 인프라의 세부(AWS EBS·NFS 등)를 개발자가 몰라도 되도록 하여, 같은 매니페스트가 클라우드·온프레미스를 오갈 수 있게 만든다는 점이다. 이후 리소스 한계나 동적 프로비저닝 설명을 읽기 위한 토대 개념으로 작동한다."
+    },
+    "3355f18531f0105770a16494bf6b08f5a5ca8d288f166f0bd864f58762f82082": {
+      "language": "mermaid",
+      "description": "Control Plane(API Server·etcd·Scheduler·Controller Manager)과 Worker Node(kubelet·kube-proxy·Pod) 그리고 CoreDNS/Metrics Server 같은 애드온이 어떻게 맞물려 클러스터를 구성하는지를 보여준다. 모든 조작이 API Server를 경유하고, etcd가 단일 상태 저장소이며, kubelet이 각 노드에서 실제 Pod 수명을 관리한다는 원리를 직관적으로 전달하려는 의도다. 이후 Step에서 HPA·Probe·Rolling Update 등이 왜 '선언 → 컨트롤러 감시 → 노드 반영' 흐름을 따르는지를 이해하기 위한 아키텍처 기반 지식을 제공한다."
+    },
+    "d7263821a33413ed7768d22974d00d32ab83eb13f0775b69be81d72eee39bb25": {
+      "language": "mermaid",
+      "description": "Pod 하나가 애플리케이션 컨테이너와 로그 수집 사이드카 컨테이너를 공유 네트워크·공유 볼륨 위에서 함께 실행한다는 구조를 해부도 형식으로 보여준다. 여러 컨테이너가 왜 같은 Pod에 들어갈 수 있는지—즉 localhost 통신과 파일 공유가 필요할 때 의미가 있다—를 구체적 예시로 학습자에게 전달한다. Pod IP가 일시적이라는 점도 함께 강조해, 다음 절의 Service 개념이 왜 필요한지를 자연스럽게 동기화한다."
+    },
+    "021907b999e44d3a133eaba9d399420da8fd2c836202cceb18a83dcf03701f7a": {
+      "language": "yaml",
+      "description": "Pod 매니페스트의 최소 구성 요소—컨테이너 이미지와 포트, 환경변수, requests/limits로 표현되는 리소스 경계, 그리고 liveness/readiness Probe—를 한눈에 훑도록 배치된 예시다. 이 코드의 학습 의도는 YAML 필드를 외우는 것이 아니라, '운영에 필요한 모든 관점(배포 이미지·설정·리소스 경계·헬스체크)이 선언에 포함되어 있어야 K8s가 Self-healing을 수행할 수 있다'는 선언적 배포의 원칙을 체험하게 하는 데 있다. 단, 실제로는 Pod를 직접 만들지 말고 Deployment로 감싸라는 경고가 바로 뒤에 이어진다."
+    },
+    "d40504e21ff708152601bf87ec12055069a0d3a4382ca1ff6f7b251b37b09557": {
+      "language": "mermaid",
+      "description": "Deployment 하나가 ReplicaSet을 만들고, 그 ReplicaSet이 랜덤 해시 이름의 Pod 셋을 서로 다른 Node에 분산 배치한다는 실제 이름 구조를 보여준다. 하나의 Pod가 죽으면 ReplicaSet이 즉시 새 Pod를 만들어 '항상 3개'라는 선언을 유지한다는 Self-healing 동작을 동반 설명으로 강조한다. 학습자가 YAML 한 줄의 replicas 값이 운영 중 어떤 컨트롤 루프로 변환되는지를 구체적으로 상상할 수 있게 돕는 것이 목적이다."
+    },
+    "72ac9fbce7274994135b0e253bb54ab0dc234e942ec38d721c19eb962e2e8694": {
+      "language": "yaml",
+      "description": "실무에서 가장 자주 작성하는 Deployment 매니페스트의 완성형을 제시하는 예제다. Rolling Update 전략 파라미터(maxSurge/maxUnavailable), ConfigMap·Secret 일괄 주입(envFrom), 리소스 경계, 그리고 startup/liveness/readiness 세 종류 Probe의 역할 분담을 한 파일 안에서 통합적으로 보여 준다. 각 블록이 독립 개념이 아니라 무중단 배포와 Self-healing을 동시에 달성하기 위한 필수 구성 요소로 함께 묶여 있다는 점을 학습자에게 각인시키는 것이 의도다."
+    },
+    "0e5525265c919243aa8a51e9759625d55e277e03b13f7a12f946baf38bc8b223": {
+      "language": "mermaid",
+      "description": "`kubectl set image` 한 줄이 내부적으로 새 ReplicaSet 생성 → 새 Pod 하나 기동 → readinessProbe 통과 → 구 Pod 하나 종료를 N회 반복하는 Rolling Update의 실제 타임라인을 시퀀스로 풀어낸다. readinessProbe가 통과하기 전에는 구 Pod를 절대 내리지 않기 때문에 무중단이 보장된다는 인과를 강조하며, SIGTERM과 Graceful Shutdown이 결합되어 진행 중 요청이 손실되지 않는 조건을 학습자가 체감하도록 돕는다."
+    },
+    "3e7be1b476c9d00a3a046dac005caf4290ea31f1ccd57f2422ac8216bba21b4b": {
+      "language": "bash",
+      "description": "Deployment의 배포 이력을 조회하고 이전 리비전으로 되돌리는 일상 운영 명령을 모아 둔 실습 스니펫이다. `kubectl rollout history`로 과거 배포를 점검하고, `undo`에 `--to-revision`을 붙이면 특정 버전으로 되감기가 가능하다는 점을 통해, K8s의 선언적 상태는 단순 최신값이 아니라 시간축을 가진 리비전 스택으로 관리된다는 개념을 전달한다. 문제가 발생했을 때 코드 수정·재빌드 없이 플랫폼 명령만으로 안전장치를 발동할 수 있음을 체험시키는 장면이다."
+    },
+    "d4033512827c960bd1e23a64509093089d9ddb7916edabce09051bf63acec62c": {
+      "language": "mermaid",
+      "description": "'Pod IP를 직접 호출했을 때'의 실패 시나리오와 'Service DNS를 썼을 때'의 성공 시나리오를 나란히 배치해, Service 존재의 필요성을 반증적으로 증명한다. Pod는 재생성될 때마다 IP가 바뀌어 고정 참조가 불가능하므로, 변하지 않는 ClusterIP와 DNS 이름을 제공하는 Service가 서비스 간 통신의 안정적 접점이 된다는 점을 학습자가 장면 비교로 각인하도록 설계된 그림이다."
+    },
+    "8ec6a982858032129309e1ec8a5838dc7183c04b1497a680beb880931de753c0": {
+      "language": "mermaid",
+      "description": "Service의 세 타입 ClusterIP·NodePort·LoadBalancer가 접근 범위(내부 전용/노드 포트 개방/클라우드 LB 자동 생성)와 적합 시점(기본 내부 통신/개발 테스트/프로덕션 외부 노출) 면에서 어떻게 달라지는지를 세 상자로 나란히 대비한다. 학습자가 '어떤 Service 타입을 선택할 것인가'라는 결정에서 의미 있는 축을 두 가지로 추릴 수 있도록 돕는다."
+    },
+    "85e1c2108bc0b8062f9a48edbc0a802ee8cc32d126098d8524bce226072a56ab": {
+      "language": "mermaid",
+      "description": "브라우저가 클라우드 LoadBalancer를 거쳐 API Gateway Pod에 도달한 뒤, 내부에서는 ClusterIP Service를 통해 order/user service로 트래픽이 흘러가는 계층적 접근 패턴을 보여준다. '경계에서만 LoadBalancer를 쓰고 내부 서비스 간 통신은 ClusterIP'라는 관용적 MSA 네트워크 설계 원칙을, 하나의 요청 흐름이라는 서사로 학습시키는 의도다."
+    },
+    "67e610a9fcd6b6cfcfe972748bc286a3496cc542f43b0ee29f5f1557e33ddc68": {
+      "language": "yaml",
+      "description": "ClusterIP Service의 최소 매니페스트를 통해, Service가 Label Selector로 Pod 그룹을 묶고 port와 targetPort로 트래픽 경로를 매핑하는 구조를 체득시키는 예제다. metadata.name이 DNS 이름 자체가 된다는 규칙, 기본 타입이 ClusterIP라는 관례를 자연스럽게 학습자가 흡수하도록 구성되었다. 이후 Deployment의 Label과 Service의 Selector가 어떻게 짝을 이루는지를 읽기 위한 기준점이 된다."
+    },
+    "11267acf118913a80349697034175d77fa2efd9c873f55aa3818d42a63332c68": {
+      "language": "",
+      "description": "CoreDNS가 Service 이름을 어떻게 해석해 주는지를 세 가지 표기 수준—같은 Namespace 내 단축명, 타 Namespace 접근 시 `.shop` 접미, 완전 정규화된 `svc.cluster.local` 형태—로 정리한다. 이 요약표의 교육적 목적은 학습자가 `order-service`라는 간결한 이름이 실은 계층적 DNS 공간의 축약 표기임을 인지하게 하고, 타 Namespace 리소스 호출 시 표기를 어떻게 확장해야 하는지를 몸에 익히도록 만드는 데 있다."
+    },
+    "a8b050722a2e62190d208a70407833a0226ed63c14197837f54f900642ad44f0": {
+      "language": "mermaid",
+      "description": "비민감 설정은 ConfigMap, 민감 데이터는 Secret이라는 분류 원칙과, 둘 모두 envFrom 또는 volumeMount의 두 가지 방식으로 Pod 컨테이너에 주입된다는 공통 경로를 한 그림에 담는다. 설정 외부화의 기본 패턴이 '값의 종류'와 '주입 방식'이라는 두 축의 교차로 정리된다는 점을 강조하여, 이후 환경별 설정 관리와 Secret 로테이션 같은 고급 주제로 확장할 때의 뼈대를 제공한다."
+    },
+    "a146a66735569552b757a3a069bea534ff0d8916cee7bf698b313c21b52802ee": {
+      "language": "yaml",
+      "description": "ConfigMap이 단순 키-값 쌍뿐 아니라 `application.yml` 같은 파일 블록 전체를 담을 수 있다는 두 가지 사용법을 대조적으로 보여 준다. 실무에서 환경변수로 간편히 넘기는 값과 Spring Boot 설정 파일처럼 구조화된 문서 전체를 함께 관리할 수 있게 설계되었다는 점을 학습자에게 각인시키는 것이 목적이며, 설정 외부화의 유연성을 YAML 한 파일로 압축해 보여 준다."
+    },
+    "1b33aeb2971aa77f74c0a61802b14b46e0010262aa40bcea90f4396831d1cd3f": {
+      "language": "yaml",
+      "description": "Opaque 타입 Secret에 Base64 인코딩된 민감값을 저장하는 최소 예시를 통해, Secret이 '암호화 저장소'가 아니라 '평문의 가벼운 감춤 장치'에 가깝다는 오해 소지를 짚어 준다. 주석의 `echo -n ... | base64` 변환 안내는 값이 어떻게 들어가는지를 학습자가 스스로 재현해 볼 수 있도록 유도하며, 저장 시 암호화가 필요하면 etcd 암호화를 별도로 켜야 한다는 선행 본문 설명과 결합되어 읽힌다."
+    },
+    "e2e59309e6fb895ed6d0551b8a81a50916c0694f7e5e9a73159cfcca035411a3": {
+      "language": "yaml",
+      "description": "ConfigMap과 Secret을 컨테이너에 주입하는 두 가지 방법—envFrom으로 모든 키를 환경변수로 받는 방식, volumeMount로 특정 파일만 디스크에 내리는 방식—을 동일 매니페스트 안에서 병치한다. 값의 성격과 사용 시점에 따라 주입 방식을 선택하는 실무적 판단을 직접 보여 주기 위한 예제이며, 파일 마운트 시 하위 `items.path`로 내부 경로를 자유롭게 재구성할 수 있다는 점도 함께 전달한다."
+    },
+    "61bdc5e9ebed82ef138797bd0a20b9a7e12f9f49613a67ece948e1ddb0e6ce04": {
+      "language": "mermaid",
+      "description": "관리자 영역(StorageClass)과 개발자 영역(PVC)이 분리된 상태에서 PVC 생성이 트리거가 되어 PV가 동적으로 만들어지고 Pod에 마운트되기까지의 네 단계 흐름을 순번 화살표로 설명한다. 이 그림의 핵심은 '누가 무엇을 선언하는가'의 책임 분할이며, 개발자가 용량과 접근 모드만 지정해도 클라우드 스토리지가 자동으로 프로비저닝되는 선언적 스토리지 관리 경험을 설명하려는 의도다."
+    },
+    "1185ca73805a2473af2854a0327574e77d1bad27af1d9f6e91b7943ade1b39b2": {
+      "language": "yaml",
+      "description": "PVC 매니페스트의 최소 형태로, accessModes·storageClassName·resources.requests.storage 세 가지 필드만으로 어떤 스토리지를 원하는지를 선언한다는 단순함을 보여 준다. 실제 백엔드가 EBS인지 NFS인지를 명시하지 않고도 작동한다는 점을 통해, PVC가 스토리지 요청서이고 구현은 StorageClass와 PV가 책임진다는 역할 분리를 다시 한 번 확인시켜 주는 예제다."
+    },
+    "cc742e568832f2aa1335826ec980a47b611aded59a2cb9936b527c1b8e9b3876": {
+      "language": "yaml",
+      "description": "Pod의 volumes에 `persistentVolumeClaim.claimName`으로 PVC를 참조하고, 같은 이름의 볼륨을 컨테이너의 volumeMounts로 연결해 실제 디렉터리에 마운트하는 최소 사용례다. Pod 입장에서는 클라우드 디스크든 NFS든 동일한 `/var/lib/mysql` 경로로 보인다는 추상화의 일관성을 체험시키는 것이 목적이며, PVC라는 요청서와 Pod라는 소비자의 결합 지점을 코드 수준에서 확인하게 한다."
+    },
+    "3b4bee142694dfccaf434abfb8bb27fd23ae9bdb245fcdf9a849572249cec563": {
+      "language": "mermaid",
+      "description": "shop·infra·kube-system이라는 세 Namespace가 서로 다른 목적(비즈니스 서비스/공유 인프라/플랫폼 애드온)의 리소스를 격리해 담는 예시를 통해, Namespace가 단순 이름 공간을 넘어 RBAC·NetworkPolicy·ResourceQuota의 적용 경계가 된다는 점을 전달한다. 기능별 분리가 환경별/팀별 전략과 비교해 가장 일반적이라는 실무 관례를 그림으로 요약하는 역할을 한다."
+    },
+    "48d8bb9b03dbe8f646a3456d1b3921a0289a5e1b9ea09645e93ca7b978cdab91": {
+      "language": "mermaid",
+      "description": "Ingress → API Gateway → 도메인 서비스(order/user/payment) → 공유 인프라(MySQL·Redis·Kafka)로 이어지는 전형적인 쇼핑몰 MSA의 K8s 배치도를 제시한다. 비즈니스 서비스는 shop Namespace의 Deployment로, 상태가 있는 미들웨어는 infra Namespace의 StatefulSet으로 나누는 분리 전략과, 외부 트래픽이 어떤 경로로 내부에 도달하는지를 학습자가 통째로 조감하도록 설계된 대표 아키텍처 그림이다."
+    },
+    "a4dd351646554088e6a70326b7c76354e07a5b04c472f243f268654d5b9761d2": {
+      "language": "mermaid",
+      "description": "`kubectl run`으로 직접 띄운 Pod는 Node 장애 시 사라진 채로 끝나지만, 같은 이미지를 Deployment로 감싸 두었으면 ReplicaSet이 다른 Node에 새 Pod를 만들어 복구한다는 두 경로의 결말 차이를 대비시킨다. Self-healing이 Pod 자체의 속성이 아니라 상위 Controller의 책임임을 사례로 각인시키기 위한 그림이며, 테스트를 제외하고 Pod를 직접 만들지 말라는 실무 원칙의 근거를 제공한다."
+    },
+    "b589f3db7665382e6c5f2f64567e8a632404c96a771a2db4542e0c302f58a2bc": {
+      "language": "yaml",
+      "description": "MySQL Pod 앞에 `mysql`이라는 이름의 ClusterIP Service를 세워, 애플리케이션이 Pod IP 대신 DNS 이름으로 DB에 접근하게 만드는 해결책을 보여 주는 매니페스트다. metadata.name이 곧 클러스터 내부 DNS가 된다는 규칙을 DB 접근이라는 구체적 상황에 적용해, Pod 재생성으로 인한 연결 끊김 문제를 플랫폼 수준에서 해소하는 설계를 학습시킨다."
+    },
+    "48a0feb94699f125d0531d8deaef9d58dc2673ac8d2ec8b0e847e8bebb7e99b9": {
+      "language": "yaml",
+      "description": "Spring Boot `application.yml`의 JDBC URL에 호스트명을 `mysql`이라는 Service 이름으로 적어 두면, Pod IP가 어떻게 바뀌어도 접속이 끊기지 않는다는 실제 작성 예를 보여 준다. 설정 외부화와 서비스 디스커버리 두 개념이 단 한 줄의 URL에서 만나는 지점을 명확히 드러내며, '하드코딩된 IP를 DNS 이름으로 바꾸는 것' 자체가 문서의 Case 3 해법의 핵심임을 강조한다."
+    },
+    "ad827c6fb9e3660deb0042faf5b4d2beea447cccb0f623a05ec5df95654a85f1": {
+      "language": "mermaid",
+      "description": "실무 사례 '쇼핑몰 ShopFast'가 12개 마이크로서비스와 공유 인프라, 관측 도구를 각각 shop-app·shop-infra·monitoring Namespace로 분리한 아키텍처를 그림으로 제시한다. Stateless 비즈니스 서비스는 Deployment로, 상태가 있는 DB·Kafka는 StatefulSet으로 구분하는 워크로드 유형 선택 근거와, 관측 스택을 별도 Namespace로 분리해 RBAC·리소스 경계를 깔끔히 유지하는 실제 조직 배치 패턴을 읽어 내도록 돕는 것이 목적이다."
+    },
+    "6c08eba81909b0ce42f014962408574fef072848278ce4d8561210e520ce2f59": {
+      "language": "yaml",
+      "description": "Q3 실습 정답으로 제시된 ConfigMap + Deployment + Service의 통합 매니페스트로, 단일 YAML 문서 구분자(`---`)로 세 리소스를 한 번에 선언하는 실무 패턴을 학습자에게 체득시키는 예제다. replicas·resources·세 종류 Probe·envFrom이 모두 모여 '운영 가능한 최소 서비스 한 벌'을 이루며, K8s에서 새 서비스를 온보딩할 때 반복적으로 재현하게 될 표준 형태를 암묵적 템플릿으로 전달한다."
+    },
+    "f3bc4ab2ecb5cfdb82741df6f16d6dc06646281e0934faaa213d3298a2a65097": {
+      "language": "bash",
+      "description": "Minikube 같은 로컬 K8s 환경에서 Deployment 생성 → 복제본 확장 → ClusterIP Service 노출 → DNS로 접근 → Pod 강제 삭제 후 Self-healing 확인 → 정리에 이르는 전 과정을 8단계 커맨드로 연결한다. 학습자가 K8s의 선언적 모델과 컨트롤 루프의 결과(스케일·DNS 해석·자동 복구)를 자신의 터미널에서 직접 체험하도록 설계된 실습으로, 이론으로 다룬 개념들을 관찰 가능한 사건으로 바꿔 준다."
+    },
+    "b77562d14e6d2a7dbc5c61be56793591b162c29e58764cddef2c85c19012d8af": {
+      "language": "bash",
+      "description": "`kubectl create configmap --from-literal`로 ConfigMap을 즉석에서 만들고, envFrom으로 주입한 뒤 `kubectl logs`로 환경변수가 실제 주입되었는지 확인하는 간단한 실습이다. 설정 외부화의 전체 사이클—선언·주입·검증·정리—을 60초 안에 체험시켜, ConfigMap이 특별한 인프라가 아니라 일상 명령으로 즉시 다룰 수 있는 평범한 리소스라는 감각을 심어 주는 것이 목표다."
+    }
+  }
 }
