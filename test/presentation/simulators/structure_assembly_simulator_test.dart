@@ -1,5 +1,6 @@
 import 'package:dol/data/models/book_model.dart';
 import 'package:dol/presentation/simulators/structure_assembly_simulator.dart';
+import 'package:dol/presentation/widgets/steampunk_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -70,11 +71,13 @@ void main() {
 
     testWidgets('배치 전에는 판정 버튼이 disabled (onPressed null)', (tester) async {
       await tester.pumpWidget(_harness(_sampleConfig()));
-      final button = tester.widget<ElevatedButton>(
+      // art-2: SteampunkButton 이 ElevatedButton 랩퍼에서 StatefulWidget
+      // 스프라이트 버튼으로 이주 — 타입 매칭도 업데이트.
+      final button = tester.widget<SteampunkButton>(
         find
             .ancestor(
               of: find.text('⚖ 판정'),
-              matching: find.byType(ElevatedButton),
+              matching: find.byType(SteampunkButton),
             )
             .first,
       );
@@ -94,11 +97,11 @@ void main() {
 
     testWidgets('리셋 버튼은 항상 활성', (tester) async {
       await tester.pumpWidget(_harness(_sampleConfig()));
-      final button = tester.widget<ElevatedButton>(
+      final button = tester.widget<SteampunkButton>(
         find
             .ancestor(
               of: find.text('🔄 리셋'),
-              matching: find.byType(ElevatedButton),
+              matching: find.byType(SteampunkButton),
             )
             .first,
       );

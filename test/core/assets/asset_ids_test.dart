@@ -21,11 +21,31 @@ void main() {
   });
 
   group('UiAssets', () {
-    test('UI 프레임 경로는 sprites/ui/frames/ 하위', () {
-      expect(UiAssets.frameDialog, startsWith('sprites/ui/frames/'));
-      expect(UiAssets.frameQuest, startsWith('sprites/ui/frames/'));
-      expect(UiAssets.frameBook, startsWith('sprites/ui/frames/'));
-      expect(UiAssets.framePanel, startsWith('sprites/ui/frames/'));
+    // art-2: pubspec assets 와 rootBundle.load 호환 위해 'assets/' prefix 필수.
+    test('UI 프레임 경로는 assets/sprites/ui/frames/ 하위', () {
+      expect(UiAssets.frameDialog, startsWith('assets/sprites/ui/frames/'));
+      expect(UiAssets.frameQuest, startsWith('assets/sprites/ui/frames/'));
+      expect(UiAssets.frameBook, startsWith('assets/sprites/ui/frames/'));
+      expect(UiAssets.framePanel, startsWith('assets/sprites/ui/frames/'));
+      expect(
+        UiAssets.frameCodeTerminal,
+        startsWith('assets/sprites/ui/frames/'),
+      );
+    });
+
+    test('UI 버튼 경로는 assets/sprites/ui/buttons/ 하위', () {
+      expect(
+        UiAssets.buttonPrimaryIdle,
+        startsWith('assets/sprites/ui/buttons/'),
+      );
+      expect(
+        UiAssets.buttonPrimaryHover,
+        startsWith('assets/sprites/ui/buttons/'),
+      );
+      expect(
+        UiAssets.buttonPrimaryPressed,
+        startsWith('assets/sprites/ui/buttons/'),
+      );
     });
 
     test('버튼 3 상태 네이밍', () {

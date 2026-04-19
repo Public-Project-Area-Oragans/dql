@@ -29,19 +29,22 @@ class AnchorAssets {
 class UiAssets {
   const UiAssets._();
 
-  static const frameDialog = 'sprites/ui/frames/ui_frame_dialog_v1.png';
-  static const frameQuest = 'sprites/ui/frames/ui_frame_quest_v1.png';
-  static const frameBook = 'sprites/ui/frames/ui_frame_book_v1.png';
-  static const framePanel = 'sprites/ui/frames/ui_frame_panel_v1.png';
+  static const frameDialog =
+      'assets/sprites/ui/frames/ui_frame_dialog_v1.png';
+  static const frameQuest =
+      'assets/sprites/ui/frames/ui_frame_quest_v1.png';
+  static const frameBook = 'assets/sprites/ui/frames/ui_frame_book_v1.png';
+  static const framePanel =
+      'assets/sprites/ui/frames/ui_frame_panel_v1.png';
   static const frameCodeTerminal =
-      'sprites/ui/frames/ui_frame_code_terminal_v1.png';
+      'assets/sprites/ui/frames/ui_frame_code_terminal_v1.png';
 
   static const buttonPrimaryIdle =
-      'sprites/ui/buttons/ui_button_primary_v1.png';
+      'assets/sprites/ui/buttons/ui_button_primary_v1.png';
   static const buttonPrimaryHover =
-      'sprites/ui/buttons/ui_button_primary_hover_v1.png';
+      'assets/sprites/ui/buttons/ui_button_primary_hover_v1.png';
   static const buttonPrimaryPressed =
-      'sprites/ui/buttons/ui_button_primary_pressed_v1.png';
+      'assets/sprites/ui/buttons/ui_button_primary_pressed_v1.png';
 }
 
 // ── NPC Portraits (art-2) ─────────────────────────────────────────────
