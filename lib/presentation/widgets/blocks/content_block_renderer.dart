@@ -45,7 +45,38 @@ class ContentBlockRenderer extends StatelessWidget {
       final FlowchartBlock f => FlowchartWidget(block: f),
       final SequenceBlock s => SequenceWidget(block: s),
       final MindmapBlock m => MindmapWidget(block: m),
+      final BoxDiagramBlock b => _BoxDiagramPlaceholder(block: b),
     };
+  }
+}
+
+/// fix-4b 스켈레톤: 파서(fix-4c)가 `BoxDiagramBlock` 을 emit 할 때까지 사용되는
+/// 임시 플레이스홀더. fix-4d 에서 실 `BoxDiagramWidget` (Container+CustomPaint)
+/// 로 교체된다. 현재는 노드 수·엣지 수만 텍스트로 노출해 라우팅이 작동하는지
+/// 확인.
+class _BoxDiagramPlaceholder extends StatelessWidget {
+  final BoxDiagramBlock block;
+  const _BoxDiagramPlaceholder({required this.block});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.darkWalnut,
+        border: Border.all(color: AppColors.magicPurple),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        '[BoxDiagram placeholder] ${block.nodes.length}개 노드, '
+        '${block.edges.length}개 연결, ${block.cols}x${block.rows} 그리드',
+        style: const TextStyle(
+          color: AppColors.parchment,
+          fontSize: 12,
+        ),
+      ),
+    );
   }
 }
 

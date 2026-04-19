@@ -154,5 +154,62 @@ void main() {
         ),
       ));
     });
+
+    test('BoxDiagramBlock 라운드트립 (fix-4b 신규)', () {
+      checkRoundTrip(const BoxDiagramBlock(
+        cols: 20,
+        rows: 5,
+        nodes: [
+          BoxNode(
+            id: 'n1',
+            label: 'API Gateway',
+            col: 0,
+            row: 0,
+            widthCells: 10,
+            heightCells: 3,
+          ),
+          BoxNode(
+            id: 'n2',
+            label: 'Service A',
+            col: 12,
+            row: 0,
+            widthCells: 8,
+            heightCells: 3,
+          ),
+        ],
+        edges: [
+          BoxEdge(from: 'n1', to: 'n2', arrow: '→', label: 'request'),
+        ],
+      ));
+    });
+  });
+
+  group('ContentBlock.fromJson → BoxDiagramBlock 디스크리미네이터', () {
+    test('type:boxDiagram → BoxDiagramBlock', () {
+      final b = ContentBlock.fromJson({
+        'type': 'boxDiagram',
+        'cols': 15,
+        'rows': 4,
+        'nodes': [
+          {
+            'id': 'a',
+            'label': 'A',
+            'col': 0,
+            'row': 0,
+            'widthCells': 5,
+            'heightCells': 3,
+            'shape': 'rect',
+          }
+        ],
+        'edges': [
+          {'from': 'a', 'to': 'a', 'arrow': '→', 'label': ''},
+        ],
+      });
+      expect(b, isA<BoxDiagramBlock>());
+      final d = b as BoxDiagramBlock;
+      expect(d.cols, 15);
+      expect(d.nodes.single.label, 'A');
+      expect(d.edges.single.arrow, '→');
+    });
   });
 }
