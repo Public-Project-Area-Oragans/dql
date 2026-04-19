@@ -69,10 +69,7 @@ class _MonospaceScroll extends StatelessWidget {
           source,
           style: const TextStyle(
             color: AppColors.steamGreen,
-            fontFamily: 'Courier New',
-            // Flutter Web CanvasKit 는 generic 'monospace' 패밀리를 항상 실제
-            // monospace 로 매핑하지 않는다. ASCII 박스 드로잉의 열 정렬을
-            // 유지하려면 실 폰트 이름을 순서대로 폴백 지정해야 한다.
+            fontFamily: kMonospaceFamily,
             fontFamilyFallback: kMonospaceFallback,
             fontSize: 13,
             height: 1.4,
@@ -83,9 +80,13 @@ class _MonospaceScroll extends StatelessWidget {
   }
 }
 
-/// 프로젝트 공통 monospace 폰트 폴백 체인. ASCII 박스 드로잉 정렬이 필요한
-/// 모든 텍스트 위젯에서 재사용한다. 플랫폼별로 가장 먼저 발견되는 실제
-/// monospace 폰트가 적용된다.
+/// fix-4a: 번들된 JetBrains Mono 를 1차 패밀리로 사용한다. OS/브라우저에
+/// 독립적으로 ASCII 박스 드로잉·코드 블록 열 정렬을 보장한다.
+/// `pubspec.yaml` 의 `fonts:` 선언과 family 이름이 일치해야 한다.
+const String kMonospaceFamily = 'JetBrainsMono';
+
+/// 시스템에 JetBrains Mono 가 로드되지 않은 예외 상황(에셋 로딩 지연 등)을
+/// 대비한 OS별 monospace 폴백 체인.
 const List<String> kMonospaceFallback = <String>[
   'Consolas', // Windows (Chrome/Edge)
   'Menlo', // macOS (Safari/Chrome)

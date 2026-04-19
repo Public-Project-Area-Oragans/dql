@@ -10,8 +10,13 @@ import 'package:flutter_test/flutter_test.dart';
 /// 그 내부 `SelectableText` 의 `TextStyle.fontFamilyFallback` 가
 /// `kMonospaceFallback` 과 동일해야 한다.
 void main() {
-  group('kMonospaceFallback 상수', () {
-    test('플랫폼별 실 monospace 폰트를 순서대로 나열한다', () {
+  group('monospace 상수', () {
+    test('kMonospaceFamily 는 번들된 JetBrainsMono 패밀리', () {
+      // fix-4a: pubspec.yaml 의 fonts: family 선언과 동일해야 한다.
+      expect(kMonospaceFamily, 'JetBrainsMono');
+    });
+
+    test('kMonospaceFallback 은 플랫폼별 실 monospace 를 순서대로 나열', () {
       expect(kMonospaceFallback, contains('Consolas'));
       expect(kMonospaceFallback, contains('Menlo'));
       expect(kMonospaceFallback, contains('DejaVu Sans Mono'));
@@ -34,7 +39,7 @@ void main() {
   }
 
   group('ContentBlockRenderer — monospace fallback 전파', () {
-    testWidgets('AsciiDiagramBlock 은 Courier New + kMonospaceFallback',
+    testWidgets('AsciiDiagramBlock 은 JetBrainsMono + kMonospaceFallback',
         (tester) async {
       final style = await _styleOf(
         tester,
@@ -42,7 +47,7 @@ void main() {
           source: '┌──┐\n│ A │\n└──┘',
         ),
       );
-      expect(style.fontFamily, 'Courier New');
+      expect(style.fontFamily, kMonospaceFamily);
       expect(style.fontFamilyFallback, kMonospaceFallback);
     });
 
@@ -54,7 +59,7 @@ void main() {
           source: 'gantt\n  section Foo\n  task1: 2026-01-01, 5d',
         ),
       );
-      expect(style.fontFamily, 'Courier New');
+      expect(style.fontFamily, kMonospaceFamily);
       expect(style.fontFamilyFallback, kMonospaceFallback);
     });
   });
