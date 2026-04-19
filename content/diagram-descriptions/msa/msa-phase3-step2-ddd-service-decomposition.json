@@ -1,4 +1,113 @@
 {
   "chapterId": "msa-phase3-step2-ddd-service-decomposition",
-  "entries": {}
+  "entries": {
+    "151b7d6cecdfd7c38265439f1e0405ff3c7b0d830c4debc5c650f3115c045f68": {
+      "language": "mermaid",
+      "description": "Step 1에서 배운 모놀리식 이해가 Step 2의 DDD 서비스 분리로 어떻게 이어지는지를 연결 지어 보여주려는 다이어그램이다. 모놀리식 단계에서 이미 다룬 도메인 기반 패키지 구조, Modular Monolith 개념, Conway의 법칙, 전환 판단 프레임워크라는 네 가지 축이 서비스 분리 학습의 토대가 된다는 점을 강조한다. 즉 DDD는 갑자기 등장한 별개의 주제가 아니라, 앞 단계에서 모놀리식 내부에 미리 심어둔 경계 개념을 물리적 서비스 분리로 확장하는 연속적인 학습임을 시각적으로 납득시키는 것이 의도다."
+    },
+    "2d3adca9d13f7893fcc171ef1dd6ec0e09eb126f2bcb2ae2ac8f2b2870070f04": {
+      "language": "mermaid",
+      "description": "DDD와 서비스 분리라는 주제 전체를 조감도처럼 펼쳐 보여주는 개념 지도다. 중심 개념에서 뻗어 나오는 큰 가지로 전략적 설계, 전술적 설계, 서비스 경계 설정, 전환 패턴이라는 네 기둥을 소개하고, 각 기둥 밑에 이 문서에서 다룰 세부 개념들을 열거한다. 학습자가 본문을 읽기 전에 Bounded Context와 Aggregate, ACL과 Strangler Fig 같은 용어들이 어떤 범주에 속하며 서로 어떤 층위에서 쓰이는지 미리 머릿속에 지도를 그려 두도록 돕는 것이 목적이다."
+    },
+    "7bf59187151935cadd8f2f39d453da7b2e17e4dc3a4a1405740553f08217567e": {
+      "language": "mermaid",
+      "description": "이커머스 플랫폼을 예로 들어 전체 도메인을 Core·Supporting·Generic 세 종류의 서브도메인으로 분해하고, 각 서브도메인 유형이 마이크로서비스 분리 전략에 어떻게 매핑되는지 보여주려는 다이어그램이다. 추천 엔진이나 동적 가격 정책 같은 경쟁력의 원천은 1순위로 독립 서비스화하고, 상품 카탈로그 같은 보조 영역은 2순위 표준 패턴으로, 인증이나 결제 같은 범용 기능은 SaaS 위임까지 고려하라는 투자 우선순위를 한 장면에 담는다. 결국 서비스 분리는 기술이 아니라 비즈니스 가치 배분에서 출발해야 한다는 교훈을 전달한다."
+    },
+    "026dd6d8b8c75ec65a4a16b18453476d6f8214cc7bc6823132611a01ef721a4e": {
+      "language": "mermaid",
+      "description": "현실 세계의 동일한 사물인 '상품'이 카탈로그, 주문, 배송이라는 서로 다른 Bounded Context 안에서는 완전히 다른 속성과 이름으로 모델링된다는 사실을 시각화한 그림이다. 카탈로그에서는 노출용 정보, 주문에서는 구매 시점 스냅샷, 배송에서는 물리적 패키지라는 각기 다른 관심사가 서로 다른 모델을 만들어 낸다. 하나의 Product 클래스에 모든 속성을 밀어 넣는 God Object 안티패턴 대신, 각 Context가 자기 언어와 자기 모델을 갖는 것이 Bounded Context의 본질임을 직관적으로 이해시키는 것이 목적이다."
+    },
+    "60cc28804d2f6e66a8bcbb632a4a3968a85394f095ea6cbe74dc17389f7557b1": {
+      "language": "mermaid",
+      "description": "Order를 Aggregate Root로 두고 그 내부에 OrderItem이라는 Entity와 ShippingAddress, Money 같은 Value Object가 포함된 전형적인 주문 Aggregate의 내부 구조를 보여주는 클래스 다이어그램이다. Aggregate Root만 외부로 드러나고 나머지는 Root를 통해서만 조작된다는 불변식, Value Object가 불변 속성 묶음으로 Entity에 임베드된다는 관계, 그리고 트랜잭션의 최소 단위가 바로 이 Aggregate 범위라는 점을 한눈에 전달한다. 학습자가 '어디까지를 한 트랜잭션으로 묶어야 하는가'에 대한 실질적 감각을 잡도록 돕는 것이 핵심 의도다."
+    },
+    "6489d1a1f4ed0959616f5ca05349be4b8ee998cab15668a5c2948da9cc81c625": {
+      "language": "mermaid",
+      "description": "주문·결제·배송이라는 신규 Bounded Context들과 레거시 ERP 사이의 통합 관계를 Context Map으로 표현한 그림이다. 주문은 결제에 OHS로 공개 API를 제공하고, 배송에는 Customer-Supplier 관계로 데이터를 넘기며, 레거시와는 ACL을 두어 외부 모델의 오염을 차단한다. 결제에서 배송으로는 Domain Event가 비동기로 흘러간다. 서비스 분리 자체보다 이 관계의 유형을 어떻게 고르느냐가 MSA 성패를 좌우한다는 교육적 메시지를 전달하는 것이 목적이다."
+    },
+    "af60d93d26b69a0b07e1dab170496147cbbb2eb55fd93118f31573a751e4486d": {
+      "language": "mermaid",
+      "description": "DDD가 두 개의 설계 수준으로 나뉜다는 사실을 층위화해서 보여주는 다이어그램이다. 전략적 설계는 Bounded Context 식별·Context Map·유비쿼터스 언어처럼 '무엇을 어떻게 나눌 것인가'를 다루는 바깥 틀이고, 전술적 설계는 Aggregate·Entity·Value Object·Domain Event·Repository처럼 '나뉜 서비스 내부를 어떻게 구성할 것인가'를 다루는 안쪽 설계다. 서비스 경계를 먼저 확정한 다음 내부 구조 설계로 내려가는 작업 순서를 강조해, MSA 설계가 왜 바깥에서 안으로 진행되어야 하는지 납득시키려는 의도다."
+    },
+    "7e4239ffd488e04add28ca52863f0b77cafd94eb5f32871c52a456ca64b86a0e": {
+      "language": "mermaid",
+      "description": "쇼핑몰 도메인을 예로 들어 서브도메인을 Core, Supporting, Generic으로 분류한 그림이다. 주문 관리·추천 엔진·가격 정책 같은 경쟁력 원천은 Core로, 상품 카탈로그·재고·리뷰는 Supporting으로, 사용자 인증·결제 처리·알림·파일 저장 같은 범용 기능은 Generic으로 배치해 색으로 구분한다. 같은 시스템 안에서도 영역에 따라 투자 강도와 MSA 전략이 달라져야 한다는 점, 특히 Generic 영역은 자체 개발보다 SaaS 도입이 비용 대비 효과가 크다는 서브도메인별 접근법을 직관적으로 학습시키는 것이 목적이다."
+    },
+    "c26712ed138cd4b8d208d4b35b767af6713ecddd11f63b0f2a4644f45423ce2d": {
+      "language": "mermaid",
+      "description": "'Product'라는 하나의 단어가 카탈로그·주문·재고·배송이라는 네 Context로 들어가면서 각각 완전히 다른 속성 집합을 갖는다는 점을 펼쳐 보여주는 다이어그램이다. 카탈로그는 이름과 이미지, 주문은 가격과 수량, 재고는 SKU와 창고 위치, 배송은 무게와 파손 여부에 관심을 둔다. 같은 이름을 공유한다고 같은 모델이어선 안 되며, 각 Context가 자기 관심사에 맞는 모델을 독립적으로 유지하는 것이 Bounded Context의 실체라는 사실을 반복 사례를 통해 체득시키려는 의도다."
+    },
+    "f2ca1762b71c87d9998f4512343797e3c113b04a070dfa87f90b48376dd3bf17": {
+      "language": "mermaid",
+      "description": "Bounded Context 하나가 어떻게 마이크로서비스 하나로 이어지는지 1:1 매핑 관계로 시각화한 그림이다. 카탈로그·주문·재고·배송·결제·사용자 Context가 각각 product-service, order-service, inventory-service 등 이름 있는 서비스로 대응된다. 다만 주석으로 1:1이 이상적 출발점일 뿐 절대 규칙은 아니며, 하나의 큰 Context는 여러 서비스로 쪼개질 수 있고 작은 두 Context는 하나로 합쳐질 수도 있음을 덧붙인다. 학습자에게 'BC=서비스 경계'라는 직관과 그 유연성을 함께 심어주는 것이 목적이다."
+    },
+    "f7ad41a361fd47936317e84ff62715b599ea937a164095148b0607c40b933476": {
+      "language": "mermaid",
+      "description": "쇼핑몰 전체의 Context Map을 한 장에 펼쳐 각 Bounded Context 사이에 어떤 종류의 관계가 흐르는지 보여주는 다이어그램이다. 사용자·카탈로그는 주문에 OHS/PL 방식으로 API를 제공하고, 주문은 결제에 대해 ACL로 경계를 세우며, 주문에서 재고·배송·알림으로는 Domain Event가 흘러가고 재고는 다시 카탈로그에 이벤트로 가용 수량을 알린다. 단순 서비스 목록이 아니라 서비스끼리의 통신 방식과 팀 간 협력 모델이 Context Map에서 결정된다는 사실을 시각적으로 설득하려는 의도다."
+    },
+    "f4d9024c762ff016b81db7f453fcb274462d60d03b5fe37774d6e98ff0857315": {
+      "language": "mermaid",
+      "description": "외부 결제 PG사의 낯선 데이터 포맷이 내부 주문 서비스 도메인 모델로 들어오는 경로에 Anti-Corruption Layer가 어떻게 방화벽처럼 끼어드는지 보여주는 다이어그램이다. PG가 주는 pay_id, amount_krw, 0/1/2 상태 코드, unix timestamp 같은 외부 용어가 PaymentGatewayAdapter를 통과하면서 paymentId, Money, PaymentStatus enum, LocalDateTime 같은 내부 언어로 변환된다. PG사가 API 형식을 바꾸거나 다른 업체로 교체되어도 Adapter만 수정하면 된다는 점, 즉 내부 도메인이 외부 세계의 변동에 오염되지 않도록 격리하는 것이 ACL의 본질임을 전달한다."
+    },
+    "277a3a5921c2bf87a5fce1d4f013bb4a4e0d43bbe9ab0efad2b80acbb21486e7": {
+      "language": "mermaid",
+      "description": "Entity와 Value Object의 차이를 나란히 배치해 대조시키는 개념 비교 다이어그램이다. Order는 id 5001을 가진 Entity로 상태가 바뀌어도 같은 주문으로 식별되는 반면, Money와 Address는 Value Object로서 식별자 없이 속성 값만으로 동일성이 결정되며 값이 바뀌면 새로운 객체가 되는 불변 타입이다. ID 기반 동일성과 속성 기반 동일성이라는 두 세계의 구분을 체감하게 해, 학습자가 도메인 모델을 설계할 때 언제 Entity로 만들고 언제 Value Object로 만들어야 하는지 판단 기준을 갖도록 돕는 것이 목적이다."
+    },
+    "ccf9ec5ec9e39eec2bcb781ad6ab5b23853d3b4639f8243975eac2871516f988": {
+      "language": "java",
+      "description": "Entity와 Value Object의 개념 차이를 JPA/Java 코드로 구현할 때 어떤 문법 요소가 대응되는지 보여주는 예제다. Entity에는 @Id로 식별자를 부여하고 가변 상태를 허용하며 Value Object는 @Embedded로 Entity 안에 끼워 넣는다. 나아가 Java 14 이후의 record를 활용해 Money나 Address 같은 Value Object를 불변 타입으로 간결하게 선언하고, 통화가 일치하지 않으면 덧셈을 거부하는 식의 도메인 규칙을 메서드로 내재화한다. DDD 개념이 어떻게 프레임워크 기능과 결합해 실제 코드로 구현되는지 감각을 주는 것이 핵심 의도다."
+    },
+    "20412534925d8d37a0b95f31645782edeb185176168f7db7200e40ba08723d35": {
+      "language": "mermaid",
+      "description": "주문 Aggregate의 내부 구조와 바깥에서 접근할 때 지켜야 할 규칙을 한 그림에 결합한 다이어그램이다. Order가 Root가 되어 여러 OrderItem과 ShippingAddress를 거느리고, 외부의 서비스나 다른 Aggregate는 반드시 Root인 Order를 경유해야 하며 OrderItem에 직접 손댈 수 없다. 옆쪽 박스에는 Root 경유 접근, 1 Aggregate=1 트랜잭션, 다른 Aggregate는 ID로만 참조, 내부 객체 직접 접근 금지라는 네 가지 불변 규칙이 열거된다. Aggregate가 단순한 객체 묶음이 아니라 일관성과 트랜잭션의 경계라는 점을 각인시키는 것이 목적이다."
+    },
+    "13ecf005743bf14b1a9a1f1970ace7e46e013eef054490b154559608ba9b96bc": {
+      "language": "mermaid",
+      "description": "하나의 주문 생성이 Order·Inventory·Payment라는 세 서로 다른 Aggregate에 걸쳐 있는 상황을, 분산 트랜잭션 대신 Domain Event로 어떻게 엮어 나가는지 단계별로 보여주는 시퀀스 다이어그램이다. 각 Aggregate는 자신만의 짧은 트랜잭션 안에서 상태를 바꾸고, 후속 작업은 OrderCreatedEvent나 StockReservedEvent, PaymentCompletedEvent 같은 이벤트를 비동기로 퍼뜨려 유발한다. '1 Aggregate = 1 트랜잭션' 규칙이 서비스 경계를 넘나드는 MSA 환경에서 최종 일관성과 이벤트 기반 협력으로 자연스럽게 확장된다는 점을 시각적으로 이해시키는 것이 목적이다."
+    },
+    "aabb30b56179a04287f3d611c1fe433103a0782811d146343f2bd7ce16d57882": {
+      "language": "mermaid",
+      "description": "서비스 분리 기준을 비즈니스 역량 기반과 기술 역량 기반 둘로 나눠 대조하는 다이어그램이다. 주문·재고·결제·배송처럼 비즈니스 가치를 제공하는 단위로 나누면 도메인 전문가도 구조를 이해하고 Conway 법칙에 따라 팀과 서비스가 자연스럽게 일치한다. 반면 API Gateway·데이터 처리·알림 발송·파일 저장처럼 기술 기능 단위로 나누면 도메인 변경이 여러 서비스에 흩어져 관리가 어려워진다. 핵심 도메인은 비즈니스 기준, 범용 기능은 기술 기준으로 섞어 쓰는 실무적 균형 감각을 길러주는 것이 의도다."
+    },
+    "8bfba4a7e01825a1683a7110b77009fbd42b1f4e5c8b901018d699b74e6056e5": {
+      "language": "mermaid",
+      "description": "Strangler Fig 패턴이 모놀리식에서 MSA로 가는 과정을 세 단계 스냅샷으로 펼쳐 보여주는 그림이다. 처음에는 클라이언트가 모놀리식에 직접 접근하지만, 앞에 Reverse Proxy를 끼워 투명한 전달 계층을 만든 뒤 사용자 영역만 신규 서비스로 떼어내 트래픽을 분산시키고, 최종적으로는 모놀리식이 완전히 제거되고 API Gateway 뒤에 user/order/payment/product 서비스가 독립적으로 서는 구조로 전환된다. 빅뱅 재작성이 아니라 한 번에 하나의 Bounded Context씩 점진적으로 '감싸서 대체'하는 것이 핵심임을 시각적으로 체득시키는 의도다."
+    },
+    "d70b2d34648b6a8368013f3040e16eac0fdf710b33b720abebb1183eca8072ca": {
+      "language": "mermaid",
+      "description": "Strangler Fig가 외부 라우팅으로 전환한다면 Branch by Abstraction은 내부 코드 관점에서 같은 일을 해낸다는 것을 3단계로 보여주는 그림이다. 먼저 OrderService가 UserRepository를 직접 호출하던 구조에서 UserApi라는 인터페이스를 뽑아내 LocalUserApi 구현체를 놓고, 신규 사용자 서비스가 준비되면 같은 인터페이스 뒤를 RemoteUserApi로 슬쩍 갈아끼운다. 호출부 코드는 그대로 유지된 채 구현만 바뀌므로 위험을 최소화하면서 내부에서 외부 서비스로의 이행을 할 수 있다는 점, 그리고 Strangler Fig와 보완 관계라는 점을 전달한다."
+    },
+    "58af94019036a1ce75671ca0476821d25523f88a604cbfd82a81dc00662d703b": {
+      "language": "mermaid",
+      "description": "Event Storming 워크숍에서 뽑아낸 Domain Event 목록을 의미 있는 덩어리로 그룹핑해 Bounded Context를 도출하는 과정을 보여주는 다이어그램이다. UserRegistered, ProductListed, OrderPlaced, PaymentProcessed, StockReserved, ShipmentDispatched, ReviewSubmitted 같은 과거형 이벤트들이 사용자 관리, 상품 카탈로그, 주문 관리, 결제, 재고, 배송, 리뷰라는 일곱 개의 Context로 자연스럽게 묶인다. Bounded Context가 책상 앞 추측이 아니라 실제 업무에서 발생하는 이벤트를 관찰하고 응집 있는 묶음을 찾아내는 귀납적 작업이라는 점을 납득시키는 것이 목적이다."
+    },
+    "54c057bb2696a6c12b78e570601fa78197a978a1bfdd9ebf9fec53dcca76247b": {
+      "language": "mermaid",
+      "description": "DDD 없이 '테이블 하나 = 서비스 하나' 식으로 분리했을 때 어떤 참사가 벌어지는지 반례로 보여주는 그림이다. users, orders, order_items, payments, addresses 테이블마다 기계적으로 서비스를 만들면 주문 생성 한 번에 order-service가 order-item-service를 호출해야 하고 사용자 주소 조회조차 서비스 간 네트워크 호출로 번지면서 결국 다섯 개의 서비스가 사실상 분산 모놀리스가 되어 버린다. 테이블이 아니라 Aggregate와 Bounded Context를 기준으로 묶어야 한다는 핵심 교훈을 '잘못된 분리'의 구체적 증상을 통해 역으로 각인시키는 의도다."
+    },
+    "0cc1aeaf89f2935a9c51d182b7ac3aa3e809d0cb7595cd7d4af362daaef9911d": {
+      "language": "mermaid",
+      "description": "Strangler Fig 패턴으로 쇼핑몰의 사용자 기능을 분리해 나가는 6주짜리 프로젝트 일정을 간트 차트로 펼친 그림이다. 준비 단계에서 API Proxy와 신규 서비스 스켈레톤을 세우고, 구현 단계에서 회원가입·로그인·프로필 기능을 차례로 옮기며, 테스트 단계에서 기능 동등성과 부하 검증을 거쳐, 전환 단계에서 Canary 10%·50%·100%로 트래픽을 점진적으로 이동시키고 마지막에 모놀리식의 사용자 코드를 제거한다. 모놀리식에서 MSA로 가는 길이 일회성 빅뱅이 아니라 명확한 타임라인과 단계 게이트를 가진 위험 관리 프로젝트라는 점을 체감시키는 것이 목적이다."
+    },
+    "fcb2ccc56c46c0ada15fa22de749ac92ac2447cda5f8c15dece287f6a07387e1": {
+      "language": "mermaid",
+      "description": "Context Mapping을 생략한 경우와 제대로 적용한 경우를 문제·해결 두 패널로 나란히 놓고 비교하는 그림이다. 왼쪽 문제 패널에서는 order-service와 payment-service가 서로의 내부 DTO를 직접 참조해 양방향 순환 결합에 빠지고, 한쪽 변경이 양쪽 재배포로 이어진다. 오른쪽 해법 패널에서는 PaymentGateway 인터페이스 형태의 ACL이 중간에 끼어들어 order-service가 자신의 모델만 다루고 ACL에서 변환 후 payment-service를 호출하는 단방향 느슨한 결합 구조가 된다. 서비스 분리만큼 중요한 것이 '관계를 명시적으로 설계'하는 Context Mapping임을 대비로 확인시키는 것이 핵심 의도다."
+    },
+    "67f0778fb3eb99d9349141f6c889b92344f0dc218aa714d8a75ec03d90916733": {
+      "language": "java",
+      "description": "모놀리식 코드에 은근히 섞여 있는 Aggregate 규칙 위반을 찾아내는 진단용 예제다. 하나의 OrderService 메서드 안에서 User, Product, Order라는 서로 다른 세 Aggregate를 한 트랜잭션으로 조작하고, User에 포인트를 적립하며 Product의 재고를 차감하고, 심지어 User·Product 객체 자체를 Order 생성자에 직접 넘긴다. 학습자가 이 코드를 읽고 '다른 Aggregate 직접 수정', '객체 직접 참조', '다른 Context의 Repository 사용'이라는 세 가지 안티패턴을 스스로 짚어내도록 유도해, DDD 규칙이 단순한 이론이 아니라 실제 코드 리뷰의 체크리스트임을 깨닫게 하는 것이 목적이다."
+    },
+    "9ee85f5b5ee315a8437df8450ef73e577957d06dd2649778efb13ee901432258": {
+      "language": "java",
+      "description": "앞서 안티패턴을 지적한 주문 생성 코드를 Aggregate 규칙에 맞게 고쳐 쓴 해답 예제다. Order는 User나 Product 엔티티를 직접 참조하지 않고 userId와 productId만 보관한 채 생성되어 저장되고, 다른 Aggregate의 후속 작업은 OrderCreatedEvent를 발행해 재고 차감과 포인트 적립 같은 처리를 별도 서비스에 맡긴다. 한 트랜잭션을 하나의 Aggregate 안에 가두고 서비스 간 협력은 Domain Event로 해결하는 MSA 친화적 설계가 구체적으로 어떤 코드 모양을 띠는지 보여주는 것이 핵심 의도다."
+    },
+    "306e46eb3a19446791681c5c6fcf9033905e7786ee3069616689bc07e747dda4": {
+      "language": "",
+      "description": "온라인 도서관 시스템을 설계 문제로 두고 나온 Context Map의 정답 예시를 텍스트 그림으로 보여주는 요약이다. 회원 관리와 도서 카탈로그는 OHS/PL로 대출 관리에 API를 제공하고, 대출 관리는 BookBorrowed·BookOverdue·BookReturned 같은 Domain Event를 예약·벌금 관리·카탈로그로 흘려보내며, 벌금 관리와 예약은 각각 알림 서비스를 Domain Event로 트리거한다. 동기 API와 비동기 이벤트를 어디에 어떻게 섞어 써야 느슨한 결합을 유지하면서도 필요한 데이터 흐름을 보장할 수 있는지, 연습 문제 형식으로 학습자의 설계 능력을 검증하려는 의도다."
+    },
+    "2bd4b5ffeb47143767769fb634049961d86e5413ec99690a0aef6acedcd1ce06": {
+      "language": "",
+      "description": "실제 포스트잇 워크숍 없이 글로만 Event Storming의 핵심 단계를 따라가 보는 시뮬레이션 실습이다. 쇼핑몰 주문~배송 흐름을 대상으로 먼저 과거형 Domain Event를 쭉 나열하고, 그 이벤트를 일으키는 Command를 추려 낸 뒤, Command를 처리하는 Aggregate를 식별하고, 마지막으로 이 Aggregate들을 주문·결제·재고·배송이라는 네 개의 Bounded Context로 묶어 서비스 간 이벤트 흐름까지 그려 낸다. 이벤트→Command→Aggregate→Context→Context Map으로 이어지는 귀납적 절차를 실제로 실행해 보며 체득시키는 것이 목적이다."
+    }
+  }
 }
