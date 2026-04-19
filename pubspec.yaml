@@ -71,6 +71,10 @@ flutter:
     - content/books/flutter/book.json
     - content/books/mysql/book.json
     - content/books/msa/book.json
+    # art-2: UI 크롬 (9-slice 프레임 + 버튼 3상태). Manifest §7.1 준수,
+    # _anchors/ 는 런타임 번들 제외.
+    - assets/sprites/ui/frames/
+    - assets/sprites/ui/buttons/
   fonts:
     # fix-4a: ASCII 박스 드로잉·코드 블록 열 정렬을 브라우저·OS 독립적으로
     # 보장하기 위해 JetBrains Mono 를 번들링. SIL Open Font License 1.1.

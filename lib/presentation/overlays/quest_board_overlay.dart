@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/assets/asset_ids.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/models/book_model.dart';
 import '../../data/models/quest_model.dart';
 import '../../domain/providers/content_providers.dart';
 import '../../domain/providers/game_providers.dart';
 import '../../domain/providers/wing_quests_providers.dart';
+import '../widgets/pixel_nine_slice.dart';
 
 class QuestBoardOverlay extends ConsumerWidget {
   final VoidCallback onClose;
@@ -27,15 +29,14 @@ class QuestBoardOverlay extends ConsumerWidget {
     final wingQuests = ref.watch(wingQuestsProvider(wingId));
 
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 500,
         height: 460,
-        decoration: BoxDecoration(
-          color: AppColors.deepPurple,
-          border: Border.all(color: AppColors.gold, width: 2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
+        child: PixelNineSlice(
+          assetName: UiAssets.frameQuest,
+          child: ColoredBox(
+            color: AppColors.deepPurple,
+            child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
@@ -148,6 +149,8 @@ class QuestBoardOverlay extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+      ),
       ),
     );
   }
