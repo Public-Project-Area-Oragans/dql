@@ -101,40 +101,37 @@ class QuestBoardOverlay extends ConsumerWidget {
                             style: const TextStyle(color: AppColors.parchment),
                           ),
                         )
+                      else if (filterCategory != null)
+                        // fix-6: 분관 책장에서 열린 경우 — 해당 분관의 모든
+                        // 책의 모든 챕터를 책 타이틀 헤더 없이 flat 으로
+                        // 노출. 책과 책 사이에는 얇은 gold alpha divider 만.
+                        ..._buildFlatChapters(books, onChapterSelected)
                       else
                         for (final book in books)
-                          // 분관 책장에서 열렸으면(filterCategory != null) 책
-                          // 목록을 펼친 상태로 평탄하게 노출한다. 중앙 홀에서
-                          // 연 경우만 ExpansionTile 로 접어 둔다(5 카테고리
-                          // 동시 노출 시 길이 제어용).
-                          if (filterCategory != null)
-                            _FlatBookSection(
-                              book: book,
-                              onChapterSelected: onChapterSelected,
-                            )
-                          else
-                            ExpansionTile(
-                              title: Text(
-                                book.title,
-                                style: const TextStyle(
-                                    color: AppColors.parchment),
-                              ),
-                              subtitle: Text(
-                                '${(book.totalProgress * 100).toInt()}% 완료',
-                                style: TextStyle(
-                                  color:
-                                      AppColors.gold.withValues(alpha: 0.7),
-                                  fontSize: 12,
-                                ),
-                              ),
-                              children: book.chapters
-                                  .map((ch) => _ChapterRow(
-                                        book: book,
-                                        chapter: ch,
-                                        onChapterSelected: onChapterSelected,
-                                      ))
-                                  .toList(),
+                          // 중앙 홀 경로: 5 카테고리 동시 노출이라 세로 길이
+                          // 제어 위해 ExpansionTile 유지.
+                          ExpansionTile(
+                            title: Text(
+                              book.title,
+                              style: const TextStyle(
+                                  color: AppColors.parchment),
                             ),
+                            subtitle: Text(
+                              '${(book.totalProgress * 100).toInt()}% 완료',
+                              style: TextStyle(
+                                color:
+                                    AppColors.gold.withValues(alpha: 0.7),
+                                fontSize: 12,
+                              ),
+                            ),
+                            children: book.chapters
+                                .map((ch) => _ChapterRow(
+                                      book: book,
+                                      chapter: ch,
+                                      onChapterSelected: onChapterSelected,
+                                    ))
+                                .toList(),
+                          ),
                     ],
                   );
                 },
@@ -232,58 +229,38 @@ class _QuestTile extends StatelessWidget {
   }
 }
 
-/// 분관 책장에서 열린 QuestBoard 용. 책 타이틀은 작은 섹션 헤더로만 두고
-/// 챕터를 펼친 상태로 평탄하게 노출한다 (ExpansionTile 클릭 불필요).
-class _FlatBookSection extends StatelessWidget {
-  final Book book;
-  final void Function(String bookId, String chapterId) onChapterSelected;
-
-  const _FlatBookSection({
-    required this.book,
-    required this.onChapterSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 4, 12, 6),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '📖 ${book.title}',
-                    style: const TextStyle(
-                      color: AppColors.parchment,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Text(
-                  '${(book.totalProgress * 100).toInt()}% 완료',
-                  style: TextStyle(
-                    color: AppColors.gold.withValues(alpha: 0.7),
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          for (final ch in book.chapters)
-            _ChapterRow(
-              book: book,
-              chapter: ch,
-              onChapterSelected: onChapterSelected,
-            ),
-        ],
-      ),
-    );
+/// fix-6: 분관 책장에서 열린 QuestBoard 의 챕터 평탄 렌더링.
+///
+/// 입력된 책 리스트의 모든 챕터를 **책 타이틀 헤더 없이** 순서대로 flat 으로
+/// 쌓고, 책 경계에 얇은 gold alpha divider 한 줄만 삽입한다. 사용자의
+/// 2026-04-19 요구사항: "언어(책) 에 묶여서 전체가 한눈에 안 보임" → 책
+/// 타이틀·이모지·진행률 헤더 제거. 단 책 구분감은 divider 로 유지.
+List<Widget> _buildFlatChapters(
+  List<Book> books,
+  void Function(String bookId, String chapterId) onChapterSelected,
+) {
+  final result = <Widget>[];
+  for (var i = 0; i < books.length; i++) {
+    final book = books[i];
+    for (final ch in book.chapters) {
+      result.add(_ChapterRow(
+        book: book,
+        chapter: ch,
+        onChapterSelected: onChapterSelected,
+      ));
+    }
+    if (i < books.length - 1) {
+      result.add(Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        child: Divider(
+          height: 1,
+          thickness: 1,
+          color: AppColors.gold.withValues(alpha: 0.25),
+        ),
+      ));
+    }
   }
+  return result;
 }
 
 class _ChapterRow extends StatelessWidget {
