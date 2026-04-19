@@ -279,26 +279,25 @@
 | fix-4a (R2 기반) | JetBrainsMono 번들 + fontFamily 교체 | 중간 | S | ✅ PR #60 merged |
 | fix-4b (R2 모델) | `ContentBlock.boxDiagram` + BoxNode/BoxEdge + renderer 스켈레톤 | 낮음 | S | ✅ PR #65 merged |
 | fix-4c (R2 렌더) | `AsciiGridDiagram` CustomPaint 그리드 드로잉 | 중간 | M | ✅ PR #66 merged — 테두리는 복구, 내부 한글 컬럼 정렬 미해결 |
-| **fix-9 (R6)** | `QuestBoardFilterCategory` 등 UI 세션 state 를 `@Riverpod(keepAlive: true)` 로 전환 — autoDispose 로 인한 첫-탭 필터 소실 해결 | **최고** | S | ⏳ 대기 |
-| **fix-4-escalation (R2 조건부)** | `tools/content_builder.dart` 의 `_extractBlocks` 에서 asciiDiagram / raw 블록을 emit 하지 않도록 strip — 이론 탭에서 ASCII 박스 노출 자체 제거 | 조건부 | XS | ⏳ fix-9 후 판단 |
+| fix-9 (R6) | `QuestBoardFilterCategory` 등 UI 세션 state 를 `@Riverpod(keepAlive: true)` 로 전환 — autoDispose 로 인한 첫-탭 필터 소실 해결 | 최고 | S | ✅ PR #68/#69 merged — headed 브라우저 실측 완료, MSA 첫-탭 필터 정상 |
+| fix-4-escalation (R2 조건부) | `tools/content_builder.dart` 의 `_extractBlocks` 에서 asciiDiagram / raw 블록을 emit 하지 않도록 strip | 조건부 | XS | **skip** — 사용자 2026-04-19 결정으로 R7 (fix-10) 로 대체 (§5.5 참조) |
+| **fix-10 (R7)** | 이론 파트 prose-only 재구성 — asciiDiagram/flowchart/sequence/mindmap/table/raw/code 전부 strip + 코드는 simulator 팝업 | 높음 | L | ⏳ 진행 (세부 §3.4) |
 | release | develop → master 묶음 | — | XS | — |
 
-### 3.2 착수 순서 (현재)
+### 3.2 착수 순서 (2026-04-19 업데이트)
 
 1. ✅ R1, R0, R3 해결 완료 (fix-5, fix-6)
 2. ✅ R2 부분 완화 (fix-4a/4b/4c) — 테두리 복구, 내부 컬럼 미해결
-3. **지금: fix-9 (R6 근본)** — 첫-탭 필터 autoDispose 해결
-4. fix-9 배포 후 내가 headed gstack-browse 재검증 → 사용자 확인
-5. R2 잔여 처리:
-   - (A) fix-4-escalation 승인 시 ASCII 블록 strip
-   - (B) 사용자가 현 상태 수용 시 종결
-6. release PR → 배포 검증 → 최종 확인
+3. ✅ R6 해결 (fix-9) — `@Riverpod(keepAlive: true)` 4 개 + headed 브라우저 실측 완료. MSA 분관 첫-탭 시 MSA 챕터만 즉시 노출 확인.
+4. **지금: R7 착수 (fix-10a 부터)** — 이론 파트 prose-only 재구성.
+5. 사용자 결정: fix-4-escalation **skip** (R7 에 포함됨, §5.5 참조).
+6. fix-10 전 단계 완료 후 release → 배포 검증 → 최종 확인.
 
 ### 3.4 R7 실행 계획 (fix-10 ~ 10e, fix-9 이후)
 
 | PR | 범위 | 의존 | 난이도 |
 |---|---|---|---|
-| fix-10a | content_builder `_extractBlocks` 를 prose-only 로 제한. asciiDiagram / flowchart / sequence / mindmap / table / raw 블록 strip. `theory.codeExamples` 필드 제거 | fix-9 머지 | M |
+| fix-10a | content_builder `_extractBlocks` 를 prose-only 로 제한. asciiDiagram / flowchart / sequence / mindmap / table / raw 블록 strip. `theory.codeExamples` 필드 제거. 파싱 내부 테스트(ascii/flowchart/flowchart_boost/sequence_mindmap/table) 삭제 — emit 경로에서 parser 결과가 버려져 assertion 가치 상실 (Phase 3 의 위젯 자체는 코드 상 보존, 후속 정리 PR 에서 정리) | fix-9 머지 | M |
 | fix-10b | 제거된 다이어그램 자리에 "[원본: {github link}]" placeholder prose 삽입 | fix-10a | S |
 | fix-10c | Chapter JSON 스키마에 `simulatorContent.codeSnippets: List<{language, code, description}>` 추가 + content_builder 가 MD 의 코드 펜스를 해당 필드로 수집. freezed 모델 확장 + build_runner | fix-10a | M |
 | fix-10d | 시뮬레이터 UI 에 **코드 스니펫 팝업/보조 패널** — CodeStep / StructureAssembly 등 기존 인터랙션 위에 "코드 보기" 토글 버튼 → 다이얼로그 또는 side panel 로 codeSnippets 표시 | fix-10c | M |

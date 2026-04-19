@@ -76,61 +76,41 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
   }
 
   final sections = <Map<String, dynamic>>[];
-  final codeExamples = <Map<String, String>>[];
   String? currentSection;
   final currentContent = StringBuffer();
   var inCodeBlock = false;
-  String? codeLanguage;
-  final codeBuffer = StringBuffer();
 
   for (final line in lines) {
     if (line.startsWith('```') && !inCodeBlock) {
+      // fix-10a (R7): 이론 파트는 prose 전용. 펜스 시작 지점 이후 본문은
+      // 전부 소비만 하고 출력하지 않는다. fix-10c/10d 에서 simulator
+      // codeSnippets 으로 이관할 예정. fix-10b 에서 이 자리에 "[원본: ...]"
+      // placeholder 를 삽입한다.
       inCodeBlock = true;
-      codeLanguage = line.substring(3).trim();
-      if (codeLanguage.isEmpty) codeLanguage = 'text';
-      codeBuffer.clear();
       continue;
     }
 
     if (line.startsWith('```') && inCodeBlock) {
       inCodeBlock = false;
-      final body = codeBuffer.toString().trimRight();
-      // Task 12 option D: language가 ascii/diagram/text/'' 이면서 박스
-      // 드로잉 문자가 포함된 블록은 codeExamples로 분리하지 않고 섹션
-      // 본문 안에 코드펜스로 유지한다. (코드 예제 섹션에서 문맥을 잃지 않음)
-      // Phase 3 PR #4: mermaid도 섹션에 유지해 _extractBlocks가 구조화.
-      final asciiLike = {'ascii', 'diagram', 'text'};
-      final lang = (codeLanguage ?? 'text');
-      final lower = lang.toLowerCase();
-      final keepInSection =
-          (asciiLike.contains(lower) && _hasBoxDrawing(body)) ||
-              lower == 'mermaid';
-      if (keepInSection) {
-        currentContent.writeln('```$lang');
-        currentContent.writeln(body);
-        currentContent.writeln('```');
-      } else {
-        codeExamples.add({
-          'language': codeLanguage ?? 'text',
-          'code': body,
-          'description': currentSection ?? '',
-        });
-      }
       continue;
     }
 
     if (inCodeBlock) {
-      codeBuffer.writeln(line);
+      // 펜스 내부 본문은 버린다.
       continue;
     }
 
     if (line.startsWith('## ')) {
       if (currentSection != null) {
         final wrapped = _wrapAsciiBlocks(currentContent.toString().trim());
+        // fix-10a (R7): 이론 섹션 블록은 prose 만 남긴다.
+        final blocks = _extractBlocks(wrapped)
+            .where((b) => b['type'] == 'prose')
+            .toList();
         sections.add({
           'title': currentSection,
           'content': wrapped,
-          'blocks': _extractBlocks(wrapped),
+          'blocks': blocks,
         });
       }
       currentSection = line.substring(3).trim();
@@ -145,10 +125,14 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
 
   if (currentSection != null) {
     final wrapped = _wrapAsciiBlocks(currentContent.toString().trim());
+    // fix-10a (R7): 이론 섹션 블록은 prose 만 남긴다.
+    final blocks = _extractBlocks(wrapped)
+        .where((b) => b['type'] == 'prose')
+        .toList();
     sections.add({
       'title': currentSection,
       'content': wrapped,
-      'blocks': _extractBlocks(wrapped),
+      'blocks': blocks,
     });
   }
 
@@ -158,7 +142,9 @@ Map<String, dynamic> parseMdToChapter(String markdown, String id, int order) {
     'order': order,
     'theory': {
       'sections': sections,
-      'codeExamples': codeExamples,
+      // fix-10a (R7): codeExamples 제거. 코드는 fix-10c/10d 에서
+      // simulatorContent.codeSnippets 로 이관 예정.
+      'codeExamples': <Map<String, String>>[],
       'diagrams': <Map<String, String>>[],
     },
     'simulator': {
