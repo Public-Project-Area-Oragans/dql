@@ -5,9 +5,10 @@ import '../../data/models/qa_message.dart';
 import '../../domain/providers/npc_qa_providers.dart';
 import '../../domain/providers/quest_providers.dart';
 
-/// P0-5 NPC-4: DialogueOverlay에 "대화" / "질문" 두 탭.
+/// P0-5 NPC-4 + fix-5: DialogueOverlay 에 "대화" / "질문" 두 탭.
 /// - 대화: 기존 DialogueTree 스크립트 (Phase 1 구현 유지).
-/// - 질문: Claude API 기반 Q&A. `ActiveNpcId`가 null이면 탭 숨김.
+/// - 질문: Claude API 기반 Q&A. `ActiveNpcId` 가 null 이어도 탭바는 상시
+///   노출하고, 본문에서 NPC 미선택 안내를 한다 (2026-04-19 실사용 요구).
 class DialogueOverlay extends ConsumerStatefulWidget {
   final VoidCallback onClose;
 
@@ -44,10 +45,12 @@ class _DialogueOverlayState extends ConsumerState<DialogueOverlay> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (npcId != null) _tabBar(),
+            // fix-5: 탭바 상시 노출. npcId 가 null 이어도 사용자가 Q&A 탭
+            // 존재를 인지하고 선택하여 안내 메시지를 볼 수 있어야 한다.
+            _tabBar(),
             Padding(
               padding: const EdgeInsets.all(20),
-              child: _tab == 0 || npcId == null
+              child: _tab == 0
                   ? _DialogueBody(
                       dialogueState: dialogueState,
                       onEnd: () {
@@ -58,7 +61,9 @@ class _DialogueOverlayState extends ConsumerState<DialogueOverlay> {
                         widget.onClose();
                       },
                     )
-                  : _QaBody(npcId: npcId),
+                  : (npcId != null
+                      ? _QaBody(npcId: npcId)
+                      : const _QaEmptyState()),
             ),
           ],
         ),
@@ -330,6 +335,28 @@ class _QaBodyState extends ConsumerState<_QaBody> {
             fontSize: 13,
             height: 1.4,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// fix-5: NPC 가 선택되지 않은 상태에서 ❓ 질문 탭을 선택했을 때의 placeholder.
+/// 사용자가 Q&A 기능 자체를 인지할 수 있고, 다음 행동을 안내한다.
+class _QaEmptyState extends StatelessWidget {
+  const _QaEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 24),
+      child: Text(
+        '분관의 사서에게 먼저 말을 걸어라. 사서가 곁에 있을 때에만 '
+        '그의 전공 분야에 대해 질문할 수 있다.',
+        style: TextStyle(
+          color: AppColors.parchment,
+          fontSize: 13,
+          height: 1.5,
         ),
       ),
     );
