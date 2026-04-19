@@ -200,11 +200,15 @@
 - 이론 파트에서 옮겨온 코드 스니펫은 시뮬레이터 화면 내 **팝업 다이얼로그** 또는 **보조 패널(side panel)** 로 표시.
 - 시뮬레이터가 "읽기 전용"으로 격하되지 않음. 코드는 참고용 + 인터랙션은 주체.
 
-**비목표**:
+**정책**:
 
 - docs-source 원본 markdown 수정 금지. 변환은 빌드 파이프라인에서만.
-- 이론 파트의 prose 언어 자동 재생성(AI 기반) 금지. 기존 prose 만 유지.
-- 다이어그램이 있던 자리는 "[원본: github link]" placeholder prose 삽입.
+- 다이어그램·코드 펜스 자리에는 **Claude API 로 의도 기반 설명 prose 생성** 후 삽입 (2026-04-19 사용자 결정).
+  - 생성은 **오프라인 1회** (`tools/ai_diagram_describer.dart`).
+  - 결과는 `content/diagram-descriptions/<category>/<chapter-id>.json` 에 해시 → 설명 매핑으로 캐시.
+  - **빌드(CI) 는 캐시만 조회**. API 호출 안 함.
+  - 설명 길이: 한국어 1~2 문단.
+  - 모델: `claude-haiku-4-5` 기본 (비용·지연 최적).
 
 **전제 조건**:
 
@@ -298,7 +302,7 @@
 | PR | 범위 | 의존 | 난이도 |
 |---|---|---|---|
 | fix-10a | content_builder `_extractBlocks` 를 prose-only 로 제한. asciiDiagram / flowchart / sequence / mindmap / table / raw 블록 strip. `theory.codeExamples` 필드 제거. 파싱 내부 테스트(ascii/flowchart/flowchart_boost/sequence_mindmap/table) 삭제 — emit 경로에서 parser 결과가 버려져 assertion 가치 상실 (Phase 3 의 위젯 자체는 코드 상 보존, 후속 정리 PR 에서 정리) | fix-9 머지 | M |
-| fix-10b | 제거된 다이어그램 자리에 "[원본: {github link}]" placeholder prose 삽입 | fix-10a | S |
+| fix-10b | **AI 기반 의도 설명 prose 삽입 파이프라인** — (1) `tools/ai_diagram_describer.dart` 신규 스크립트가 docs-source 각 MD 를 순회해 코드·다이어그램 펜스 블록을 Claude API (`claude-haiku-4-5`) 로 1~2 문단 한국어 설명 생성 → `content/diagram-descriptions/<category>/<chapter-id>.json` 해시→설명 캐시. (2) `tools/content_builder.dart` 는 펜스 drop 시 캐시에서 동일 해시 설명 조회 → currentContent 에 prose 삽입. 캐시 miss 시 "_[설명 생성 대기]_" placeholder. (3) CI 빌드는 캐시 조회만 (API 호출 없음). 로컬 오프라인으로만 `ANTHROPIC_API_KEY` env 로 생성 | fix-10a | M |
 | fix-10c | Chapter JSON 스키마에 `simulatorContent.codeSnippets: List<{language, code, description}>` 추가 + content_builder 가 MD 의 코드 펜스를 해당 필드로 수집. freezed 모델 확장 + build_runner | fix-10a | M |
 | fix-10d | 시뮬레이터 UI 에 **코드 스니펫 팝업/보조 패널** — CodeStep / StructureAssembly 등 기존 인터랙션 위에 "코드 보기" 토글 버튼 → 다이얼로그 또는 side panel 로 codeSnippets 표시 | fix-10c | M |
 | fix-10e | docs-source submodule 최신 revision 으로 update + 전체 재빌드 + 5 카테고리 배포 검증 | fix-10a~d | S |

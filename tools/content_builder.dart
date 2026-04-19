@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
+
 /// MD 문서를 JSON 콘텐츠로 변환하는 빌드 스크립트
 ///
 /// 사용법: dart run tools/content_builder.dart [docs-source-path]
@@ -42,7 +44,13 @@ void main(List<String> args) {
       final file = mdFiles[i];
       final fileName = file.uri.pathSegments.last.replaceAll('.md', '');
       final id = '$categoryId-$fileName';
-      final content = file.readAsStringSync();
+      final raw = file.readAsStringSync();
+
+      // fix-10b: 코드 / 다이어그램 펜스를 AI 캐시의 설명 prose 로 치환.
+      // 캐시 miss 는 placeholder 로 들어간 뒤 parseMdToChapter 의 fence
+      // drop 경로를 타지 않는다 (이미 prose 로 교체됨).
+      final content =
+          substituteFencesWithDescriptions(raw, categoryId, id);
 
       final chapter = parseMdToChapter(content, id, i + 1);
       chapters.add(applyOverride(chapter, categoryId, id));
@@ -910,4 +918,79 @@ int compareNatural(String a, String b) {
     }
   }
   return (a.length - i).compareTo(b.length - j);
+}
+
+/// fix-10b: 코드·다이어그램 펜스를 AI 캐시의 설명 prose 로 치환.
+///
+/// - 캐시 경로: `content/diagram-descriptions/<categoryId>/<chapterId>.json`
+/// - 캐시 hit: 설명 prose 를 펜스 자리에 삽입 (본문 2개 줄바꿈 으로 단락화).
+/// - 캐시 miss: `_[설명 생성 대기: tools/ai_diagram_describer.dart 실행]_`
+///   placeholder 삽입. 이후 오프라인 생성 재실행하면 자리잡음.
+/// - 파일 없음: 모든 펜스 miss 로 처리.
+///
+/// 빌드(CI) 는 이 함수를 호출하면서 **Claude API 에 접근하지 않는다**.
+/// 호출은 전적으로 `ai_diagram_describer.dart` 에서 미리 수행됨.
+String substituteFencesWithDescriptions(
+  String markdown,
+  String categoryId,
+  String chapterId,
+) {
+  final cache = _loadDiagramCache(categoryId, chapterId);
+
+  final out = StringBuffer();
+  final lines = markdown.split('\n');
+  var inFence = false;
+  final fenceBuf = StringBuffer();
+
+  for (final line in lines) {
+    if (!inFence && line.startsWith('```')) {
+      inFence = true;
+      fenceBuf.clear();
+      continue;
+    }
+    if (inFence && line.startsWith('```')) {
+      inFence = false;
+      final body = fenceBuf.toString().trimRight();
+      final hash = sha256.convert(utf8.encode(body)).toString();
+      final entry = cache[hash];
+      final description = entry?['description'] as String?;
+      if (description != null && description.trim().isNotEmpty) {
+        out.writeln(description.trim());
+      } else {
+        out.writeln(
+          '_[설명 생성 대기: tools/ai_diagram_describer.dart 실행]_',
+        );
+      }
+      out.writeln();
+      continue;
+    }
+    if (inFence) {
+      fenceBuf.writeln(line);
+      continue;
+    }
+    out.writeln(line);
+  }
+
+  return out.toString();
+}
+
+Map<String, Map<String, dynamic>> _loadDiagramCache(
+  String categoryId,
+  String chapterId,
+) {
+  final file = File(
+    'content/diagram-descriptions/$categoryId/$chapterId.json',
+  );
+  if (!file.existsSync()) return const <String, Map<String, dynamic>>{};
+  try {
+    final data =
+        jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+    final entries = data['entries'];
+    if (entries is! Map) return const <String, Map<String, dynamic>>{};
+    return entries.map(
+      (k, v) => MapEntry(k as String, (v as Map).cast<String, dynamic>()),
+    );
+  } catch (_) {
+    return const <String, Map<String, dynamic>>{};
+  }
 }
