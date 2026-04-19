@@ -34,7 +34,7 @@ void main(List<String> args) {
         .whereType<File>()
         .where((f) => f.path.endsWith('.md'))
         .toList()
-      ..sort((a, b) => a.path.compareTo(b.path));
+      ..sort((a, b) => compareNatural(a.path, b.path));
 
     final chapters = <Map<String, dynamic>>[];
 
@@ -879,4 +879,49 @@ String _wrapAsciiBlocks(String content) {
     i++;
   }
   return out.join('\n');
+}
+
+/// 파일/문자열을 자연(numeric-aware) 순서로 비교한다.
+///
+/// `phase1` < `phase2` < `phase10` — 단순 `compareTo`는 `phase1` < `phase10` <
+/// `phase2`로 정렬하여 MSA처럼 `phaseN-stepM` 패턴을 가진 챕터의 순서를
+///망가뜨린다. 이 함수는 digit run을 정수로 비교하고 그 외 구간은 문자열
+/// 비교한다.
+int compareNatural(String a, String b) {
+  var i = 0;
+  var j = 0;
+  while (i < a.length && j < b.length) {
+    final ca = a.codeUnitAt(i);
+    final cb = b.codeUnitAt(j);
+    final aDigit = ca >= 0x30 && ca <= 0x39;
+    final bDigit = cb >= 0x30 && cb <= 0x39;
+    if (aDigit && bDigit) {
+      var ei = i;
+      while (ei < a.length) {
+        final c = a.codeUnitAt(ei);
+        if (c < 0x30 || c > 0x39) break;
+        ei++;
+      }
+      var ej = j;
+      while (ej < b.length) {
+        final c = b.codeUnitAt(ej);
+        if (c < 0x30 || c > 0x39) break;
+        ej++;
+      }
+      // leading zero 중화: 숫자 값으로 비교하되 동일하면 더 짧은 쪽(덜 pad된
+      // 쪽) 을 먼저 둔다.
+      final na = int.parse(a.substring(i, ei));
+      final nb = int.parse(b.substring(j, ej));
+      if (na != nb) return na.compareTo(nb);
+      final lenCmp = (ei - i).compareTo(ej - j);
+      if (lenCmp != 0) return lenCmp;
+      i = ei;
+      j = ej;
+    } else {
+      if (ca != cb) return ca - cb;
+      i++;
+      j++;
+    }
+  }
+  return (a.length - i).compareTo(b.length - j);
 }
