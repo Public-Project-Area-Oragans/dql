@@ -4,7 +4,7 @@ part 'game_providers.g.dart';
 
 enum GameScene { title, centralHall, wing }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CurrentScene extends _$CurrentScene {
   @override
   GameScene build() => GameScene.title;
@@ -12,7 +12,7 @@ class CurrentScene extends _$CurrentScene {
   void goTo(GameScene scene) => state = scene;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CurrentWingId extends _$CurrentWingId {
   @override
   String? build() => null;
@@ -21,7 +21,7 @@ class CurrentWingId extends _$CurrentWingId {
   void clear() => state = null;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class QuestBoardOpen extends _$QuestBoardOpen {
   @override
   bool build() => false;
@@ -32,7 +32,7 @@ class QuestBoardOpen extends _$QuestBoardOpen {
 
 /// 분관 책장에서 QuestBoard를 열 때 해당 분관의 카테고리를 전달.
 /// null이면 전체 노출 (중앙 홀 등).
-@riverpod
+@Riverpod(keepAlive: true)
 class QuestBoardFilterCategory extends _$QuestBoardFilterCategory {
   @override
   String? build() => null;
