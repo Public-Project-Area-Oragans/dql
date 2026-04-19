@@ -40,7 +40,8 @@ class TheoryCard extends StatelessWidget {
                 code.code,
                 style: const TextStyle(
                   color: AppColors.steamGreen,
-                  fontFamily: 'monospace',
+                  fontFamily: 'Courier New',
+                  fontFamilyFallback: kMonospaceFallback,
                   fontSize: 13,
                   height: 1.4,
                 ),
@@ -113,7 +114,8 @@ class TheoryCard extends StatelessWidget {
       listBullet: body,
       code: const TextStyle(
         color: AppColors.steamGreen,
-        fontFamily: 'monospace',
+        fontFamily: 'Courier New',
+        fontFamilyFallback: kMonospaceFallback,
         fontSize: 13,
         backgroundColor: AppColors.darkWalnut,
       ),
@@ -171,7 +173,8 @@ class _ScrollablePreBuilder extends MarkdownElementBuilder {
           element.textContent,
           style: const TextStyle(
             color: AppColors.steamGreen,
-            fontFamily: 'monospace',
+            fontFamily: 'Courier New',
+            fontFamilyFallback: kMonospaceFallback,
             fontSize: 13,
             height: 1.4,
           ),
