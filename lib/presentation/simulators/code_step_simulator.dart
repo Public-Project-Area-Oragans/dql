@@ -75,7 +75,7 @@ class _CodeStepSimulatorState extends State<CodeStepSimulator> {
             _step.code,
             style: const TextStyle(
               color: AppColors.steamGreen,
-              fontFamily: 'monospace',
+              fontFamily: 'JetBrainsMono',
               fontSize: 14,
             ),
           ),
@@ -100,7 +100,7 @@ class _CodeStepSimulatorState extends State<CodeStepSimulator> {
                     '${e.key} = ${e.value}',
                     style: const TextStyle(
                       color: AppColors.steamGreen,
-                      fontFamily: 'monospace',
+                      fontFamily: 'JetBrainsMono',
                       fontSize: 13,
                     ),
                   ),
