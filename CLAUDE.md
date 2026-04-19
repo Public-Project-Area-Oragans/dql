@@ -50,7 +50,8 @@ master ← develop ← feature/task-XX-*
 
 ## 참조 문서
 
-- [**세션 핸드오프 (2026-04-18)**](docs/2026-04-18-session-handoff.md) — **새 세션 진입 시 최우선 읽기. 직전 세션 결과·프로덕션 검증 체크리스트·다음 Task.**
+- [**세션 핸드오프 (2026-04-19)**](docs/2026-04-19-session-handoff.md) — **새 세션 진입 시 최우선 읽기. 직전 세션 결과 + 오픈 PR (#74 #75 #76) + 사용자 작업 항목 (API 키 revoke / credit 재충전) + 다음 Task.**
+- [세션 핸드오프 (2026-04-18)](docs/2026-04-18-session-handoff.md) — 직전 세션
 - [**로드맵 피벗 (2026-04-18)**](docs/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계 P0 · 순차 로드맵. Phase 2 §10 게이트 대체.**
 - [**Phase 계획**](docs/2026-04-18-phase-plan.md) — P0~P3 단계별 산출물·전환 기준·잔여 태스크 (P0-5 NPC 보강 포함)
 - [**Task 워크플로**](docs/2026-04-18-task-workflow.md) — 브랜치→커밋→PR→머지→릴리즈 표준 절차
@@ -61,4 +62,9 @@ master ← develop ← feature/task-XX-*
 - [Phase 2 설계](docs/2026-04-18-dev-quest-library-phase2-design.md) — MSA 구조 조립 시뮬레이터 (§10은 로드맵 피벗이 대체)
 - [Phase 3 다이어그램 위젯 이주 설계](docs/2026-04-18-diagram-widget-migration-design.md) — ASCII/표/Mermaid → Flutter 위젯
 - [P0-5 NPC 분관 보강 설계](docs/2026-04-18-npc-branch-enhancement-design.md) — Claude API 기반 NPC Q&A + 책장 카테고리 필터 + 퀘스트 분관화
+- [**2026-04-19 재작업 요구사항**](docs/2026-04-19-requirements-consolidated.md) — R0~R7 실사용 결함 + AI 설명 파이프라인 정책
+- [2026-04-19 ASCII→위젯 이주 설계](docs/2026-04-19-ascii-to-widget-migration-design.md) — R2 기술 설계
+- [Pixel Art Asset Bible](docs/PIXEL_ART_ASSET_BIBLE.md) / [Asset Manifest](docs/PIXEL_ART_ASSET_MANIFEST.md) — 픽셀아트 스타일·아키텍처 락
+- [Pixel Art Anchor Approval](docs/PIXEL_ART_ANCHOR_APPROVAL.md) — art-0 승인 게이트
+- [Pixel Art Progress](docs/PIXEL_ART_PROGRESS.md) — art-0~9 누적 진행
 - [flutter-setup 스킬](../develop-study-documents/Skillbook/flutter-setup/) — Flutter 패키지/설정 레퍼런스

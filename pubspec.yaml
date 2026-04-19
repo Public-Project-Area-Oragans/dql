@@ -60,6 +60,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   # fix-10b: ai_diagram_describer / content_builder 에서 fence body 해시용.
   crypto: ^3.0.3
+  # art-1: tool/verify_palette.dart 가 PNG 픽셀 값 16색 팔레트 검증.
+  image: ^4.3.0
 
 flutter:
   uses-material-design: true
