@@ -43,11 +43,13 @@ void main() {
       await tester.pumpWidget(const ProviderScope(child: DolApp()));
       mark('DolApp pumped');
 
-      // allBooksProvider(Future)가 rootBundle에서 book.json을 읽어올 시간.
-      // 웹 빌드에서는 asset 로드가 네트워크 fetch 수준으로 느릴 수 있어
-      // settle 시간을 넉넉히 (위젯 테스트보다 길게).
-      await tester.pumpAndSettle(const Duration(seconds: 5));
-      mark('initial settle done');
+      // art-3: 초기 진입 화면이 TitleScreen 이며 `AnimationController.repeat()`
+      // 로 PRESS TO START 가 무한 깜빡임. pumpAndSettle 이 영원히 끝나지 않으므로
+      // 고정 시간 pump 로 부트스트랩 (allBooksProvider Future 해석 + rootBundle
+      // book.json fetch 시간). router.go 로 /book/... 진입 후에는 TitleScreen 이
+      // dispose 되어 일반 pumpAndSettle 가능.
+      await tester.pump(const Duration(seconds: 5));
+      mark('initial pump done (TitleScreen animation ongoing)');
 
       // 책 상세(챕터) 화면으로 직접 이동.
       appRouter.go(
