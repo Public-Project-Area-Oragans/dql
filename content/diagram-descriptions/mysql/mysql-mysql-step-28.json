@@ -1,0 +1,157 @@
+{
+  "chapterId": "mysql-mysql-step-28",
+  "entries": {
+    "fc8f4615f151c72e8b7282d901cd61e1e0e43ef258ab5232bb596027bb7aa2be": {
+      "language": "",
+      "description": "이 단원은 MySQL의 네 가지 주요 로그(Error, Slow Query, General, Binary)를 구분해 설명할 수 있고, Slow Query Log가 임계값 기반으로 기록되는 원리를 이해하며, 실제 로그를 분석해 병목 쿼리를 식별하고, Threads_connected 같은 서버 상태 지표로 부하를 진단할 수 있는 수준까지 학습자를 이끈다. 로그는 장애 후 복기 도구가 아니라 평시부터 설정·관찰·분석하는 지속적 관측 체계임을 관점으로 심는 것이 이 장의 핵심 의도다."
+    },
+    "1e4d04d1340b153be9b50f916d836bb0e1a21772ff022d970e09da6393f9e25c": {
+      "language": "",
+      "description": "새벽 3시 장애 상황을 통해 로그와 모니터링이 없으면 원인 분석이 얼마나 무력해지는지를 극적으로 보여 준다. 언제부터 느려졌는지, 어떤 쿼리가 문제인지, 에러는 발생했는지, 연결 수는 어떤지 어느 것도 답할 수 없는 운영팀의 무력함은 결국 DB 재시작이라는 임시방편으로 마무리되고 다음 날 같은 문제가 재발한다. 반면 Error Log·Slow Query Log·SHOW STATUS가 있었다면 각 질문에 구체적 답이 주어진다는 대비를 통해, 로그가 블랙박스라는 은유가 자연스럽게 전달된다."
+    },
+    "f5b5cb91b3c81923a138f316c54c45e022133b73647e5ad1aeb2b7b759bacab9": {
+      "language": "",
+      "description": "MySQL의 네 가지 주요 로그를 표로 정리하여 기록 내용과 주요 용도를 한눈에 대조시킨다. Error Log는 서버 시작·종료·에러 메시지, Slow Query Log는 임계값 초과 쿼리, General Log는 모든 SQL, Binary Log는 데이터 변경 이력을 각각 담당하며 용도 역시 장애 분석·병목 탐지·감사 디버깅·PITR 복제로 뚜렷이 구분된다. 이 표는 이후 각 로그를 심화 학습할 때 항상 돌아와 확인할 수 있는 기준 지도가 된다."
+    },
+    "31baabb064fdfb951b749acf997a28a7d208cc498f4111669207aebaed0e700b": {
+      "language": "sql",
+      "description": "Error Log의 위치와 상세 수준을 확인하는 SHOW VARIABLES 명령을 정리한다. log_error 변수로 로그 파일 경로를, log_error_verbosity로 기록 수준(에러만·경고까지·정보까지)을 파악할 수 있으며, Error Log는 기본적으로 항상 활성화되어 있다는 사실을 환기한다. 장애 분석의 출발점은 이 경로로 이동해 해당 시간대의 로그를 직접 열어 보는 것이며, 설정값을 알아 두는 것이 그 첫 단계다."
+    },
+    "ac4ea75b14e0d43b7d9e8166974ea63958ce6e2c38ec42eb2d71b0578465045d": {
+      "language": "",
+      "description": "Error Log에서 자주 마주치는 대표 메시지 다섯 가지와 각 메시지가 어떤 원인을 가리키는지 해석을 함께 제시한다. InnoDB 파일 잠금 에러는 중복 프로세스, was not properly shut down 경고는 비정상 종료 뒤 복구 진행, MYD 파일 에러는 물리 파일 손상, Shutdown completed는 정상 종료, Access denied는 인증 실패를 뜻한다. 로그 한 줄을 단순 텍스트가 아니라 증상의 코드처럼 읽도록 훈련시키는 미니 참조 카드다."
+    },
+    "f404f303e1f916f21438b7e2ae6ee4f525fd8534142a8e13d211d21223599633": {
+      "language": "sql",
+      "description": "Slow Query Log 관련 핵심 변수 세 가지(slow_query_log, long_query_time, log_queries_not_using_indexes)를 SHOW VARIABLES로 확인하고 각각의 기본값이 무엇인지 설명한다. 기본 상태에서는 Slow Query Log가 꺼져 있고 10초 임계값에 인덱스 미사용 기록도 꺼져 있어, 운영에 유용한 수준까지 끌어올리려면 반드시 의도적인 설정이 필요하다는 사실을 각인시킨다. 로그는 설정하지 않으면 존재하지 않는다는 교훈이다."
+    },
+    "0f17b27c9ddc48b9251f6e5210473cb8e1f09fbc6ee47bc3cfd49081a8187346": {
+      "language": "sql",
+      "description": "런타임에서 Slow Query Log를 활성화하는 네 줄짜리 SET GLOBAL 명령을 제시한다. 활성화·임계값 조정·로그 파일 경로·인덱스 미사용 기록 활성화를 한 번에 설정할 수 있어 운영 중인 DB에 재시작 없이 바로 적용할 수 있다. 운영 환경에서는 보통 1~2초 수준의 임계값이 합리적이며, 이어지는 my.cnf 영구 설정과 함께 사용해야 재시작 이후에도 유지된다는 점을 주의로 남긴다."
+    },
+    "b2300dd6a6c00c04e372be5aeeb4ab87dfdcf1b7ca30eda18bce5815666ce26d": {
+      "language": "ini",
+      "description": "my.cnf의 [mysqld] 섹션에 Slow Query Log 관련 설정을 영구 기록하는 ini 블록이다. slow_query_log 활성화, 로그 파일 경로, long_query_time 1초, 인덱스 미사용 기록, log_slow_admin_statements로 ALTER 같은 관리 쿼리까지 포함, min_examined_row_limit 1000으로 대량 스캔 쿼리만 필터링 같은 세밀한 조정 포인트를 한자리에 모아 두었다. 재시작 이후에도 정책이 유지되게 만드는 표준 템플릿이다."
+    },
+    "880da43aa2c61a581565f5e7a37d4a5942667c57615b4a7511eba85b5ef4190b": {
+      "language": "",
+      "description": "Slow Query Log 파일의 실제 출력 구조를 예시로 보여 주고 각 필드의 의미를 해석한다. Query_time 8.34초, Lock_time 0초, Rows_sent 20·Rows_examined 987,654라는 값의 의미는 각각 총 실행 시간·잠금 대기·반환 행 수·스캔 행 수이며, Rows_examined가 Rows_sent보다 훨씬 크다는 사실 자체가 Full Scan의 전형적 신호임을 강조한다. 로그 파일을 읽는 법을 아는 것이 튜닝의 시작임을 구체 데이터로 가르치는 장면이다."
+    },
+    "b77785d677804d263ba73166676d039cc94cea534d5b1d8592d2ba95ac1a1952": {
+      "language": "sql",
+      "description": "General Log의 설정법과 그 위험성을 함께 알린다. SET GLOBAL general_log로 모든 SQL을 기록할 수 있지만 운영 환경에서 상시 활성화하면 초당 수백~수천 건의 쿼리가 파일로 쏟아져 디스크 I/O가 폭발하고 DB 성능이 30~50% 이상 떨어질 수 있다. 따라서 단기 디버깅 목적으로만 잠깐 켜고 즉시 OFF로 돌려야 한다는 경고가 강하게 담긴다. 강력한 도구일수록 반드시 규율과 함께 쓰여야 한다는 원칙이 여기서 나타난다."
+    },
+    "8c04ebb208e28888af9e3bc4409439618db59024ce4af095632c1453500a165a": {
+      "language": "",
+      "description": "Slow Query Log가 임계값 기반으로 동작하는 내부 흐름을 다이어그램 형태로 풀어 설명한다. 쿼리 시작 시 타이머가 켜지고 실행이 끝난 뒤 long_query_time과 비교해 초과한 경우에만 기록되며, 추가로 log_queries_not_using_indexes가 켜져 있으면 실행 시간과 무관하게 인덱스 미사용 쿼리도 기록되고 min_examined_row_limit로 스캔 행 수 기준도 적용된다. 단순한 ON/OFF가 아니라 여러 조건이 맞물려 기록 여부가 정해진다는 구조 인식을 심어 준다."
+    },
+    "4c2b1bd9c090e052782c5ad6046519a485dba574fb7909565f1bb44009f703b4": {
+      "language": "bash",
+      "description": "mysqldumpslow를 이용해 Slow Query Log 파일을 요약 분석하는 네 가지 정렬 옵션과 출력 예시 해석을 함께 제시한다. -s t(시간 합계)·-s c(발생 횟수)·-s r(스캔 행 수)·-t 10(상위 10개) 같은 옵션을 조합하면 수천 줄의 로그에서 가장 비용이 큰 쿼리 패턴을 빠르게 끄집어낼 수 있다. 127회 실행되어 총 18분을 잡아먹는 쿼리 한 패턴을 찾아내는 사례는 평범한 로그에서 최우선 튜닝 대상이 어떻게 드러나는지 보여 준다."
+    },
+    "2ba9ac49b5f96f137c50ba5260a483e1446e685e111b2cc9ab1f1c6efa4c6699": {
+      "language": "sql",
+      "description": "SHOW GLOBAL STATUS와 LIKE 패턴으로 서버 상태 지표를 조회하는 기본 문법을 정리한다. 전체 지표는 수백 개에 달하므로 Thread%·Connection%·Innodb_buffer%·Com_% 같은 패턴으로 관심 영역만 뽑아 보는 것이 실무적이다. 이 한 줄 명령들이 이후 단원에서 다룰 연결 부하·버퍼 풀 히트율·쿼리 유형별 통계 분석의 출발점이 된다."
+    },
+    "e9c366f1c1c4e5cceccd11601a596a24fd3b0e3fa9ad21f630c9d4158cd38fca": {
+      "language": "sql",
+      "description": "실무에서 반드시 추적해야 할 핵심 지표들을 연결·캐시·쿼리·InnoDB 네 그룹으로 묶어 정리한다. Threads_connected와 max_connections의 비율로 연결 풀 포화 여부를, 버퍼 풀의 reads와 read_requests로 히트율 95% 기준, Com_select 같은 쿼리 유형별 누적 카운트, Innodb_row_lock_waits와 deadlocks로 동시성 상태를 각각 읽어 낸다. 하나의 지표가 아니라 지표들의 관계를 읽는 감각이 곧 운영 실력이라는 관점을 심어 준다."
+    },
+    "8a6a257fa33aacddb30e559d3bb8c06c525a7ab0b96f24b15c9217f896727fee": {
+      "language": "sql",
+      "description": "SHOW PROCESSLIST와 information_schema.PROCESSLIST를 이용해 현재 실행 중인 연결을 관찰하고 필요한 연결이나 쿼리를 KILL로 종료하는 운영 루틴을 제시한다. Sleep 상태를 제외하고 TIME 내림차순으로 정렬하면 오래 걸린 쿼리가 맨 위에 노출되어 문제 쿼리를 빠르게 특정할 수 있다. KILL QUERY와 KILL 명령의 차이(쿼리만 중단 vs 연결까지 종료)를 정확히 구분해 두어 필요 최소한의 개입만 수행하도록 돕는다."
+    },
+    "3e7c2096fa3b2aa71974ed509fc0f51eb1bdf8d75b81b833c9ae809460be233f": {
+      "language": "",
+      "description": "PROCESSLIST의 STATE 컬럼이 보여 주는 여섯 가지 대표 상태의 의미를 한자리에 정리한다. Waiting for lock은 잠금 경합 가능성, Sorting result는 filesort 발생, Copying to tmp table은 임시 테이블 생성, Sending data는 결과 전송 중, init와 query end는 각각 쿼리 시작과 끝 준비 단계를 뜻한다. STATE 한 단어만 보고도 어떤 유형의 성능 문제를 겪고 있는지 가설을 세울 수 있도록 만드는 참조표다."
+    },
+    "b52bbff48b54d8eab43909685638f2d51033f3047c65747ab1b5bd8ce6f86525": {
+      "language": "sql",
+      "description": "Performance Schema 활성화 여부를 확인하고 events_statements_summary_by_digest 테이블로 가장 느린 쿼리 TOP 10을 뽑아 내는 실전 쿼리를 제시한다. 쿼리 패턴(DIGEST_TEXT)·실행 횟수·총 실행 시간·평균 실행 시간·총 스캔 행 수를 한 화면에서 비교할 수 있어, Slow Query Log보다 훨씬 체계적인 쿼리 프로파일링이 가능하다. 잠금 대기 상위 쿼리와 sys.statement_analysis까지 함께 소개해 도구 체인 전체를 연결한다."
+    },
+    "ad26503e1ba2b093270dfc5332c0be8718fc4b24e05a8e812d3641748e268ad9": {
+      "language": "sql",
+      "description": "운영에서 중요한 시스템 변수들(max_connections, innodb_buffer_pool_size, innodb_log_file_size, wait_timeout, interactive_timeout, tmp_table_size, max_heap_table_size)을 한자리에 모아 조회하는 방법과, 디스크 임시 테이블 비율을 계산하는 쿼리까지 제시한다. Created_tmp_disk_tables가 Created_tmp_tables 대비 높다면 tmp_table_size를 키워 메모리 처리를 늘려야 한다는 구체적 튜닝 신호로 이어진다. 설정값과 실측값을 함께 읽는 훈련을 제공한다."
+    },
+    "c8e93207a41b2f603ad3094bfffb2f8e8fc3691e0b958d8be3127758b1c63a93": {
+      "language": "",
+      "description": "슬로우 쿼리 해결의 표준 프로세스를 다섯 단계(로그 발견·EXPLAIN 분석·개선안 적용·성능 검증·모니터링 반복)로 정리한다. 단순히 문제 쿼리를 찾아 고치는 것이 아니라 같은 쿼리가 로그에서 사라지는지까지 검증하고 그다음 Top 쿼리로 넘어가는 지속적 루프임을 강조한다. 일회성 사건이 아니라 상시 운영 활동이라는 관점에서 튜닝을 다시 바라보게 만든다."
+    },
+    "981ba27b0b6b7b91cfe6885277dca9732cb139ff5327851882d326e4e89e306f": {
+      "language": "",
+      "description": "모바일 앱의 내 주문 목록 API가 3~5초 걸려 사용자 불만이 쌓이는 구체 상황을 제시하고, Slow Query Log에서 발견된 쿼리와 핵심 지표(Query_time 4.127초, Rows_examined 215만·Rows_sent 20)를 함께 보여 준다. 이 수치만으로도 Full Scan에 filesort가 결합된 전형적 악성 쿼리임을 학습자가 추론할 수 있도록 구성되어 있어, 이어지는 EXPLAIN 분석과 인덱스 추가가 왜 필요한지 맥락이 자연스럽게 잡힌다."
+    },
+    "a1b552c059c6343d4e94df1254cd7e122f51740e9b3c1ba014ed57d21b7fbc97": {
+      "language": "sql",
+      "description": "앞서 발견한 쿼리에 대해 EXPLAIN을 돌려 type=ALL·key NULL·Using filesort 같은 신호를 확인하고, (user_id, status, created_at DESC) 순서의 복합 인덱스를 추가해 type을 range로 끌어올린 뒤, 실제 실행 시간을 4.127초에서 0.003초로 1,375배 개선하는 전 과정을 한 블록에 담았다. 로그·EXPLAIN·인덱스·측정이 어떻게 하나의 튜닝 사이클로 묶이는지 구체 수치로 완결된 모범 사례다."
+    },
+    "3178b222391723d4c7578572de13d91c90e37743b0c3d13e643c0023c8ed89e8": {
+      "language": "sql",
+      "description": "운영에서 주기적으로 확인해야 할 핵심 지표들(현재 연결수·최대 연결수·실행 중 쿼리 수·슬로우 쿼리 누적·버퍼 풀 히트율·잠금 대기 횟수)을 한 번의 SELECT로 뽑아 내는 대시보드 쿼리다. information_schema.GLOBAL_STATUS와 GLOBAL_VARIABLES를 서브쿼리로 조합해 하나의 행으로 정리해 주어, 모니터링 도구에 연결하거나 수동으로 반복 실행하기에 편하다. 지표 여러 개를 하나의 관점으로 엮어 보는 습관을 심는 실전 쿼리다."
+    },
+    "3619796bb74ce10538bf39e371e1a69cb1dbb4ffde76483f3cc7107d4f120dc8": {
+      "language": "sql",
+      "description": "실습을 시작하기 전 현재 서버의 로그 관련 설정을 SHOW VARIABLES로 세 번 조회해 전반적 상태를 확인하는 준비 단계다. 모든 %log% 변수, slow% 변수, long_query_time을 차례로 조회하면 어떤 로그가 활성화되어 있고 어떤 임계값이 설정되어 있는지 전체 그림이 파악된다. 이 파악 없이 설정을 바꾸면 원래 값이 무엇이었는지조차 모르게 되므로, 실습 전후 비교의 기준점을 잡는 습관을 강조한다."
+    },
+    "0b5371c85f50310c01b799fa1522dec5916f1f8d24db28a8cfbba967383cc04e": {
+      "language": "sql",
+      "description": "Slow Query Log를 실습용으로 활성화하는 절차다. @@global.slow_query_log와 long_query_time 초기값을 확인한 뒤, slow_query_log ON, long_query_time 0(모든 쿼리 기록)과 log_queries_not_using_indexes ON으로 설정을 바꾼다. 임계값 0은 운영이 아니라 실습 관찰용이라는 점을 강조하여, 실습 후 반드시 원복해야 한다는 뒷단계와 연결된다. 실측 가능한 환경을 만드는 표준 루틴이다."
+    },
+    "918da39f24afd80681c70e3cf2bf245db83621644d62bebe2c0339ad2bb4351a": {
+      "language": "sql",
+      "description": "의도적으로 Slow Query를 만들어 로그에 기록되는지 확인하는 네 가지 쿼리를 실행한다. 인덱스 없는 LIKE 검색, 함수 적용으로 인덱스 무효화, 대량 정렬, 대량 JOIN처럼 모두 Full Scan이나 filesort를 유발하는 악성 패턴이며, 마지막에 SHOW GLOBAL STATUS LIKE 'Slow_queries'로 카운터 증가를 확인해 로그 설정이 실제로 작동했음을 검증한다. 성능 문제의 전형을 직접 재현해 감각을 익히는 실습이다."
+    },
+    "640003d6bcf36be611711392188257d7be2f992fda35b27d7d37f6add013c812": {
+      "language": "bash",
+      "description": "MySQL 서버 OS 쉘에서 Slow Query Log 파일을 확인·분석하는 루틴이다. slow_query_log_file 변수로 경로를 알아 낸 뒤 tail -100으로 최근 기록을 확인하고, mysqldumpslow에 -s t와 -s c 옵션을 조합해 시간 합계·발생 횟수 기준 상위 쿼리를 뽑아 본다. 로그 파일이 아무리 길어도 이 도구 체인을 거치면 실질적 튜닝 후보 몇 건으로 좁혀진다는 감각을 실습으로 체득하게 한다."
+    },
+    "2dc425e005a8803869093050ec0e2058f2d3125b20c3b44a2f437b1a313d9f8b": {
+      "language": "sql",
+      "description": "Threads_connected·Threads_running·Slow_queries·Innodb_row_lock_waits 네 지표를 UNION ALL로 한 테이블로 엮어 설명과 함께 보여 주는 통합 상태 조회 쿼리다. 또한 PROCESSLIST에서 Sleep 제외 연결을 TIME 내림차순으로 조회해 현재 눈에 띄는 연결을 동시에 확인한다. 실습 상황에서 한 화면에 가장 쓸모 있는 지표만 모아 봄으로써 장애 시 무엇을 볼지 미리 연습하는 효과가 있다."
+    },
+    "319adb4f61147052b0880eb8eadbb4b51c51ea9ed0b83c6c2db666d7782ca19c": {
+      "language": "sql",
+      "description": "Performance Schema의 events_statements_summary_by_digest에서 practice_db를 스키마로 필터링해 가장 느린 쿼리 TOP 5를 뽑아 보는 고급 분석 실습이다. DIGEST_TEXT의 앞 80글자만 잘라 깔끔하게 보여 주며, 실행 횟수·총·평균 실행 시간·총 스캔 행 수까지 한 행에 담는다. 실습 말미에 long_query_time을 10으로 되돌리고 log_queries_not_using_indexes를 OFF로 원복해 깔끔하게 환경을 정리하는 마무리도 포함되어 있다."
+    },
+    "e1fd5f37ab08316e09bcce96a4e295d694046aad7befef2313cf1815eed211e4": {
+      "language": "",
+      "description": "첫 번째 퀴즈로, 다섯 가지 상황에서 Error·Slow Query·General·Binary 중 어떤 로그를 봐야 하는지 맞히게 한다. 서버 재시작 원인은 Error Log, 부하 유발 쿼리는 Slow Query Log, PITR 복구는 Binary Log, 특정 계정의 모든 SQL 이력은 General Log, 로그인 실패는 다시 Error Log가 답이 된다. 각 로그의 본래 역할을 다양한 업무 시나리오에 연결해 구분 감각을 굳히는 문제다."
+    },
+    "21fce652ca4836f63db3ef7941415ba7df363e6fa4ef791996068d0ae172523c": {
+      "language": "",
+      "description": "두 번째 퀴즈는 Slow Query Log의 기본 비활성, long_query_time 0의 의미, General Log 상시 활성화 금지, Rows_examined와 Rows_sent의 비교 해석, Slow_queries의 누적 특성 같은 다섯 가지 주장을 O·X로 판단하도록 한다. 실무에서 자주 혼동되는 설정 기본값과 해석 요령을 한 번에 복습하는 문항이며, 학습자가 단순 암기가 아니라 동작 원리까지 이해하고 있는지 검증한다."
+    },
+    "10708aef60d49e0f60110be14827964b6b8e49500064d52e66f4efd866ae03c1": {
+      "language": "",
+      "description": "세 번째 퀴즈는 실제 SHOW STATUS 결과값을 제시하고 서버 상태를 진단하도록 요구한다. 연결 사용률 97%, Threads_running 45, 버퍼 풀 히트율 90%, 잠금 대기 892, 슬로우 쿼리 8234라는 숫자들을 종합 해석해 어느 지표가 위험 수준이고 어떤 조치가 필요한지 판단해야 한다. 단일 지표가 아닌 여러 지표를 엮어 읽는 실전형 사고를 훈련시키는 문제다."
+    },
+    "faa221f763c804095e05bdcda32173cf0935ce7e60986386c26908bce90bf271": {
+      "language": "sql",
+      "description": "네 번째 퀴즈는 DATE(o.created_at)로 인덱스가 무효화되고 GROUP BY와 ORDER BY가 결합된 전형적 악성 쿼리를 제시하고 해결 절차를 단계별로 작성하도록 한다. Query_time 6.23초·Rows_examined 154만이라는 수치는 Full Scan 여부를 암시하며, 학습자는 EXPLAIN·쿼리 재작성·인덱스 추가·검증의 네 단계를 조립해 내야 한다. 실제 운영에서 되풀이해 겪는 문제 유형을 다섯 번째 단원인 Slow Query Log 해결 프로세스의 총정리처럼 묶어 낸 응용 문제다."
+    },
+    "d8ef04abd636302ae9ba10e32deb1071a4f6420cf6e675855227d5e0ca68acb4": {
+      "language": "sql",
+      "description": "퀴즈 4의 모범 답안 첫 단계인 EXPLAIN 분석 코드이다. 예상되는 결과로 type이 ALL로 떨어지고 Extra에 Using where·Using temporary·Using filesort가 함께 등장할 것이라는 점을 주석으로 설명한다. EXPLAIN 한 줄이 세 가지 악재를 동시에 드러내 주며, 이것이 문제의 원인 분석의 기반이 된다는 사실을 학습자에게 되새기게 한다."
+    },
+    "b085bd054f3692b63c505838014e42ed7618805368b997ba2cb9fc0ca03c1a6b": {
+      "language": "sql",
+      "description": "퀴즈 4의 개선된 쿼리로, DATE() 함수를 제거하고 created_at >= ... AND created_at < ... 형태의 범위 조건으로 바꾼 버전이다. 이 재작성만으로도 인덱스 Range Scan이 가능해지고 옵티마이저가 행 수를 훨씬 좁힐 수 있다. 동일한 의미를 갖는 쿼리가 쓰기 방식에 따라 얼마나 다른 실행 계획을 만들어 내는지 보여 주는 교과서적 리팩토링이다."
+    },
+    "1666f4fc826ecdc675e844736154bbb49abda4db4b62112304af205f8c1e347c": {
+      "language": "sql",
+      "description": "퀴즈 4의 인덱스 추가 단계로, (created_at, user_id) 복합 인덱스를 만들어 범위 조건과 GROUP BY를 함께 커버할 수 있도록 한다. 복합 인덱스의 컬럼 순서가 범위 조건을 앞에 두어 created_at으로 좁힌 뒤 user_id로 그룹핑하는 흐름에 맞아떨어지며, 이 설계가 최종 성능 향상의 핵심임을 명확히 한다. 인덱스 설계 역시 쿼리 재작성과 한 세트라는 관점을 심어 준다."
+    },
+    "7fd3704b9bf421528010c03135b82b1e6d9c19f1f6f591c4f07e05761b45ebf0": {
+      "language": "sql",
+      "description": "퀴즈 4의 마지막 검증 단계로, EXPLAIN을 재실행해 type이 range로 바뀌고 Extra에 Using index condition이 나타나는 것을 확인하며 실제 실행 시간을 0.05초 이하로 측정하는 것이 목표임을 명시한다. 개선이 눈으로 보이지 않는 추정이 아니라 실측 결과로 검증되어야 완성된다는 원칙을 문제 구성 자체에 녹여 두어, 학습자의 튜닝 루틴에 마감 검증이 자연스럽게 포함되도록 유도한다."
+    },
+    "1660e57eeb6763f67f44ebd7eecd03804436776683ae3fe6b3f2e7dfe9154d7e": {
+      "language": "",
+      "description": "이 단원에서 배운 다섯 가지 핵심(4종 로그의 용도, Slow Query Log 설정 규칙, 핵심 모니터링 지표, 슬로우 쿼리 해결 프로세스, Performance Schema와 sys 스키마 활용)을 복습용으로 압축한다. 특히 Rows_examined와 Rows_sent의 차이가 인덱스 문제의 신호라는 점, 버퍼 풀 히트율 95%와 max_connections 80%라는 기준치는 학습자가 장기 기억으로 가져가야 할 핵심 수치로 강조된다. 단순 도구 사용을 넘어 지표 해석의 감각을 내재화시키는 마감 장치다."
+    },
+    "de30d6e19549fb687f7245185597428cd28a95b9407bfd973bdc15fd4fdb90ef": {
+      "language": "",
+      "description": "Phase 7의 마지막 Step이자 전체 로드맵의 마지막 Step인 Step 29로 이어지는 진행 지도다. 로그와 모니터링을 통해 관찰과 진단을 다진 뒤, 마지막으로 복제와 확장 아키텍처를 학습하여 MySQL 운영의 큰 그림을 완성한다. 학습자가 지금까지의 29 Steps 여정이 마지막 한 걸음만 남겨 두고 있다는 감각을 가지도록 부각해, 대단원의 마무리로 자연스럽게 넘어가게 만든다."
+    }
+  }
+}

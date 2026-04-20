@@ -1,0 +1,89 @@
+{
+  "chapterId": "flutter-Step-25-Memory-Management",
+  "entries": {
+    "3ffd94ac4bbda66dad23304168b4c05440e6d71a0d05ef963ea19fefe6f9ea31": {
+      "language": "",
+      "description": "이 다이어그램은 메모리 누수가 실사용 앱에서 어떻게 드러나는지 다섯 가지 증상으로 정리한다. 사용 시간이 길어질수록 메모리가 계속 증가하다가 결국 OOM으로 앱이 강제 종료되고, GC 압박으로 화면 전환이 느려지며, 불필요한 작업이 남아 배터리까지 빠르게 소모된다. Flutter가 출력하는 전형적인 경고 문구 두 가지도 함께 보여 준다.\n\n의도는 메모리 누수를 '이론적 품질 지표'가 아니라 '사용자가 체감하는 구체적 장애'로 인식시키는 것이다. 학습자가 이 증상 목록을 기억해 두면, 자신의 앱에서 비슷한 현상을 발견했을 때 곧바로 누수 의심·DevTools 프로파일링으로 이어갈 수 있는 진단 감각이 생긴다. 뒤이어 나올 dispose 패턴과 진단 도구 학습의 목적이 여기서 선명해진다."
+    },
+    "0f7fa7d4d71869f09165f90d00403a0650d2d0addef0ff88af6a7274c780e061": {
+      "language": "",
+      "description": "이 다이어그램은 Dart에 GC가 있음에도 불구하고 왜 Flutter 앱에서 메모리 누수가 발생하는지를 근본 원리로 설명한다. GC는 참조가 끊긴 객체만 해제하므로, 리스너·구독·컨트롤러·Isolate처럼 의도치 않게 참조를 유지하는 구조가 남아 있으면 대상 객체는 영원히 살아남는다. 세 가지 원인(리스너·구독 미해제, 컨트롤러 미dispose, Isolate 미종료)이 한 화면에 정리된다.\n\n의도는 'GC가 있으니 메모리는 알아서 관리된다'는 안이한 오해를 깨는 것이다. 학습자는 참조 유지가 곧 누수이고, 개발자가 명시적으로 해제해야 하는 지점을 이해하게 되며, 이후 섹션에서 다루는 dispose·cancel·kill 호출 규율이 왜 반드시 필요한지 스스로 설명할 수 있게 된다."
+    },
+    "1e81c56762b7df49479a5edc0e3b3c97332247989d45c74ab058e6b61ca7d0f7": {
+      "language": "",
+      "description": "이 다이어그램은 Step 25에서 다룰 메모리 관리 주제 전체를 dispose 패턴·누수 패턴·진단 도구 세 갈래 트리로 압축해 보여 준다. dispose 가지에는 해제해야 할 대표 리소스 여섯 가지가, 누수 가지에는 실무에서 가장 자주 만나는 네 가지 패턴이, 진단 가지에는 DevTools Memory 탭을 비롯한 세 가지 도구가 정리된다.\n\n핵심 의도는 이어질 긴 학습을 한 장의 지도로 미리 열어 두는 것이다. 학습자는 개별 예제를 읽는 동안 '지금 다루는 내용이 해제해야 할 리소스 이야기인지, 누수 사례인지, 진단 도구인지'를 상시 위치시킬 수 있다. 세 영역이 균형 있게 이해되어야 누수 없는 Flutter 앱을 만들 수 있다는 메시지가 구조 자체로 드러난다."
+    },
+    "4bfcd7e21fa3bf7252ccc0b6f106c6d29acfc144b9194a73e69e03b800a7d2ce": {
+      "language": "dart",
+      "description": "이 예제는 StatefulWidget 한 곳에 모일 수 있는 여덟 가지 대표 리소스를 번호로 짝지어 초기화와 해제를 대칭 구조로 보여 준다. AnimationController·TextEditingController·ScrollController·FocusNode·StreamSubscription·Timer·ValueNotifier·ReceivePort를 initState에서 만들고, dispose에서 같은 순서로 해제한 뒤 마지막에 super.dispose를 호출한다.\n\n교훈은 dispose가 '잊기 쉬운 뒷정리'가 아니라 '선언한 만큼 해제하는 대칭 규율'이라는 점이다. 번호로 짝을 맞춘 체크리스트 스타일이 관례로 자리 잡으면 팀 어디서나 해제 누락이 눈에 띄고, super.dispose가 마지막에 와야 State 내부 리소스 접근이 안전하다는 규칙도 자연스럽게 몸에 밴다."
+    },
+    "f2630d9de3cb228183b4987ff1a7d9f662ab829686edfcfcec95b69a8678a74a": {
+      "language": "dart",
+      "description": "이 예제는 비동기 작업이 끝났을 때 화면이 이미 pop되어 State가 dispose된 상태일 수 있다는 사실을 세 가지 대응으로 보여 준다. 나쁜 예는 await 뒤에 곧바로 setState를 호출해 'setState called after dispose' 오류를 일으키고, 좋은 예는 mounted로 방어하며, Riverpod AsyncNotifier는 state 대입이 dispose 이후 자동 무시되어 mounted 체크를 생략할 수 있다.\n\n교훈은 비동기 완료 시점의 유효성 검사가 Flutter 상태관리에서 반복되는 버그의 핵심 방어선이라는 점이다. 명시적 mounted 가드와 Riverpod의 암묵적 안전망 중 각각이 언제 유효한지를 체감해 두면, 화면 이탈과 응답 지연이 겹치는 시나리오에서도 안정적 코드를 유지할 수 있다."
+    },
+    "984c28f352ab34dda530b7e7b3c0a9f9be7e153fcbb74d6e647156e9bf4d3f26": {
+      "language": "dart",
+      "description": "이 예제는 Stream.listen의 반환값을 변수에 저장하지 않는 것이 전형적 누수 패턴임을 명확히 한 뒤, 구독 객체를 필드로 보관해 dispose에서 cancel하는 해결책과 더 간단한 StreamBuilder 활용법 두 가지를 나란히 제시한다. 나쁜 구현은 dispose에서 취소할 대상이 없어 화면이 사라져도 구독이 남고, 좋은 구현은 구독 객체와 mounted 가드를 함께 사용한다.\n\n교훈은 Stream 구독이 주는 편리함 뒤에 반드시 '누가 언제 해제할 것인가'라는 책임이 따른다는 점이다. 직접 listen을 쓸 때는 구독 객체 저장이 필수이고, 그 책임이 부담스러운 단순 케이스에서는 StreamBuilder가 구독·해제를 자동화해 주므로 먼저 고려해야 한다는 선택 기준이 한 번에 정리된다."
+    },
+    "e36167e8f858cc3814545884334b33c8b574d474fd817bda99e65641ffb1e8c2": {
+      "language": "dart",
+      "description": "이 예제는 Timer.periodic을 변수로 저장하지 않으면 화면이 사라져도 타이머가 계속 돌아 메모리와 네트워크를 낭비한다는 문제를 지적한 뒤, 올바른 패턴으로 Timer 핸들을 필드에 저장해 dispose에서 cancel하는 방식과 콜백 내부 mounted 가드를 함께 사용하는 구조를 보여 준다. 디바운스 패턴에서는 같은 핸들을 재활용해 이전 예약을 취소한 뒤 새 예약을 다시 잡는 관용구가 등장한다.\n\n교훈은 Timer가 '해제 의무가 없는 가벼운 콜백'이 아니라, listen과 동일한 수준의 해제 책임을 가진 장기 실행 객체라는 인식이다. 주기 호출과 디바운스는 다른 용도로 보이지만 핸들 관리 규율은 동일하고, 이 한 가지 원칙만 지켜도 화면 전환 시 터지는 이상 동작 상당수가 사라진다."
+    },
+    "c40f93c5d1af6d23db6ddd96a8347fb052ef9261f76fb76902f1737d503fadac": {
+      "language": "dart",
+      "description": "이 예제는 Isolate를 반복 spawn만 하고 종료하지 않으면 매 반복마다 독립된 Dart 힙이 쌓여 메모리가 폭증한다는 사실을 먼저 보여 준다. 그 뒤 compute와 Isolate.run이 작업 완료 시점에 Isolate를 자동 종료해 주므로 일회성 작업에는 이 둘을 우선 사용하고, 장기 실행 Isolate를 직접 관리할 때만 spawn과 kill·ReceivePort.close 패턴을 적용하는 선택 기준을 제시한다.\n\n교훈은 Isolate가 '무거운 작업을 UI 스레드에서 덜어내는 도구'인 동시에 '별도 메모리 공간을 점유하는 부담'이라는 양면성을 갖는다는 점이다. 기본적으로 compute로 시작하고 필요할 때만 직접 관리로 내려가라는 실무적 의사결정 순서가 코드 구성에 그대로 드러난다."
+    },
+    "ad118c35a82423fc1a0d796a5dea5873d20e613270f23c5311eb17171268c674": {
+      "language": "",
+      "description": "이 다이어그램은 Main Isolate와 Worker Isolate가 각자 독립된 메모리와 Dart 힙을 갖고 있으며, 서로 데이터를 주고받으려면 SendPort·ReceivePort를 통해 메시지를 복사 전달해야 한다는 사실을 시각화한다. 큰 데이터를 자주 넘기면 복사 비용이 성능을 깎아먹고, 이를 피하려면 TransferableTypedData로 zero-copy 전달이 가능하다.\n\n핵심 의도는 'Isolate는 그냥 스레드가 아니다'라는 점을 각인시키는 것이다. 공유 메모리 모델에 익숙한 개발자가 Isolate를 도입했을 때 왜 객체 참조를 직접 넘길 수 없는지, 왜 큰 리스트 전달이 오히려 느려질 수 있는지를 이 한 장의 그림으로 이해하게 되고, compute의 적절한 사용 한계도 함께 감지된다."
+    },
+    "d569f25e078220f8fe06e0bfc3818af2bfd6e59e0ea92ea3fcc8092a2e99c9dd": {
+      "language": "",
+      "description": "이 다이어그램은 DevTools Memory 탭을 실제로 어떻게 쓰는지 세 단계 절차로 정리한다. 먼저 실시간 그래프로 화면 전환 반복 시 메모리가 계속 오르는지 관찰하고, 이어서 진입 전후로 힙 스냅샷을 찍어 비교해 줄어들지 않은 객체를 찾고, 마지막으로 StatefulElement·AnimationController·StreamSubscription 같은 누수 후보 타입이 잔존하는지 식별한다.\n\n핵심 의도는 누수 진단이 '감'이나 '코드 리뷰'가 아니라 '측정 도구로 확인 가능한 절차'라는 점을 알려 주는 것이다. 이 세 단계 루틴을 팀 문화로 정착시키면 누수 의심 시점마다 재현 가능한 조사 흐름을 돌릴 수 있고, 해제 누락이 있는 정확한 타입까지 가리켜 고칠 대상을 바로 좁힐 수 있다."
+    },
+    "9e0f586d258798215bcb3965981e12a424f1c11751fe05c384c639105fe7214e": {
+      "language": "bash",
+      "description": "이 예제는 DevTools Memory 탭을 쓰기 위한 환경 준비를 두 줄로 요약한다. `flutter run --profile`로 프로파일 모드 앱을 띄우면 디버그 오버헤드 없이 실제 성능·메모리 특성을 관찰할 수 있고, `flutter pub global activate/run devtools`로 DevTools를 실행해 브라우저에서 Memory 탭에 접속한다.\n\n교훈은 메모리 분석을 debug 모드에서 하면 JIT·assertion 비용이 실제 사용자 경험과 다른 결과를 만들어 낸다는 실무 감각이다. 프로파일 모드는 릴리즈에 가까우면서도 툴 연결이 가능해 메모리·프레임 레이트 진단에 가장 적합한 환경이라는 사실이 두 줄의 명령어로 자연스럽게 전달된다."
+    },
+    "4bf36704e57cdb3bc20f095031e06741885778fec8fe231f33a857cf23fc3350": {
+      "language": "dart",
+      "description": "이 예제는 상태관리 라이브러리별로 dispose 자동화 수준이 어떻게 다른지를 비교한다. ChangeNotifierProvider는 트리에서 제거되면 자동 dispose되고, Riverpod의 autoDispose Provider는 구독자가 모두 사라지면 Notifier를 알아서 정리하며, GetIt은 싱글톤 성격이 강해 수동으로 dispose나 unregister를 호출해야 한다는 차이가 드러난다.\n\n교훈은 '상태관리를 도입하면 메모리를 신경 쓸 필요가 없다'는 단순화가 위험하다는 점이다. 자동화 범위는 라이브러리마다 다르고, 자동 dispose가 동작하더라도 Notifier 내부에서 만든 Stream·Timer는 여전히 ref.onDispose에서 직접 정리해야 한다. 선택한 도구의 자동화 경계를 정확히 아는 것이 누수 예방의 출발점이다."
+    },
+    "051fc0a8df56fe42d6db0cfaebab26ef965a1685e421a2936c64a5083470a374": {
+      "language": "dart",
+      "description": "이 예제는 이미지가 Flutter 앱 메모리를 가장 빠르게 갉아먹는 자원임을 전제하고 세 가지 대응을 제시한다. 원본 크기 그대로 Image.network를 쓰면 수 MB가 그대로 힙에 올라가므로 cacheWidth·cacheHeight로 표시 크기에 맞게 디코딩하고, 앱 전역으로 imageCache의 개수와 바이트 상한을 지정하며, 더 이상 필요 없는 이미지는 evict로 캐시에서 제거한다.\n\n교훈은 이미지 최적화가 '네트워크 비용'이 아니라 '메모리 비용' 문제라는 관점 전환이다. 디코딩 후 픽셀 버퍼는 원본 파일의 몇 배 용량이 될 수 있으므로, 표시 크기 기준의 디코딩 상한과 전체 캐시 상한을 함께 거는 것이 리스트 화면에서 OOM을 막는 가장 효과적인 방어다."
+    },
+    "213478d57583d6b6986b629ad8e0be9fb2dd5d2cee3f16526f80f5b4f295a51e": {
+      "language": "",
+      "description": "이 사례 연구는 채팅 화면을 반복해서 열고 닫을 때 메모리가 계속 증가하는 실사용 장애를 진단하는 과정을 단계별로 보여 준다. DevTools로 힙 스냅샷을 비교해 StreamSubscription과 AnimationController 인스턴스가 누적되는 것을 확인하고, 원인 코드에서 구독 객체를 변수로 저장하지 않고 dispose 자체가 누락된 것을 찾아낸 뒤, 수정 코드에서 구독 필드·mounted 가드·완전한 dispose 구현을 모두 추가한다.\n\n교훈은 실제 누수 사례가 대개 여러 실수가 겹친 결과라는 점이다. 진단 도구로 후보 타입을 좁히고, 그 타입에 대응하는 코드 패턴을 역추적하며, 한꺼번에 구조적으로 수정하는 이 흐름이 Flutter 누수 디버깅의 전형적 리듬이고, 학습자는 이 리듬을 자기 프로젝트에도 그대로 적용할 수 있다."
+    },
+    "3bed625dad9df963fe351638b9954945408353674395dc680b9c85abe7d89758": {
+      "language": "dart",
+      "description": "이 예제는 무한 스크롤 목록 화면에서 메모리와 프레임을 동시에 안정화하는 세 가지 기법을 한 State에 모았다. ScrollController로 끝에 가까워졌음을 감지해 더 가져오고, Timer 디바운스로 연속 호출을 압축하며, compute로 파싱을 별도 Isolate에 맡겨 UI 스레드가 막히지 않도록 한다. dispose에서는 리스너 제거·컨트롤러 해제·타이머 취소가 모두 정리된다.\n\n교훈은 무한 스크롤이 단순 리스트가 아니라 '네트워크·파싱·상태 갱신이 교차하는 복합 경로'라는 점이다. 각 단계에 맞는 제어 장치(디바운스·Isolate·mounted 가드)를 배치하지 않으면 누수와 프레임 드랍이 동시에 발생하고, dispose에서 addListener와 짝이 되는 removeListener를 잊는 것이 대표적 함정이라는 실무 감각이 한 예제에 집약된다."
+    },
+    "e0404e5f1c3d19ced0fffba4e7f29a023c2dd2a05c3fc0ebb2001922cf49018c": {
+      "language": "dart",
+      "description": "이 예제는 서로를 참조하는 두 객체가 왜 GC 대상이 되지 않는지 순환 참조 구조로 설명한 뒤, WeakReference로 참조를 약하게 걸어 GC가 언제든 대상을 회수할 수 있게 만드는 방법을 보여 준다. 캐시 구현에서 target이 null이면 이미 GC되었음을 뜻하고, ImagePreloader는 이 특성을 활용해 메모리 압박 시 자동으로 비워지는 선로드 캐시를 만든다.\n\n교훈은 캐시처럼 '있으면 좋지만 없어도 다시 만들 수 있는 데이터'에는 약한 참조가 적합하다는 설계 관점이다. 강한 참조로 만든 캐시는 언젠가 메모리를 쥐고 놓지 않지만, 약한 참조 캐시는 시스템에 여유가 있을 때만 유지되고 부족할 때는 자연스럽게 비워지므로 OOM 저항성이 높아진다."
+    },
+    "913376169c28e690f01ce4dfc26bf991d21da437acd19aee61c151cc9201eac7": {
+      "language": "dart",
+      "description": "이 연습 문제는 한 State 안에 여섯 가지 메모리 누수 결함을 의도적으로 심어 두고 학습자가 직접 발견하도록 구성되었다. Stream 구독 객체를 저장하지 않아 cancel 불가, Timer.periodic 핸들을 놓쳐 취소 불가, AnimationController·TextEditingController·ScrollController를 모두 dispose하지 않음, 비동기 fetch 뒤 mounted 확인 없이 setState를 호출하는 문제가 얽혀 있다.\n\n교훈은 실제 현업 코드 역시 이 유형의 실수가 두세 개씩 겹쳐 나타난다는 점이다. 학습자는 이전 섹션에서 본 패턴들을 조합해 진단하는 훈련을 하게 되며, '구독 저장·핸들 저장·완전한 dispose·mounted 가드'라는 네 가지 체크리스트로 State 코드를 스캔하는 습관을 형성한다."
+    },
+    "ebeb2c32fa044cd4db871bce601e3b7f430ffc7f188bd4b904439b263b582202": {
+      "language": "dart",
+      "description": "이 모범 답안은 앞 문제에 심겨 있던 여섯 가지 누수를 체계적으로 치유한다. Stream 구독과 Timer 핸들을 각각 필드로 승격하고, 구독 콜백과 비동기 완료 지점에 mounted 가드를 넣어 dispose 후 setState를 차단하며, dispose에서 생성한 모든 리소스를 동일한 순서로 해제한 뒤 super.dispose를 마지막에 호출한다.\n\n교훈은 수정안이 단순 누락 보완이 아니라 '초기화와 해제의 대칭'이라는 구조 원칙의 구현이라는 점이다. 번호 주석으로 짝을 맞춘 형태가 관례화되면 이후 새 리소스를 추가할 때마다 선언·초기화·해제 세 지점을 함께 건드리는 습관이 생기고, 누수를 반복하지 않는 팀 규율의 토대가 된다."
+    },
+    "46158149babdee83afd1ef74756330fa87fc4508797b50e868aea97b4ab8cc51": {
+      "language": "dart",
+      "description": "이 실습 앱은 AnimationController·TextEditingController·ValueNotifier·StreamSubscription·Timer 다섯 리소스를 한 화면에 함께 동작시키고 dispose에서 빠짐없이 해제하는 작은 완성품이다. 맥박 애니메이션, 카운터 스트림, 2초 주기 타이머 로그, 조작 가능한 ValueNotifier, 텍스트 입력이 나란히 배치되어 각 리소스의 역할을 눈으로 확인할 수 있다.\n\n교훈은 이 앱 자체가 '메모리 관리 학습 환경'으로 설계되었다는 점이다. Navigator로 화면을 pop·push 반복하면서 DevTools Memory 탭으로 메모리가 다시 줄어드는지 관찰하고, 일부러 dispose를 빼 Flutter 경고를 재현해 보며, 구독 중복 여부를 로그로 찍어 이론을 직접 검증할 수 있다."
+    },
+    "5b934024edd4bbaf20a8a1edd430541a7341df579530e3181362b9312c6db4d9": {
+      "language": "dart",
+      "description": "이 퀴즈 코드는 자가 평가 문항의 진단 대상으로, 겉보기에는 1분마다 API를 호출해 데이터를 갱신하는 평범한 구현이지만 두 가지 중대한 누수 위험을 품고 있다. Timer.periodic의 반환값을 저장하지 않아 dispose에서 취소할 방법이 없고, 비동기 fetch 뒤 mounted 확인 없이 setState를 호출해 화면이 이미 사라진 상황에서 예외가 터진다.\n\n교훈은 짧고 무해해 보이는 코드일수록 감춰진 누수가 많다는 점이다. 이 패턴은 많은 앱의 자동 새로고침·백그라운드 폴링에서 반복되고, 리뷰 체크리스트의 첫 줄에 'periodic 핸들 저장 여부'와 'await 뒤 mounted 확인 여부'가 올라와야 하는 이유를 한 문제로 설득한다."
+    },
+    "033b73ed4010f51b295642c1cc6e3187f1a46aac22b8345297df47efc48c1c4b": {
+      "language": "dart",
+      "description": "이 모범 답안은 ScrollController를 쓸 때 addListener·removeListener·dispose 세 가지 짝 관계를 어떻게 맞춰야 하는지 보여 준다. initState에서 리스너를 붙이고, dispose에서 같은 핸들로 리스너를 제거한 뒤 ScrollController 자체도 dispose해 내부 애니메이션·구독을 정리하며, super.dispose를 마지막에 둔다.\n\n교훈은 addListener에 대응하는 removeListener 호출이 누락되기 쉬운 대표 지점이라는 사실이다. 컨트롤러 dispose만으로는 외부에서 건 콜백 참조가 사라지지 않을 수 있고, 리스너가 캡처한 State·BuildContext가 남아 누수로 이어진다. 두 메서드를 항상 같은 파일에서 짝지어 보는 습관이 스크롤 기반 화면의 안정성을 좌우한다."
+    }
+  }
+}

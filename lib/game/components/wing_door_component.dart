@@ -5,7 +5,7 @@ import '../dol_game.dart';
 import '../mixins/tappable_component.dart';
 
 class WingDoorComponent extends RectangleComponent
-    with TapCallbacks, TappableComponent, HasGameReference<DolGame> {
+    with TapCallbacks, HoverCallbacks, TappableComponent, HasGameReference<DolGame> {
   final String wingId;
   final String label;
   final Color color;

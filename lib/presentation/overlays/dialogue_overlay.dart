@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/assets/asset_ids.dart';
 import '../../core/constants/app_colors.dart';
 import '../../data/models/qa_message.dart';
 import '../../domain/providers/npc_qa_providers.dart';
 import '../../domain/providers/quest_providers.dart';
+import '../widgets/pixel_nine_slice.dart';
 
 /// P0-5 NPC-4 + fix-5: DialogueOverlay 에 "대화" / "질문" 두 탭.
 /// - 대화: 기존 DialogueTree 스크립트 (Phase 1 구현 유지).
@@ -34,38 +36,39 @@ class _DialogueOverlayState extends ConsumerState<DialogueOverlay> {
       bottom: 0,
       left: 0,
       right: 0,
-      child: Container(
-        margin: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.deepPurple.withValues(alpha: 0.95),
-          border: Border.all(color: AppColors.gold, width: 2),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // fix-5: 탭바 상시 노출. npcId 가 null 이어도 사용자가 Q&A 탭
-            // 존재를 인지하고 선택하여 안내 메시지를 볼 수 있어야 한다.
-            _tabBar(),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: _tab == 0
-                  ? _DialogueBody(
-                      dialogueState: dialogueState,
-                      onEnd: () {
-                        ref
-                            .read(activeDialogueProvider.notifier)
-                            .endDialogue();
-                        ref.read(activeNpcIdProvider.notifier).clear();
-                        widget.onClose();
-                      },
-                    )
-                  : (npcId != null
-                      ? _QaBody(npcId: npcId)
-                      : const _QaEmptyState()),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: PixelNineSlice(
+          assetName: UiAssets.frameDialog,
+          child: ColoredBox(
+            // art-2: frame 내부 가독성 — 반투명 deepPurple 채움 유지.
+            color: AppColors.deepPurple,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // fix-5: 탭바 상시 노출.
+                _tabBar(),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: _tab == 0
+                      ? _DialogueBody(
+                          dialogueState: dialogueState,
+                          onEnd: () {
+                            ref
+                                .read(activeDialogueProvider.notifier)
+                                .endDialogue();
+                            ref.read(activeNpcIdProvider.notifier).clear();
+                            widget.onClose();
+                          },
+                        )
+                      : (npcId != null
+                          ? _QaBody(npcId: npcId)
+                          : const _QaEmptyState()),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

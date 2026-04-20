@@ -1,0 +1,97 @@
+{
+  "chapterId": "flutter-Step-22-Dependency-Injection",
+  "entries": {
+    "ffd1745af5ef7d7a53f2b09b20c339320460d743a4618662d248625e73baca27": {
+      "language": "",
+      "description": "이 다이어그램은 DI 없이 UseCase가 Repository 구현체를 직접 생성하는 잘못된 코드를 보여주고, 그 결과 발생하는 네 가지 문제를 나열한다. 구현 세부사항을 알게 되어 Clean Architecture가 깨지고, 테스트에서 Mock 교체가 불가능하며, Dio 설정이 중복되고, 객체 생성 순서를 수동으로 관리해야 한다는 증상이 모두 결합도 문제의 다른 이름이다.\n\n의도는 DI를 '고급 기법'이 아니라 이미 Clean Architecture 학습을 마친 독자가 마주치는 실질적 다음 질문에 대한 답으로 제시하는 것이다. 계층 분리는 결국 주입을 누가 어떻게 해 주느냐로 완성되며, 직접 생성이 남아 있는 한 아키텍처의 이점은 절반밖에 누릴 수 없다는 메시지를 분명히 한다."
+    },
+    "3d94eb85dd5b44220b0832d144022cfbee9e52b196bc95a88e449b74fa4d1f11": {
+      "language": "",
+      "description": "이 다이어그램은 Flutter에서 DI를 구현하는 세 가지 대표 방식인 GetIt, GetIt+Injectable, Riverpod Provider를 나란히 대조한다. GetIt은 전역 레지스트리로 꺼내 쓰는 Service Locator 방식이고, Injectable은 GetIt 위에 어노테이션 기반 코드 생성을 더한 자동화이며, Riverpod Provider는 상태관리와 DI를 하나의 시스템으로 통합한다.\n\n의도는 DI에도 여러 스타일이 있고 각자 장단점과 적합한 상황이 다르다는 사실을 먼저 드러내는 것이다. 하나만 절대 옳은 것이 아니라 팀이 이미 사용 중인 상태관리, 코드 생성 허용 여부, 다른 플랫폼과의 공유 가능성 같은 맥락에 따라 선택이 달라진다는 판단 프레임을 제공한다."
+    },
+    "29f30729f56eb62acedc82fb0ff1ddd7af1fd7d478af30b0f9e12b7719e7a70b": {
+      "language": "",
+      "description": "이 다이어그램은 Step 22의 학습 범위를 세 축의 트리로 정리해 GetIt의 세 가지 등록 방식과 조회 메서드, Injectable의 네 가지 어노테이션, Riverpod의 Provider·read·override라는 각 도구의 핵심 표면을 한눈에 보여준다.\n\n핵심 의도는 개별 API 사용법을 외우기 전에 각 방식이 제공하는 추상화의 모양을 먼저 감지하게 하는 것이다. GetIt은 등록·조회라는 두 축, Injectable은 어노테이션별 의미, Riverpod은 Provider 정의와 override라는 독특한 테스트 장치를 각각 갖는다는 사실을 지도로 보고 나면 이후 코드 예제가 이 구조에 어떻게 끼워지는지 자연스럽게 파악된다."
+    },
+    "29f06b54cfff3e579b7673ace55fe1b9d49b0a2d0c4bf5d447f5e2eb0990aabc": {
+      "language": "yaml",
+      "description": "이 설정 조각은 get_it 패키지를 의존성으로 추가하는 pubspec.yaml 선언이다. 캐럿 버전 제약으로 7.7.0 이상 다음 메이저 미만의 안정 버전을 허용하며, Service Locator 기반 DI를 시작하기 위한 최소 요구사항을 명시한다.\n\n의도는 이후 소개될 등록과 조회 예제의 전제 조건을 눈으로 확인시키는 것이다. GetIt이 Flutter나 Riverpod에 묶이지 않은 순수 Dart 라이브러리라는 사실은 이 한 줄의 단독 의존성에서도 드러나며, 다른 상태관리 조합과 자유롭게 결합할 수 있는 이유를 넌지시 전달한다."
+    },
+    "69a64020c7b4076658fdd99d494e11609684503354c5aab96f60db41b9bdbdeb": {
+      "language": "dart",
+      "description": "이 예제는 앱 전체 DI 컨테이너를 초기화하는 injection_container.dart의 전형적 구조를 보여준다. 외부 라이브러리(Dio·Hive Box), Data Layer(DataSource·Repository), Application Layer(UseCase)를 차례로 등록하며 각 계층에 맞는 수명 전략(LazySingleton/Singleton/Factory)을 지정한다. main에서는 ensureInitialized와 Hive.initFlutter 이후 init을 await 해 DI가 준비된 상태에서 앱을 시작한다.\n\n교훈은 DI 설정이 곧 아키텍처의 실제 구성 지도라는 점이다. 이 파일만 읽어도 어느 계층이 어떤 구현체에 의존하고 생애주기가 어떻게 설정되어 있는지 파악할 수 있다. 덕분에 구현체를 교체할 때도 이 한 파일만 건드리면 되고, 나머지 코드는 흔들리지 않는다."
+    },
+    "68eadf1e13f54559ced78f970496516bc987b21420db170e5954ba01d957984f": {
+      "language": "",
+      "description": "이 다이어그램은 GetIt의 세 가지 등록 메서드 registerSingleton·registerLazySingleton·registerFactory의 생성 시점과 재사용 특성을 비교해 각 상황에 맞는 선택 기준을 제시한다. 즉시 생성 후 공유해야 하는 Config·Box류는 Singleton, 대부분의 Service·Repository는 LazySingleton, 상태가 없어야 하는 UseCase·ViewModel은 Factory가 적합하다.\n\n핵심 의도는 등록 타입 선택이 단순한 문법 차이가 아니라 메모리·초기화 시점·상태 관리에 직접적인 영향을 준다는 사실을 보여 주는 것이다. 잘못 지정하면 불필요한 초기화가 앱 시작을 지연시키거나, 의도하지 않은 상태 공유가 발생해 디버깅이 어려워진다."
+    },
+    "eab89e98c5a0f2063be7b9d757af508f93568d9389f85bd157b8d510a60e401a": {
+      "language": "dart",
+      "description": "이 예제는 GetIt에 등록한 UseCase를 실제로 꺼내 쓰는 두 가지 방식을 보여준다. 하나는 Notifier build 안에서 sl<GetProductsUseCase>()로 직접 조회하는 방식이고, 다른 하나는 생성자 파라미터로 주입받아 필드에 보관하는 방식이다. 후자가 테스트하기 더 쉽다는 주석이 함께 달려 있다.\n\n핵심 교훈은 GetIt을 쓰더라도 가능한 한 생성자 주입을 선호해야 한다는 점이다. build나 initState 안에서 sl을 남발하면 Service Locator 안티패턴에 빠져 테스트와 의존 파악이 어려워진다. sl은 주로 최상위 조립 지점에서만 쓰고, 내부 클래스는 인터페이스 타입의 의존성을 생성자로 받는 규율을 이 한 쌍의 코드가 보여 준다."
+    },
+    "dcbf156e7d29851e87be698f8adc0c93c87f3ae219cde8ee4dc3cfc717deae75": {
+      "language": "yaml",
+      "description": "이 설정 조각은 Injectable 기반 DI 자동화를 위한 pubspec.yaml 구성이다. 런타임에는 get_it과 injectable이, 빌드 타임에는 injectable_generator와 build_runner가 필요하다는 사실을 한눈에 보여 준다. 네 패키지가 짝을 이루어야 어노테이션이 실제 등록 코드로 변환될 수 있다.\n\n의도는 Injectable이 단순한 새 라이브러리가 아니라 GetIt 위에 쌓이는 '코드 생성 레이어'라는 점을 분명히 하는 것이다. 런타임 의존성과 개발 의존성을 구분해 선언하는 pub 생태계 관례가 여기서도 그대로 적용되며, 이 구분이 배포 빌드 크기와 CI 속도에도 영향을 준다는 점을 학습자가 인지하도록 돕는다."
+    },
+    "87a28777c501db79273aa1acbf91f34d15c09a6e3393d65c3b5d1154c57960c6": {
+      "language": "dart",
+      "description": "이 예제는 Injectable의 진입점이 되는 core/di/injection.dart의 전형적 골격을 보여준다. @InjectableInit 어노테이션이 붙은 configureDependencies 함수가 자동 생성된 sl.init을 호출하며, injection.config.dart가 그 init 메서드 본문을 보관한다.\n\n의도는 수작업으로 작성하던 injection_container.dart의 방대한 등록 코드가 단 몇 줄의 진입점으로 대체된다는 사실을 각인시키는 것이다. 새 클래스에 어노테이션만 붙이면 관련 등록 코드가 자동으로 만들어지므로, 대규모 앱에서 반복되던 보일러플레이트가 극적으로 줄고 인적 실수의 여지도 사라진다."
+    },
+    "55dc0f561c95e33c05fe682f4dbb457abb18ce1a120805155e4bb5fee6c5459d": {
+      "language": "dart",
+      "description": "이 예제는 Injectable의 핵심 어노테이션들이 각각 어떤 등록 타입을 의미하는지 한 묶음으로 보여준다. @lazySingleton은 LazySingleton, @LazySingleton(as: Interface)은 인터페이스로 등록, @injectable은 Factory, @singleton은 Singleton에 대응한다. 마지막으로 @module 패턴으로 Dio나 SharedPreferences 같은 외부 라이브러리의 팩토리 메서드를 선언하고, 비동기 초기화는 @preResolve로 처리한다.\n\n핵심 의도는 수작업 DI 코드에서 흔히 놓치는 '인터페이스 등록', '외부 의존성 통합', '비동기 준비' 같은 까다로운 케이스가 모두 어노테이션 한두 개로 표현 가능하다는 사실을 보여 주는 것이다. 등록 규약이 코드와 함께 위치하므로 변경 추적도 훨씬 쉬워진다."
+    },
+    "5039b45d726409eedad5c270a82a3c0ac3020c456183c40719b645bee98d4a1f": {
+      "language": "bash",
+      "description": "이 예제는 Injectable 어노테이션이 등록 코드로 변환되도록 build_runner를 실행하는 커맨드와, 생성되는 파일명 injection.config.dart를 명시한다. --delete-conflicting-outputs 옵션은 재실행 시 충돌 파일을 안전하게 정리해 주는 실무 관용구다.\n\n의도는 Injectable이 '마법'이 아니라 명시적 명령어에 의해 실행되는 코드 생성 파이프라인이라는 사실을 각인시키는 것이다. CI에서도 동일 명령어를 실행해야 생성 파일이 최신 상태로 유지되며, PR 리뷰 때 누락된 재생성이 런타임 에러로 이어지지 않도록 팀 워크플로를 설계해야 한다는 교훈까지 함께 전한다."
+    },
+    "4668bae99ccd01544680a12a0afc5c5123b91f92c4cb137d012c3eb5c810ee02": {
+      "language": "dart",
+      "description": "이 예제는 Injectable이 실제로 생성하는 injection.config.dart의 샘플을 보여주며, 자동 생성된 코드가 내부적으로 lazySingleton과 factory를 호출해 등록을 마치는 모습을 드러낸다. 각 의존성은 이전 단계에서 어노테이션으로 선언한 내용에 따라 타입·생성자·파라미터가 정확히 매칭된다.\n\n교훈은 자동 생성 코드라도 읽고 이해할 수 있어야 한다는 점이다. 생성된 내용이 기대와 다르면 어노테이션을 바로잡아 재생성하는 루프로 해결해야 하며, 이 파일은 절대 수동 수정하지 않고 SSOT를 어노테이션에 둔다는 규율이 중요하다. 생성 결과를 확인하는 습관이 Injectable 도입 초기의 혼란을 크게 줄여 준다."
+    },
+    "d9092d68205558b42032da96fa0f77a2ae0a2a9ff5519545487c0ecc1da2e1fd": {
+      "language": "dart",
+      "description": "이 예제는 Riverpod Provider만으로 Clean Architecture의 네 계층을 완전하게 연결하는 app_providers.dart 패턴을 보여준다. dioProvider, DataSource Provider들, Repository Provider, UseCase Provider, 그리고 마지막으로 AsyncNotifierProvider가 단계적으로 ref.read를 통해 위 계층의 결과물을 주입받는다.\n\n교훈은 Riverpod이 단순한 상태관리 라이브러리가 아니라 완전한 DI 컨테이너로 쓰일 수 있다는 사실이다. 별도의 GetIt 없이도 계층 간 의존성이 선언적으로 연결되며, Provider 정의가 곧 DI 설정 문서가 되어 팀원 누구라도 파일 하나만 읽으면 구조를 파악할 수 있다. 상태관리와 DI가 같은 언어로 표현되는 이점이 강조된다."
+    },
+    "93cecaf9ae1f6243b1293669d6187cf9f0b84aa04bfa234af783d525356b25c0": {
+      "language": "dart",
+      "description": "이 예제는 Riverpod DI의 최대 장점인 ProviderOverride를 위젯 테스트에서 실제로 활용하는 방법을 보여준다. ProviderScope의 overrides 리스트에 productRepositoryProvider.overrideWithValue(mockRepository)를 넣기만 하면 화면 테스트가 곧바로 Mock을 사용하게 된다. 이후 pumpAndSettle로 AsyncValue가 해결되기를 기다리고 find로 UI 결과를 검증한다.\n\n핵심 의도는 테스트 환경과 실제 환경의 차이를 단 한 줄의 override로 표현할 수 있다는 사실을 각인시키는 것이다. 전역 Service Locator의 상태를 건드리지 않고도 각 테스트가 독립적인 ProviderScope를 갖기 때문에 테스트 간 격리가 자연스럽게 확보되며, Clean Architecture의 '모든 의존성은 교체 가능'이라는 약속이 실제 작동하는 모습이 드러난다."
+    },
+    "66086719a4b15457f8d12f59c8e3361745e51f26ee5439dddee48aabd22025b5": {
+      "language": "",
+      "description": "이 다이어그램은 GetIt 방식과 Riverpod Provider 방식의 장단점을 네 축에서 비교해 학습자가 구체 기준으로 선택할 수 있도록 돕는다. GetIt은 Flutter·Riverpod 독립성과 범용성이 강점이지만 전역 상태 관리와 rebuild 미연동이 약점이고, Riverpod은 테스트 용이성과 상태관리 통합이 강점이지만 Riverpod 생태계에 종속된다.\n\n핵심 의도는 '무엇이 더 좋은가'가 아닌 '어떤 상황에 더 맞는가'를 판단하게 하는 것이다. 이미 Riverpod 기반 프로젝트라면 Riverpod Provider가 일관성 면에서 유리하고, Bloc·Cubit을 쓰거나 서버 Dart 코드와 공유해야 한다면 GetIt이 더 자연스럽다. 선택의 근거가 기술 취향이 아니라 팀 컨텍스트라는 점을 분명히 한다."
+    },
+    "72a44941d1497b373d9987e83d79dc77cea1a083211a7916c69294baaf0d5463": {
+      "language": "dart",
+      "description": "이 예제는 환경 플래그에 따라 Prod 환경에는 실제 Repository를, 개발 환경에는 Mock Repository를 주입하도록 GetIt 등록을 분기하는 init 함수를 보여준다. 하단에는 Riverpod 방식으로 동일한 전략을 ProviderScope.overrides로 구현한 짝패턴도 함께 제시된다.\n\n교훈은 환경별 의존성 분기가 아키텍처의 숨은 필수 요구라는 점이다. 개발 중에는 서버 없이도 앱을 돌려야 하고, QA 단계에서는 결정론적 테스트 데이터가 필요하며, 프로덕션에서는 실제 구현체가 들어가야 한다. DI 층에서 이 분기를 선언적으로 표현할 수 있으면 어느 환경에서 무엇이 주입되는지 한 번에 파악되고 실수가 줄어든다."
+    },
+    "435bebdb1c4e7d0cdd02ab0d9892cd153c6bce6fd4e247c437e3e0a793089c99": {
+      "language": "dart",
+      "description": "이 예제는 Riverpod Provider로 Auth·Product 두 Feature를 통합해 연결한 app_providers.dart 전체 모습을 보여준다. Dio 하나가 두 Feature의 RemoteDataSource를 공유하고, 각 Feature는 Data·Application Layer의 Provider 체인이 동일한 리듬으로 배치된다. 인터셉터는 ref를 받아 Riverpod 상태와 연동된다.\n\n교훈은 Provider 기반 DI가 Feature 단위로 반복 패턴을 갖는다는 점이다. 한 Feature를 익히면 나머지도 똑같이 읽힌다. 새 Feature를 추가할 때 이 파일에 열 줄 남짓을 덧붙이면 끝나고, 그 과정에서 Clean Architecture의 계층 구분이 자연스럽게 유지된다. DI 파일이 곧 아키텍처 지도이자 Feature 카탈로그 역할을 한다는 사실이 드러난다."
+    },
+    "fc8cd294a48030b10e740b47df9fc47bd116fabc7c0a07933aa2b1224ddbae98": {
+      "language": "dart",
+      "description": "이 예제는 AuthInterceptor가 Riverpod의 Ref를 받아 인증 토큰 Provider를 읽고, 401 에러 시 RefreshTokenUseCase를 호출해 토큰을 갱신한 뒤 원래 요청을 재시도하는 고급 시나리오를 보여준다. 갱신 실패 시 authNotifier.logout을 호출해 전역 로그아웃까지 이어지는 완결된 흐름이다.\n\n핵심 의도는 네트워크 인프라 코드(인터셉터)조차 상태관리와 결합해 반응형으로 동작할 수 있다는 점을 드러내는 것이다. GetIt으로는 전역 토큰을 읽어도 변화에 자동 반응하기 어렵지만, Ref를 통한 Riverpod 통합은 토큰 변경이 즉시 인터셉터에 반영된다. 이는 대규모 앱에서 인증 UX를 안정적으로 만드는 표준 레시피다."
+    },
+    "2817726a6fc939c54e57e8c1d3a8d334351df24afcbfeb2ec5aad12ab11c0a5b": {
+      "language": "dart",
+      "description": "이 예제는 ProviderOverride를 실전 위젯 테스트에 적용한 코드로, 상품 목록 화면이 Mock Repository에서 두 개의 상품을 받아 올바르게 표시하는지와 로딩 상태에서는 CircularProgressIndicator가 나오는지를 각각 검증한다. setUp으로 각 테스트마다 Mock을 새로 만들고, when/thenAnswer로 시나리오별 응답을 주입한다.\n\n교훈은 Riverpod DI가 테스트 격리와 시나리오 제어를 모두 쉽게 만든다는 점이다. 테스트마다 독립적인 ProviderScope가 생성되므로 전역 상태 오염 걱정이 없고, 무한 Future 같은 극단적 Mock을 주입해 로딩 화면 같은 드문 상태도 정확히 재현할 수 있다. 이는 실서버 없이도 UI의 모든 상태를 검증 가능하게 만드는 강력한 도구다."
+    },
+    "c4ee285596de8a938f9ec028b9a8fd10f25bed4b42e5f2c7c52c970b9647a7fa": {
+      "language": "dart",
+      "description": "이 예제는 GetIt이 Bloc과 함께 쓰일 때 가장 자연스러운 결합 방식을 보여준다. Bloc을 registerFactory로 등록해 매번 새 인스턴스를 생성하도록 하고, 화면에서는 BlocProvider(create: (_) => sl<ProductListBloc>())로 꺼내 이벤트를 디스패치한다.\n\n교훈은 GetIt의 프레임워크 독립성이 Bloc 같은 이질적 상태관리와 궁합이 잘 맞는다는 점이다. Riverpod이 Bloc을 감싸면 두 시스템이 혼재해 어색해지지만, GetIt은 단순히 '인스턴스 공급자' 역할에 머무르므로 Bloc이 기존의 관용구를 그대로 유지할 수 있다. 스택 선택이 자유로워지는 것이 GetIt의 실무적 가치 중 하나라는 사실을 분명히 한다."
+    },
+    "e30a5d891f55085a004dce8416ae5746b13aae650e5507a792b5fac9d5e35f08": {
+      "language": "dart",
+      "description": "이 실습 코드는 GetIt과 Riverpod을 혼용해 카운터 앱을 Clean Architecture로 구현한 종합 예제다. Domain의 CounterRepository 인터페이스와 Data의 InMemoryCounterRepository, Application의 세 UseCase(Increment·Decrement·GetCount)를 GetIt으로 등록하고, Presentation의 CounterNotifier는 Riverpod Notifier로 두어 UseCase 호출 결과를 state에 반영한다.\n\n교훈은 DI와 상태관리가 역할만 분리된다면 한 앱에서 공존 가능하다는 점이다. GetIt이 아키텍처의 '조립'을 맡고 Riverpod이 'UI 상태'를 맡으면서, InMemory 구현체를 Persistent 구현체로 바꿀 때 Notifier 코드가 손상되지 않는다는 사실을 확인 포인트로 명시해 학습자의 체감 이해를 유도한다."
+    },
+    "73361c59dddcd68eac302f00834847236b2c431ac3e87b4bfcb9cb6b70988ef5": {
+      "language": "dart",
+      "description": "이 코드 조각은 자가 평가 Q5의 문제 지문으로, 세 가지 클래스 각각에 대해 어떤 Injectable 어노테이션을 붙여야 하는지 판단하도록 요구한다. 앱 전체에서 하나여야 하는 AuthService, 인터페이스를 구현하는 ProductRepositoryImpl, 상태 없는 UseCase라는 세 가지 패턴이 의도적으로 섞여 있다.\n\n핵심 의도는 어노테이션 선택이 클래스의 수명과 역할에 따라 달라져야 한다는 원칙을 실전 상황에 적용해 보게 하는 것이다. 학습자는 @singleton, @LazySingleton(as: Interface), @injectable을 올바른 클래스에 매칭하며 DI 컨테이너의 수명 전략을 언제 어떻게 결정하는지 체화한다."
+    },
+    "a36d1463301d1b84264bbd353aa64d61da5d4893729d8b054b36dc12d961a651": {
+      "language": "dart",
+      "description": "이 코드 조각은 Q5의 모범 답안으로, 세 클래스에 각각 @singleton, @LazySingleton(as: ProductRepository), @injectable을 부여한 결과를 제시한다. AuthService는 전역 단일 인스턴스, ProductRepositoryImpl은 인터페이스로 LazySingleton 등록, GetProductsUseCase는 상태 없는 Factory라는 분류가 명확히 드러난다.\n\n교훈은 어노테이션 한 줄이 아키텍처 결정의 농축된 표현이라는 점이다. 인터페이스 등록 형태(as:)로 DIP를 구현하고, Singleton과 Factory 선택으로 상태 공유 정책을 선언하며, 어노테이션만 읽어도 해당 클래스가 시스템에서 어떤 역할을 맡는지 즉시 파악할 수 있다. DI 설계의 명시성이 코드 품질에 주는 이점을 분명히 보여 준다."
+    }
+  }
+}

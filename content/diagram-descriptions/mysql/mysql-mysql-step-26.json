@@ -1,0 +1,149 @@
+{
+  "chapterId": "mysql-mysql-step-26",
+  "entries": {
+    "29a64ab8682023c23ae8c2e62bb16180f55fa20d8d662f5f3dd9c5038fdf0a52": {
+      "language": "",
+      "description": "이 단원은 MySQL 권한 관리를 단순히 GRANT 문법을 외우는 수준이 아니라, 최소 권한 원칙이 왜 실무에서 양보할 수 없는 기준이 되는지를 이해하고 역할별 계정을 스스로 설계할 수 있으며 현장에서 빈번히 나타나는 권한 안티패턴을 식별할 수 있는 수준까지 끌어올리는 것을 목표로 한다. 보안이 운영 역량의 핵심이 되는 이유를 먼저 납득한 뒤, 그에 맞는 구체적 SQL 구문과 계정 구조를 다룬다."
+    },
+    "bd3283144630130f59e27c7c9ada9e16184df8a0109cbda219c0e3941af560ab": {
+      "language": "",
+      "description": "권한 관리를 소홀히 했을 때 실제로 어떤 치명적 사고가 일어나는지를 세 가지 사례(신입의 DROP DATABASE 실행, SQL 인젝션에 의한 전체 DB 유출, 퇴직자 계정 방치)로 제시한다. 각 사례는 기술적 실수가 아니라 계정 공유·최소 권한 미준수·수명주기 관리 부재라는 운영 관행의 결함이 직접 원인이었음을 드러낸다. 권한 관리는 예방적 규율이 사후 대응보다 훨씬 중요한 영역이라는 사실을 강한 이야기로 각인시켜, 이후 본문 학습에 대한 절박한 동기를 부여한다."
+    },
+    "13807fb2eaee2f1baa572f9e39d69999d2b9c9efd1b640dbefb7e26956be8a1e": {
+      "language": "",
+      "description": "최소 권한 원칙을 한 문장의 정의로 선언하고, 이를 적용하지 않았을 때(root 하나로 모든 권한을 넘긴 경우)와 적용했을 때(app_user, readonly_user, dba_user로 분리한 경우) 피해 범위가 어떻게 달라지는지를 대비해 설명한다. 침해가 발생해도 계정 권한 범위 안으로 피해를 가두는 구조가 보안의 근본 전략임을 각인시키며, 이후 나올 역할별 계정 설계가 단순한 행정 분리가 아니라 체계적 피해 최소화 설계임을 학습자가 이해하도록 돕는다."
+    },
+    "b3d0fb5c4d56c572a8cbc156cd3d8fef2576c519a1a4954708f3a30d9802c903": {
+      "language": "sql",
+      "description": "MySQL의 계정이 사용자명과 호스트의 쌍으로 구성된다는 특성을 네 가지 예시로 설명한다. 같은 app_user라도 localhost 전용과 특정 IP 대역 허용, 전체 허용(%)은 각각 별개의 계정이며, 보안 수준도 다르다. admin@localhost와 admin@%가 이름만 같을 뿐 서로 다른 계정이라는 점을 보여 주는 대비는 학습자가 호스트 조건을 중요 보안 요소로 인식하게 만들어, 이후 GRANT와 REVOKE를 설계할 때 호스트 범위를 함께 고려하는 습관을 들이도록 한다."
+    },
+    "1a43dd855fd4da73a17d716ef8ed155896529202e726697767cf80492488d488": {
+      "language": "sql",
+      "description": "CREATE USER·ALTER USER·DROP USER·CURRENT_USER·mysql.user 조회까지 계정 수명주기에 필요한 명령어를 한자리에 정리한다. 계정 생성 시 IDENTIFIED BY로 비밀번호를 설정하고, 비밀번호 변경은 ALTER USER로 수행하며, 불필요해진 계정은 DROP USER로 정리하고, 필요 시 mysql.user 테이블에서 plugin·Host 같은 메타데이터를 조회한다. 학습자가 실무에서 반복하게 될 기본 루틴을 한 번에 익히도록 구성한 참조 세트다."
+    },
+    "e22809c4ed2926c7cf0b9cf1a8095cf14e24fdc3302335b1d8d3feff88df1370": {
+      "language": "sql",
+      "description": "전체 서버 수준에서 부여되는 글로벌 권한의 주요 목록(ALL PRIVILEGES·CREATE USER·PROCESS·RELOAD·REPLICATION SLAVE·SHUTDOWN·SUPER)을 정리한다. 이들 권한은 개별 DB나 테이블 수준이 아니라 서버 전체에 영향을 미치므로 남발해서는 안 되며, 특히 SHUTDOWN이나 CREATE USER 같은 권한은 DBA급 계정에만 제한적으로 부여되어야 한다는 관점을 심어 준다. 권한의 위험도가 범위에 비례한다는 감각을 여기서 초기화한다."
+    },
+    "4e585951f2455aa7042aa46d02182739564120f4c7c17589ba4ecd70c3abf0a3": {
+      "language": "sql",
+      "description": "데이터베이스·테이블 수준 권한(SELECT·INSERT·UPDATE·DELETE·CREATE·DROP·ALTER·INDEX·EXECUTE·TRIGGER·CREATE VIEW·SHOW VIEW·LOCK TABLES)을 한 번에 열거한다. 일반 애플리케이션은 대개 SELECT·INSERT·UPDATE·DELETE까지만 필요로 하고, DDL 계열(CREATE·DROP·ALTER)과 관리 계열(TRIGGER·EXECUTE)은 특수한 역할에만 부여해야 한다는 분별 기준의 기초 자료가 된다. 계정별 권한 최소화를 구체적으로 설계할 때 반드시 참조하게 되는 목록이다."
+    },
+    "0c7ab75a1752628a8a22e91aa1f7a4cbae49065009fb5ac644726cb46d22f0e4": {
+      "language": "sql",
+      "description": "GRANT의 문법 구조와 적용 범위(*.*·DB.*·DB.테이블)를 먼저 설명한 뒤, 네 가지 대표 패턴을 예제로 제시한다. 특정 DB의 DML만 부여하는 애플리케이션용, SELECT만 부여하는 읽기 전용, 특정 테이블에만 권한을 주는 CS용, ALL PRIVILEGES와 WITH GRANT OPTION까지 부여하는 DBA용이다. 범위와 권한의 조합이 실제 역할과 어떻게 매핑되는지를 한눈에 정리해 주어, 이후 사례 연구에서 등장하는 역할별 계정 설계의 바탕이 된다."
+    },
+    "9ceb3f07caa9e5dda873e5fb8caf38da701e396e2c077d6edafba492e51d526b": {
+      "language": "sql",
+      "description": "REVOKE 문법과 권한 회수 패턴을 정리한다. 특정 권한만 선택적으로 회수하거나 ALL PRIVILEGES로 전부 회수할 수 있으며, 회수 전후에 SHOW GRANTS로 현재 상태를 확인하는 루틴이 함께 제시된다. 권한 부여보다 권한 회수가 오히려 실수 방지에 더 중요한 작업임을 상기시키며, 역할 변동이 잦은 조직에서 주기적 권한 정리를 습관화해야 한다는 운영 감각을 심어 준다."
+    },
+    "9c78714230ab2e15c7d2f27db55c509a53488a987946c729ad9121e14a56724f": {
+      "language": "sql",
+      "description": "MySQL 8.0에서 도입된 Role 기반 권한 관리의 전체 워크플로를 보여 준다. CREATE ROLE로 역할을 만든 뒤 GRANT로 권한을 묶고, 각 계정에 Role을 부여해 동일 권한 묶음을 일관되게 적용하며, SET ROLE과 SET DEFAULT ROLE로 활성화를 제어한다. 여러 계정이 같은 권한을 공유할 때 Role 없이 GRANT를 반복하는 방식은 유지보수가 어려워지지만, Role을 도입하면 권한 집합을 하나의 단위로 관리할 수 있어 확장성과 감사 추적성이 크게 올라간다."
+    },
+    "06216e5fbc227a78c03f106e194db747206e9fe1df82084a4c3c1a9a39e89cd7": {
+      "language": "sql",
+      "description": "SHOW GRANTS와 information_schema.USER_PRIVILEGES·TABLE_PRIVILEGES를 활용해 계정의 현재 권한을 점검하는 여러 방법을 정리한다. SHOW GRANTS는 사람이 읽기 좋은 요약을 제공하고, information_schema 조회는 감사나 자동화 스크립트에 적합한 구조화된 데이터를 돌려준다. 권한 관리의 효과는 정기적 점검 없이 유지되지 않으므로, 이 확인 도구들을 일상 운영에 자연스럽게 녹여 두는 습관이 필요함을 강조한다."
+    },
+    "8f884aec9526c282958c822c07b47dbdac83861e7b7638e89455e4e5c0eb8ee2": {
+      "language": "",
+      "description": "글로벌·DB·테이블·컬럼 네 단계의 권한이 점차 구체화되는 계층 구조를 시각적으로 정리하고, 상위 GRANT와 하위 REVOKE가 충돌할 수 있음을 경고한다. 구체적인 REVOKE로 상위 권한을 막으려 해도 실제로는 상위 GRANT가 우선할 수 있어 모순이 발생할 수 있기 때문이다. 결론은 권한 계층을 복잡하게 중첩하기보다 단순하고 명시적으로 설계하라는 것이며, 이는 권한 관리가 기술보다 설계 철학의 문제라는 관점을 심어 준다."
+    },
+    "55257389bf63dac791c600db62ba0d8aeb4e37ebd0fe2851d1de28dd716c78e1": {
+      "language": "",
+      "description": "접속 시 MySQL이 권한을 확인하는 내부 순서를 다섯 단계로 풀어 설명한다. mysql.user의 호스트·사용자명·비밀번호로 인증하고, 이후 글로벌·DB·테이블·컬럼 권한을 각각 mysql.user·mysql.db·mysql.tables_priv·mysql.columns_priv 시스템 테이블에서 확인하며, 어느 수준에서든 허용이 나오면 실행이 가능하다. 이 내부 흐름을 이해하면 학습자는 단순 GRANT 사용자가 아니라 권한 시스템의 작동 원리를 파악한 운영자로 성장할 수 있다."
+    },
+    "d0118265f456a9ac1242e4b476adcb4333482ecea7094a13c82b637a4343f662": {
+      "language": "sql",
+      "description": "MySQL 8.0의 기본 인증 플러그인이 caching_sha2_password로 바뀌면서 생긴 호환성 이슈와 해결책을 보여 준다. 구 버전 클라이언트와 연결이 필요할 때는 ALTER USER ... IDENTIFIED WITH mysql_native_password로 전환할 수 있고, 신규 계정을 만들 때 아예 IDENTIFIED WITH 절을 붙여 플러그인을 명시할 수도 있다. 보안 강화를 위해 기본값이 바뀌었지만 운영 환경에서는 클라이언트 호환성까지 함께 고려해야 한다는 실무 판단을 가르친다."
+    },
+    "bf209e55c618e9e16b12ba942098b04ccc8cee2c6c7f60d20f09a7c390b3a215": {
+      "language": "sql",
+      "description": "비밀번호 정책 관련 변수와 ALTER USER를 활용한 만료·잠금 제어를 한자리에 정리한다. validate_password.length, policy, special_char_count 같은 변수를 조정해 최소 길이와 복잡도를 강제할 수 있고, PASSWORD EXPIRE INTERVAL로 주기적 갱신을 강제할 수 있으며, ACCOUNT LOCK/UNLOCK으로 계정을 일시적으로 비활성화할 수 있다. 강한 비밀번호와 주기적 갱신은 권한 설계만큼 중요한 보안 방어선임을 각인시킨다."
+    },
+    "40048e1ee8a2712443727073bdb20ab3922e1dfdfd79d956d7d9c2aee8b25361": {
+      "language": "sql",
+      "description": "실시간 접속과 실행 중 쿼리를 감사하는 네 가지 도구를 묶어 소개한다. SHOW PROCESSLIST 또는 information_schema.PROCESSLIST로 현재 연결을 보고, KILL로 특정 연결이나 쿼리만 강제 종료하며, SHOW STATUS LIKE 'Connections'와 Max_used_connections, Threads_connected로 전체 연결 통계를 파악한다. 이상 징후(오래 걸린 쿼리, 예기치 않은 IP 접속, 급증한 연결 수)를 조기에 포착하는 모니터링 루틴의 기초가 되는 명령어들이다."
+    },
+    "128b66b4d82570876461ede2fe81a8f8b0365dca881b086b6f91d8dde54edd6a": {
+      "language": "",
+      "description": "사례 연구에서 다룰 쇼핑몰 운영 환경의 구성 요소(메인 API, 리포트 서버, CS 도구, 배치 서버, DBA)와 그에 대응하는 다섯 가지 계정 설계(app_user, readonly_user, cs_user, batch_user, dba_admin)를 표로 제시한다. 각 계정의 접속 허용 범위와 권한이 업무 성격에 정확히 맞춰져 있어, 최소 권한 원칙이 실제 조직 구조 위에서 어떻게 구현되는지를 한눈에 보여 준다. 이론과 구현을 연결하는 중심 사례의 뼈대다."
+    },
+    "e6f5a43be32041454e6146dffd65c00b84afbeadd9eb5b2924adc26d9be93002": {
+      "language": "sql",
+      "description": "앞에서 설계한 다섯 계정을 실제 CREATE USER와 GRANT로 구현하는 DDL 모음이다. 앱 서버에는 DML만, 리포트에는 SELECT만, CS에는 특정 테이블 SELECT만, 배치에는 EXECUTE만, DBA에는 localhost 전용 ALL PRIVILEGES with GRANT OPTION과 비밀번호 90일 만료를 부여하여 접속 호스트와 권한 범위가 모두 최소화되어 있다. 각 계정의 호스트 제약이 IP 대역이나 특정 IP·localhost로 분화된 점은 보안 설계가 문서 한 줄이 아니라 실제 네트워크 구조와 결합되어야 한다는 감각을 심어 준다."
+    },
+    "f9657b3b2480785cd18d3a13eae95895218c64fb75e55cb08634518ce3d95d8f": {
+      "language": "",
+      "description": "권한 설계에서 실무적으로 가장 자주 발견되는 여섯 가지 안티패턴을 정리한다. 애플리케이션에 root 사용, 모든 IP 허용, 약한 비밀번호, GRANT ALL 남발, 퇴직자 계정 방치, 팀 공유 계정까지 각 항목은 결국 최소 권한 원칙 위배와 감사 추적성 상실로 귀결된다. 새 프로젝트 시작 시나 기존 운영 감사 시 이 여섯 가지를 체크리스트처럼 훑으면 대부분의 큰 위험을 예방할 수 있다는 실무 가이드로 기능한다."
+    },
+    "a573516847f9eb9d387674cac224a3b0df257cddef17b4be04411643d960d514": {
+      "language": "sql",
+      "description": "실습을 시작하기 전에 현재 세션이 root 혹은 이에 준하는 계정으로 접속되어 있는지 CURRENT_USER로 확인하고, mysql.user에서 전체 계정 목록을 plugin까지 포함해 조회하는 준비 단계다. 권한을 부여·회수할 수 있으려면 충분한 권한을 가진 세션에서 작업해야 하고, 전체 계정 현황을 알아야 새 계정이 기존 계정과 충돌하지 않는지 판단할 수 있다는 운영 루틴을 체화시키는 출발점이다."
+    },
+    "bfab15c1957d084f71baeafe5ec83cc3af3b3aeab2e19bf8de3300fd8630ec18": {
+      "language": "sql",
+      "description": "세 종류의 실습 계정(앱용·읽기전용·특정 테이블 제한)을 localhost에서 생성하고 각기 다른 권한을 부여하는 실습이다. 각 계정의 비밀번호 강도 조건과 권한 범위가 서로 다르게 설정되어 있어, 학습자는 한 DB 안에서도 용도별로 권한이 분화될 수 있음을 직접 체험한다. 마지막 mysql.user 조회로 세 계정이 실제로 생성되었는지 확인하는 검증 단계까지 포함되어 있다."
+    },
+    "3dd2a14a9f6cce633256ada9ea748f01a21672dc7d866073e4f0bb429b9d8a71": {
+      "language": "sql",
+      "description": "SHOW GRANTS와 information_schema.TABLE_PRIVILEGES를 활용해 방금 만든 세 계정에 어떤 권한이 실제로 부여되었는지 검증하는 실습이다. 사람이 읽기 좋은 SHOW GRANTS 출력과 정형화된 information_schema 조회가 서로 보완 관계임을 확인하고, 계정이 의도한 권한만 가지고 있는지 정기적으로 점검하는 감사 흐름을 체득한다. 권한 부여가 끝이 아니라 검증까지 이어져야 비로소 설계가 완성된다는 관점을 심어 준다."
+    },
+    "53f277ae92c631325483dd72b93b1eddc0318899d6aafb3169dc803b7c90624c": {
+      "language": "sql",
+      "description": "test_app, test_readonly, test_limited 세 계정으로 실제 접속하여 SELECT·INSERT·DROP 같은 여러 시도를 돌려 보고 어떤 것이 허용되며 어떤 것이 에러가 나는지 확인하는 시나리오 묶음이다. 기대 결과를 주석으로 함께 제시하여, 실습 중 발생하는 에러 메시지가 잘못이 아니라 설계대로 작동하는 증거임을 해석할 수 있게 한다. 특히 test_limited가 users·orders만 접근 가능하고 products는 에러가 나는 장면은 최소 권한 설계의 체감 효과를 극적으로 보여 준다."
+    },
+    "a220c6ab07eeeb02a2e938749b68d6db017dbc529c79158311759c051b1de3fa": {
+      "language": "sql",
+      "description": "MySQL 8.0의 Role 기능을 실제로 사용해 보는 실습이다. shop_app_role과 shop_readonly_role 두 개의 역할을 만들어 각각에 맞는 권한 묶음을 GRANT로 부여하고, test_app 계정에 shop_app_role을 연결한 뒤 SET DEFAULT ROLE ALL로 로그인 시 자동 활성화까지 설정한다. 마지막에 SHOW GRANTS ... USING 'shop_app_role'로 Role을 포함한 권한을 확인하여, 계정에 직접 GRANT를 반복하는 방식과 Role 기반 관리가 실제로 어떻게 다른 결과를 만드는지를 체험하게 한다."
+    },
+    "4ff31e15231406399499502fa5a0ff1f973fad5c0c7dc7092a4efb8a4e9c186b": {
+      "language": "sql",
+      "description": "REVOKE로 특정 권한을 선택적으로 회수한 뒤 SHOW GRANTS로 변경 결과를 확인하고, ALTER USER ACCOUNT LOCK/UNLOCK으로 계정을 일시 비활성화·재활성화하며, 마지막으로 실습에서 만든 모든 계정과 Role을 DROP으로 정리한다. 권한 관리가 부여·회수·잠금·삭제의 네 행위 사이를 오가는 반복적 관리 작업임을 실습 루틴으로 체화시키며, 실습 후 환경을 깔끔하게 원상 복구하는 마무리 습관까지 함께 자리잡게 한다."
+    },
+    "817dfa5c74997f0c15633cf0bb1d5e0b4ffd7b8e2079155e7cb3f5d346c5d6e1": {
+      "language": "sql",
+      "description": "첫 번째 퀴즈 문제로, GRANT·REVOKE·SHOW GRANTS·DROP USER의 네 가지 핵심 구문에서 빈칸을 채워 올바른 SQL을 완성하게 한다. 실제 실무에서 자주 쓰이는 형태(특정 권한만 부여, 전체 권한 회수, 특정 호스트 조건 계정의 권한 확인, IF EXISTS를 포함한 안전 삭제)를 포괄하여, 학습자가 구문 암기가 아니라 의미 있는 문장 구성을 할 수 있는지 점검한다. 권한 관리 DDL의 기본기를 확실히 굳히는 문제다."
+    },
+    "2597bf308587538991ab7d2de340772f3ece8e1bc8eae2cc8dcd7b0c060db58c": {
+      "language": "sql",
+      "description": "첫 번째 퀴즈의 모범 답안으로 네 가지 빈칸을 채운 완전한 SQL 문장을 제공한다. GRANT SELECT, INSERT ON app_db.*, REVOKE ALL PRIVILEGES ON shop_db.*, SHOW GRANTS FOR, DROP USER IF EXISTS처럼 모든 구문이 완성된 형태로 제시되어 학습자가 빈칸을 스스로 채운 답과 대조하며 어디서 어긋났는지 명확히 확인할 수 있다. 교정 학습을 돕는 참조 자료 역할을 한다."
+    },
+    "08a6d944dc83a50d241333c5b7460305585d2da3d9201e60ad1c1db2e0cc2f4d": {
+      "language": "",
+      "description": "두 번째 퀴즈 문제는 권한 관리에 대한 다섯 가지 주장을 O·X로 판단하게 한다. 호스트가 다르면 다른 계정이라는 점, 최근 MySQL에서 FLUSH PRIVILEGES가 더 이상 필수가 아니라는 점, ALL PRIVILEGES와 GRANT OPTION의 구분, Role의 계층적 조합 가능성, DROP USER 시 권한도 자동 제거된다는 사실까지 자주 틀리기 쉬운 미세 경계 다섯 가지를 집중적으로 짚는다. 학습자가 표면적 규칙이 아닌 정확한 동작을 이해하고 있는지 검증하는 문제다."
+    },
+    "a4a99533173decaca9c5efd7f37ac9891c4bb4d24144936066832cc95483b791": {
+      "language": "sql",
+      "description": "세 번째 퀴즈 문제는 세 가지 계정 설계(A, B, C)의 문제점을 찾고 개선안을 제시하게 한다. A는 약한 비밀번호·와일드카드 호스트·모든 DB 권한이라는 삼중 실수, B는 팀 공유 계정, C는 리포트 전용 사용자에게 불필요한 DML 권한을 준 사례다. 학습자는 각 설계가 어떤 원칙(최소 권한·감사 추적·호스트 제한·비밀번호 강도)을 위반하는지를 지적하고 구체적 SQL로 개선해야 하며, 이를 통해 안티패턴 감식 능력을 기른다."
+    },
+    "6e764f310a622e81c287c59aa7e8b68619262654d9d880a1448af955e765a7b4": {
+      "language": "sql",
+      "description": "설계 A의 개선 답안으로, 호스트를 10.0.1.%로 제한하고 비밀번호를 강한 문자열로 바꾸며 ALL PRIVILEGES 대신 shop_db.*의 DML 네 권한만 부여하는 모범 구현을 제시한다. 세 가지 동시 위반을 한 번에 바로잡은 형태이며, 학습자가 비슷한 상황에서 어떤 방향으로 설계를 수정해야 하는지 템플릿으로 참고할 수 있다. 안티패턴 교정의 구체적 모범 답안 역할이다."
+    },
+    "5e9872e833a45d10b39162abb8a23a20df5787c3cedbc48f237328ddae421114": {
+      "language": "sql",
+      "description": "설계 B의 개선 답안으로, 팀 공유 계정 대신 user_alice와 user_bob처럼 개인별 계정을 생성한 뒤 동일 Role을 부여해 권한 관리를 통일하는 방식을 제시한다. 이렇게 하면 누가 어떤 작업을 수행했는지 감사 로그에서 추적할 수 있고, 퇴직이나 역할 변경이 발생했을 때 해당 계정만 잠그거나 권한을 조정하면 된다는 운영상의 이점이 드러난다. 감사 추적성과 관리 유연성을 동시에 확보하는 설계 전환의 모범이다."
+    },
+    "6e7eaee2ac05027a9293beb646f4b7b1f5ff0c52592e029b17fd5ed5d8ca95f4": {
+      "language": "sql",
+      "description": "설계 C의 개선 답안으로, 리포트 전용 사용자인 report_user에게는 SELECT 권한만 부여하는 한 줄 수정을 제시한다. INSERT·UPDATE·DELETE를 불필요하게 부여했던 원본 설계를 최소 권한 원칙에 맞게 정리한 것이며, 역할의 성격에 따라 권한이 달라져야 한다는 단순하면서도 자주 간과되는 원칙을 짧은 구문으로 못 박는다. 최소 권한의 적용이 얼마나 단순하고도 강력한지를 보여 준다."
+    },
+    "569d784398e7b7b3a15484f2afce600b6619770e64600d233f5a53e1d773f353": {
+      "language": "",
+      "description": "네 번째 퀴즈는 블로그 플랫폼의 API 서버, 검색 인덱서, 관리자 세 역할에 맞는 계정과 권한을 학습자가 직접 설계해 SQL로 작성하게 하는 응용 과제다. 각 역할이 접근할 테이블과 필요한 권한 수준이 서로 달라 어떤 역할에는 특정 테이블만 CRUD, 어떤 역할에는 단일 테이블 SELECT, 어떤 역할에는 전체 관리 권한을 부여해야 한다. 학습한 모든 요소(호스트 제약·GRANT 범위·비밀번호 강도·만료 설정)를 조합해야 완성되는 종합 문제다."
+    },
+    "7b97c21a8da9a6cdb997403ea6d0d02cd1c811781273a255593b4e3f46be4de9": {
+      "language": "sql",
+      "description": "퀴즈 4의 모범 답안으로, 세 역할을 각각 blog_app·blog_indexer·blog_admin 계정으로 구현한 전체 DDL이다. API 서버는 posts·comments·users에는 CRUD, categories에는 SELECT만, 인덱서는 posts에 SELECT만, 관리자는 localhost에서 blog_db 전체 권한에 90일 비밀번호 만료까지 부여된다. 역할별 접근 범위와 호스트·비밀번호 정책이 한 덩어리로 정돈되어 있어, 실무에서 비슷한 설계를 만들 때 바로 가져다 쓸 수 있는 수준의 템플릿이다."
+    },
+    "4c40f877ba0311b09cc9d81e72a2dfe99843dab160ce455dd6c9e62639429f98": {
+      "language": "",
+      "description": "이 단원에서 배운 다섯 가지 핵심(계정 구조, 최소 권한 원칙, GRANT/REVOKE 패턴, Role 활용, 안티패턴 여섯 가지)을 요약한다. 특히 각 항목이 개별 규칙이 아니라 침해 발생 시 피해를 가두는 다층 방어선이라는 점을 다시 강조하며, 권한 관리는 한 번에 완성되는 것이 아니라 정기적 점검과 안티패턴 감식으로 유지된다는 운영 철학을 재확인시킨다. 단원 전체를 한 페이지 체크리스트로 압축한 마감 장치다."
+    },
+    "f1728b33c0ff71e8847061167dfdae029db5fc21c6bea3e5442a1747df665b9b": {
+      "language": "",
+      "description": "Phase 7의 로드맵으로, 이번 단원에 이어질 Step 27 백업·복구 전략과 Step 28 모니터링을 예고하는 진행 지도다. 권한 관리가 침해 예방이라면, 백업·복구는 이미 발생한 사고의 피해를 복원하는 영역이고, 모니터링은 문제를 조기에 포착하는 영역이라는 운영의 세 축이 연결된다. 학습자가 커리큘럼의 큰 흐름을 눈앞에 두고 다음 학습의 동기를 갖도록 유도하는 네비게이션 역할을 한다."
+    }
+  }
+}

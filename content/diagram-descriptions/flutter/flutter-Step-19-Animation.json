@@ -1,0 +1,85 @@
+{
+  "chapterId": "flutter-Step-19-Animation",
+  "entries": {
+    "64f44a503fe16b7a0e4b93b06ec1782aa88a95e4b72cd89218fb320be048947b": {
+      "language": "",
+      "description": "이 다이어그램은 애니메이션이 단순한 꾸밈이 아니라 공간 인지·피드백·시선 유도·상태 전이·브랜드 개성이라는 다섯 가지 UX 역할을 수행한다는 사실을 정리해 보여준다. 카드가 확장되는 모습이 '이 화면이 그 카드에서 왔다'는 공간적 맥락을 전달하고, 버튼이 눌리는 느낌이 조작 확인 피드백을 주며, 부드러운 전환이 사용자의 시선을 중요한 변화로 끌어당긴다.\n\n핵심 의도는 이후 소개될 AnimationController·Tween·Curve 같은 도구가 '왜 존재하는지'를 목적 관점에서 먼저 각인시키는 것이다. 기술을 먼저 배운 뒤 적당히 쓰는 대신, 이루고 싶은 UX 효과를 염두에 두고 그에 맞는 애니메이션 기법을 선택해야 한다는 학습 태도를 제시한다."
+    },
+    "738c1d28dacdf27b6c702c3b9cab060887ad67d092b4d7e04b398e571b815123": {
+      "language": "",
+      "description": "이 다이어그램은 Flutter 애니메이션의 두 가지 큰 줄기, 즉 명시적(Explicit) 방식과 암시적(Implicit) 방식을 나란히 대조해 언제 어느 쪽을 선택해야 하는지를 판단하게 해 준다. 명시적 방식은 AnimationController로 시간과 방향을 직접 제어해 복잡한 시퀀스를 구성하기 좋고, 암시적 방식은 속성 값만 바꾸면 위젯이 알아서 부드럽게 전환해 단순한 상태 변화 UI에 적합하다.\n\n이 대비를 통해 학습자는 '모든 애니메이션에 AnimationController가 필요한 것은 아니다'라는 사실을 이해하고, 단순한 버튼 상태 변화에도 장황한 컨트롤러 코드를 작성하려는 실수를 피하게 된다. 각 방식의 코드량 차이가 유지보수성과 가독성으로 이어진다는 교훈도 함께 전달한다."
+    },
+    "7a5e3700b46901310d01fc6d012f380ed8530eedbe6274b15b9b779c7ec35a5c": {
+      "language": "",
+      "description": "이 다이어그램은 Step 19 전체 내용을 하나의 트리로 묶어 Flutter 애니메이션의 구성 요소를 일람하게 해 준다. 명시적 축에는 AnimationController·Tween·Curve·Animation·AnimatedBuilder가, 암시적 축에는 AnimatedContainer·AnimatedOpacity·TweenAnimationBuilder가, 화면 전환 축에는 Hero와 PageRouteBuilder가 놓여 서로의 관계를 한눈에 파악할 수 있다.\n\n의도는 개별 위젯의 이름을 나열하는 것이 아니라, 애니메이션이 '시간 제어→값 변환→곡선 가속→rebuild'라는 공통 흐름 위에 얹힌 추상화라는 점을 시각화하는 것이다. 학습자는 이 지도를 기준으로 자신이 어느 영역을 학습 중인지 지속적으로 위치시킬 수 있다."
+    },
+    "697dac3ee9c59ed15df55c90d9f121ce984816b31a11d138e89178c44b7cb6f4": {
+      "language": "",
+      "description": "이 다이어그램은 AnimationController가 주어진 duration 동안 어떻게 0.0에서 1.0으로 선형 증가하는 값을 생성하는지, 그리고 forward·reverse·repeat·reset 같은 메서드가 그 값을 어떻게 조작하는지 시각적으로 보여준다. 500ms짜리 컨트롤러의 중간 지점에서 값이 0.5라는 단순한 사실이 모든 애니메이션의 기반임을 강조한다.\n\n핵심은 AnimationController 자체는 '시간의 흐름을 나타내는 숫자'일 뿐이고, 의미 있는 값(크기·색상·위치)은 Tween이 덧붙인다는 점이다. 학습자는 이 기초 동작을 이해함으로써 이후 등장할 모든 Tween·Curve·Builder 조합이 결국 이 단순한 숫자 위에 쌓인 가공 계층이라는 사실을 파악하게 된다."
+    },
+    "8011aa64bf8be776a854e40b623669a14a0bd1c901a4e42237a83dbbfa03d458": {
+      "language": "dart",
+      "description": "이 예제는 AnimationController를 다루는 가장 기본적인 위젯 구조를 정리한다. SingleTickerProviderStateMixin으로 vsync를 제공하고, initState에서 duration을 지정해 컨트롤러를 만들고 dispose에서 반드시 해제한다. 화면에는 AnimatedBuilder로 현재 value를 실시간 출력하고 forward·reverse·repeat·stop 버튼으로 직접 제어한다.\n\n이 구조가 가르치는 핵심은 세 가지다. 첫째, vsync는 화면 갱신 신호에 맞춰 프레임을 생성해 불필요한 계산을 막는 장치라는 점. 둘째, dispose 누락은 메모리 누수와 위젯 폐기 후 setState 경고의 원인이라는 점. 셋째, AnimationController는 Listenable이므로 AnimatedBuilder로 반응형 UI를 쉽게 구성할 수 있다는 점이다."
+    },
+    "d9b42cee0399d8d87df0b4e5e8134e922a8e041f4956f1f35241190bbc84c1f2": {
+      "language": "dart",
+      "description": "이 예제는 AnimationController의 선형 값을 실제 의미 있는 값으로 변환하는 Tween의 사용법을 보여준다. Tween<double>·ColorTween·Tween<Offset>처럼 타입별 Tween이 있고, animate(controller)로 Animation 객체를 만들어 Builder 안에서 value를 읽는다. 끝부분에서는 CurvedAnimation으로 elasticOut 같은 비선형 가속을 얹는 방식까지 한 번에 정리한다.\n\n핵심은 Tween이 '값 범위'를, Curve가 '진행 곡선'을 각각 담당한다는 역할 분리를 분명히 하는 것이다. 이 두 축을 조합하면 50에서 200으로 크기가 탄성적으로 튀는 애니메이션, 파랑에서 빨강으로 부드럽게 전이하는 색상 같은 구체적 효과를 선언적으로 조립할 수 있다."
+    },
+    "658b76f99d02f5aac93b099441b245844b1eab97cc9a14e8b6372f58cf359c05": {
+      "language": "",
+      "description": "이 다이어그램은 Curves 라이브러리가 제공하는 대표적인 곡선들이 0.0→1.0 진행에 어떤 가속·감속 패턴을 입히는지 ASCII 시각화로 직관적으로 전달한다. linear는 일정한 속도, easeIn은 뒤로 갈수록 빨라지고, easeOut은 반대, easeInOut은 양끝만 느리며, bounceOut과 elasticOut은 도착 후 튀어 오르는 느낌을 준다.\n\n의도는 학습자가 Curve를 '기능 이름'이 아닌 '움직임의 성격'으로 감각하도록 돕는 것이다. UI가 사람처럼 느껴지려면 등속 운동보다 자연스러운 가속이 필요하며, 그 선택이 브랜드의 개성까지 좌우한다. 이 지도는 실습에서 Curve를 바꿔 가며 어떤 느낌이 나는지 직접 체험해 보도록 유도하는 교육적 장치다."
+    },
+    "5617eced6b30a71260b9736e41a63eb7c6e039ff222ca3b6891b5d359961f47b": {
+      "language": "dart",
+      "description": "이 예제는 CurvedAnimation을 통해 Tween에 곡선을 얹는 표준 패턴과, 필요하면 직접 Curve를 상속해 커스텀 곡선을 구현할 수 있다는 사실을 동시에 보여준다. reverseCurve를 별도로 지정해 왕복 애니메이션의 갈 때와 돌아올 때 다른 곡선을 적용하는 고급 기법도 함께 포함한다.\n\n특히 SlowMiddleCurve 같은 커스텀 Curve 예제는 transform 함수가 t(0~1)를 받아 새로운 진행 값을 반환하는 수학적 매핑이라는 점을 명확히 드러낸다. 학습자는 이 구조를 이해함으로써 Curves 라이브러리에 없는 고유한 움직임도 직접 설계할 수 있게 되고, 애니메이션이 단순한 설정이 아니라 함수 합성의 문제임을 체감하게 된다."
+    },
+    "4e979314d36247432fcc5f33486657f833c2e7c010df907f31651ae2e9ba0648": {
+      "language": "dart",
+      "description": "이 예제는 AnimatedBuilder의 child 파라미터를 활용해 애니메이션 서브트리의 재빌드 범위를 최소화하는 패턴을 보여준다. 회전시킬 FlutterLogo는 child로 고정 전달되어 매 프레임 다시 만들어지지 않고, builder는 Transform.rotate 래핑만 매번 수행한다.\n\n이 패턴의 교훈은 애니메이션 최적화의 핵심이 '정적 부분과 동적 부분의 분리'라는 점이다. 자주 바뀌는 값만 builder 안에서 반영하고 무거운 자식은 child로 전달하면 GPU 비용을 절감할 수 있다. 이는 AnimatedBuilder뿐 아니라 TweenAnimationBuilder·AnimatedSwitcher 같은 유사 위젯에도 그대로 적용되는 일반 원칙이다."
+    },
+    "5a12de28be398b608e3fc4401c7d8441e036be6a743b8467c9fc24f784fabec8": {
+      "language": "dart",
+      "description": "이 예제는 하나의 AnimationController로 여러 애니메이션을 순차 실행하는 Interval 기반 시퀀스 패턴을 보여준다. 0~40% 구간에서 fadeIn, 30~70% 구간에서 slideUp, 60~100% 구간에서 scaleUp이 각각 실행되어 서로 겹치면서 자연스러운 연출이 만들어진다.\n\n핵심 의도는 컨트롤러를 여러 개 만드는 대신 단일 타임라인을 구간으로 쪼개는 편이 성능과 유지보수 측면에서 유리하다는 사실을 보여주는 것이다. 각 단계가 어느 퍼센트에서 시작하고 끝나는지를 코드로 읽을 수 있어 시나리오 전체의 리듬을 한눈에 파악할 수 있으며, 스플래시·온보딩 같은 복잡한 진입 애니메이션의 표준 골격이 된다."
+    },
+    "b51bc5c11fd67f9556e0de436f3b434b060009305b301d542d57a349df614d23": {
+      "language": "dart",
+      "description": "이 예제는 AnimatedContainer로 버튼이 눌릴 때 크기·색상·모서리 반지름·그림자가 한꺼번에 부드럽게 변하는 누르기 효과를 구현한다. GestureDetector가 onTapDown·onTapUp·onTapCancel을 받아 pressed 상태를 setState로 토글하기만 하면 나머지 전환은 AnimatedContainer가 자동으로 처리한다.\n\n교훈은 암시적 애니메이션이 '상태→UI 매핑'을 선언적으로 표현하는 데 얼마나 강력한지를 보여주는 것이다. duration과 curve 한 줄만 지정하면 값 변화가 자연스럽게 트랜지션되므로, 명시적 컨트롤러를 쓸 때 필요한 initState·dispose·AnimatedBuilder 보일러플레이트가 모두 사라진다. 단순한 인터랙션에 최적인 이유를 직접 체감하게 된다."
+    },
+    "f1f4450ff14b36b32b76129d1ad79b78237f4ff59877dbc6c8f20d498295350b": {
+      "language": "dart",
+      "description": "이 예제는 AnimatedOpacity를 사용해 특정 플래그가 바뀔 때마다 자식 위젯의 투명도가 부드럽게 전환되는 가장 전형적인 사용법을 보여준다. _isVisible 상태를 토글하면 300ms easeInOut 동안 opacity가 0과 1 사이를 오간다.\n\n이 짧은 코드에 담긴 메시지는 분명하다. 단순한 fade in/out은 AnimationController 없이도 충분히 깔끔하게 표현할 수 있고, 암시적 애니메이션이 가장 빛을 발하는 지점이 바로 이런 단일 속성 전환이라는 점이다. 한편 opacity 애니메이션이 잦으면 FadeTransition이 더 효율적이라는 성능 관점도 이후 FAQ에서 대비된다."
+    },
+    "b118768f643f7aa5c4f16b62c4a34b86646d2c2970bc94c0eddfa2bc2002f882": {
+      "language": "dart",
+      "description": "이 예제는 TweenAnimationBuilder로 컨트롤러 없이 커스텀 값 변화를 애니메이션화하는 두 가지 시나리오를 보여준다. 카운터 숫자가 바뀔 때 scale을 elasticOut으로 튕기듯 강조하고, 별점이 변경될 때 begin을 0에서 현재값까지 채워 가며 별 아이콘의 색이 번져 가는 효과를 만든다.\n\n핵심은 TweenAnimationBuilder가 '목표 값이 바뀌면 이전 값에서 새 값까지 자동 보간'해 준다는 선언적 편의성을 제공한다는 점이다. 덕분에 상태관리 코드는 최종 값을 바꾸는 일에만 집중하고, 애니메이션은 위젯이 알아서 만든다. 이는 ValueListenableBuilder와 AnimationController를 조합하는 수고를 상당 부분 줄여 준다."
+    },
+    "6f84ad3dab4f3ec2d28f9af8c84a10f273314e1e49c7e02efab0ddbecff9200d": {
+      "language": "dart",
+      "description": "이 예제는 AnimatedSwitcher로 로딩 인디케이터와 숫자 같은 서로 다른 위젯을 교체할 때 Fade와 Slide를 결합한 전환 효과를 자동 적용하는 방법을 보여준다. transitionBuilder에서 incoming·outgoing 자식을 감싸 커스텀 애니메이션을 삽입할 수 있고, child에는 교체 대상 위젯을 직접 넣는다.\n\n핵심은 AnimatedSwitcher가 교체 판정을 Key로 내린다는 사실이다. 같은 타입 위젯을 교체할 때 Key가 동일하면 전환 효과 없이 값만 갱신되므로, 반드시 ValueKey에 구분 가능한 값을 부여해야 한다. 이 규칙은 실무에서 '전환이 안 되는데 왜지?'라는 당황을 만드는 대표적 함정이다."
+    },
+    "21a2e69c49f752114e6f78b0e11e7f181d1c3291ee7f043aa8b7ff368542364c": {
+      "language": "dart",
+      "description": "이 예제는 Hero 애니메이션을 기본 사용에서 한 단계 더 나아가 flightShuttleBuilder와 createRectTween으로 커스터마이징하는 방법을 보여준다. flightShuttleBuilder로는 전환 중 보이는 중간 위젯을 자유롭게 만들어 모서리 반지름이 목록 8에서 상세 0으로 부드럽게 줄어드는 연출을 구현하고, createRectTween으로는 이동 경로를 직선 대신 MaterialRectArcTween의 호 모양으로 바꿀 수 있다.\n\n이 예제의 교훈은 Hero가 단순한 '같은 tag 위젯 이동'이 아니라, 전환 과정 자체를 제어 가능한 확장 지점이라는 점이다. 앱의 공간적 연속성을 강화하는 고급 연출은 이런 훅에서 만들어지며, Material Design의 모양·위치 변환 가이드라인을 따라갈 때 필수 도구가 된다."
+    },
+    "ab09918e38532fbad44bac0837379ecc59d75559d31847350a2518d179825c85": {
+      "language": "dart",
+      "description": "이 예제는 Interval 기반 다중 애니메이션을 활용해 앱 진입 스플래시를 한 컨트롤러 안에서 세 단계로 연출한다. 0~40% 구간에서 로고가 페이드인되고, 20~60% 구간에서 elasticOut으로 확대되며, 50~100% 구간에서 제목 텍스트가 아래에서 위로 슬라이드업된다. 모든 구간이 끝나면 약간의 지연 뒤 pushReplacementNamed로 홈으로 이동한다.\n\n핵심은 첫인상을 책임지는 스플래시가 단순한 로딩 대기 화면을 넘어 브랜드의 움직임 언어를 전달하는 자리라는 점이다. 이 코드는 Interval·CurvedAnimation·AnimatedBuilder·forward 후 then 체이닝이라는 여러 기법이 하나의 UX 목적을 위해 어떻게 조합되는지 실전 수준으로 보여준다."
+    },
+    "5a7f506514056b7c025eee68ae13de74bdd6048973d9d447ca8e67b8ad8951db": {
+      "language": "dart",
+      "description": "이 예제는 좋아요 버튼에 TweenSequence를 적용해 '확대 후 축소'라는 두 단계 스케일 리듬을 만드는 패턴을 보여준다. 탭할 때마다 forward(from: 0)로 컨트롤러를 매번 처음부터 실행시켜 같은 제스처가 반복돼도 항상 동일한 애니메이션이 보이도록 한다.\n\n교훈은 짧고 반복적인 제스처 피드백에서는 TweenSequence가 매우 강력한 도구라는 점이다. 1.0→1.4→1.0 같은 비대칭 리듬을 한 줄로 표현할 수 있고, 탭 반응처럼 여러 번 실행되는 애니메이션에서도 상태 꼬임 없이 일관된 연출이 가능하다. 상태 아이콘과 애니메이션이 결합된 모바일 UX의 작은 즐거움을 구현하는 표준 레시피다."
+    },
+    "ec8cc14b6fc64b0e225ec6eb9d1c0c728339c0a01e6050f47d485060b98f3773": {
+      "language": "dart",
+      "description": "이 예제는 Matrix4와 Y축 회전을 이용해 카드가 앞면에서 뒷면으로 뒤집히는 3D 애니메이션을 구현한다. Tween의 0~1 값을 π와 곱해 회전 각도로 변환하고, 각도가 π/2를 넘는 순간 뒷면을 뒤집어 그려 자연스러운 뒤집기 효과를 만든다. addStatusListener로 완료 시점에 _showFront 플래그를 토글해 내부 상태를 유지한다.\n\n이 코드의 교훈은 Flutter에서도 간단한 3D 변환이 가능하며, 핵심은 Matrix4의 setEntry(3, 2, 0.001) 원근감 설정과 Y축 회전의 조합이라는 점이다. addStatusListener를 활용해 애니메이션 상태 전이와 앱 상태를 동기화하는 기법도 함께 보여 주는, 여러 개념이 압축된 예제다."
+    },
+    "36e635765d7301855e0b2d618beffa0ada76bd0ab098764dfdb563dc368dbbc4": {
+      "language": "dart",
+      "description": "이 실습 코드는 명시적 AnimationController 기반 회전+확대 애니메이션, 암시적 AnimatedContainer 크기·색 전환, AnimatedOpacity 페이드, AnimatedSwitcher 텍스트 교체 네 가지를 한 화면에 나란히 배치한 쇼케이스다. 각 섹션은 독립적으로 동작하며 버튼을 통해 실시간으로 제어할 수 있다.\n\n의도는 앞선 이론에서 나온 서로 다른 애니메이션 방식이 실제 코드로 어떻게 공존하고 차이 나는지 한 화면에서 비교 체험하게 하는 것이다. 학습자는 명시적 컨트롤러의 제어 자유도와 암시적 위젯의 간결함을 동시에 느끼며, 각자의 장단점과 적합한 상황을 코드 규모와 UX 자유도 측면에서 직접 판단할 수 있게 된다."
+    },
+    "31350a9060c67dc4b1917be7aeb1c3272512f69ce292b37277eb0537c1a00080": {
+      "language": "dart",
+      "description": "이 코드 조각은 자가 평가 Q4의 모범 답안으로, 왼쪽 화면 밖에서 중앙으로 슬라이드 인 하는 위젯을 SlideTransition과 Tween<Offset>으로 구현하는 표준 레시피다. begin을 Offset(-1.0, 0)으로 두면 위젯 자신의 너비만큼 좌측으로 밀려 있는 위치가 되고, end는 Offset.zero로 원위치로 돌아오는 움직임이 만들어진다.\n\n교훈은 SlideTransition이 수용하는 Offset이 절대 픽셀이 아니라 위젯 크기 단위라는 사실이다. 이 덕분에 디바이스 크기에 상관없이 동일한 비율로 슬라이드 효과가 발생한다. 또한 initState에서 forward를 즉시 호출해 진입 애니메이션을 자동 실행하는 리듬은 스플래시·모달·스낵바 같은 다양한 상황에 그대로 재사용된다."
+    }
+  }
+}

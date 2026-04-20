@@ -5,7 +5,7 @@ import '../dol_game.dart';
 import '../mixins/tappable_component.dart';
 
 class BookshelfComponent extends RectangleComponent
-    with TapCallbacks, TappableComponent, HasGameReference<DolGame> {
+    with TapCallbacks, HoverCallbacks, TappableComponent, HasGameReference<DolGame> {
   final String shelfId;
   final String category;
   VoidCallback? onShelfTapped;

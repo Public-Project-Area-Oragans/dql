@@ -60,6 +60,8 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   # fix-10b: ai_diagram_describer / content_builder 에서 fence body 해시용.
   crypto: ^3.0.3
+  # art-1: tool/verify_palette.dart 가 PNG 픽셀 값 16색 팔레트 검증.
+  image: ^4.3.0
 
 flutter:
   uses-material-design: true
@@ -69,6 +71,10 @@ flutter:
     - content/books/flutter/book.json
     - content/books/mysql/book.json
     - content/books/msa/book.json
+    # art-2: UI 크롬 (9-slice 프레임 + 버튼 3상태). Manifest §7.1 준수,
+    # _anchors/ 는 런타임 번들 제외.
+    - assets/sprites/ui/frames/
+    - assets/sprites/ui/buttons/
   fonts:
     # fix-4a: ASCII 박스 드로잉·코드 블록 열 정렬을 브라우저·OS 독립적으로
     # 보장하기 위해 JetBrains Mono 를 번들링. SIL Open Font License 1.1.
