@@ -5,7 +5,7 @@
 - **총 PR 수**: 10 (art-0 ~ art-9)
 - **총 예상 에셋**: ~120 (Manifest §10.1)
 - **총 API 호출 예산**: 1000 call (2026-04-19 사용자 결정, 기존 plan 290 대비 3.5×)
-- **실 사용 누적**: 12 / 1000
+- **실 사용 누적**: 14 / 1000
 
 ---
 
@@ -46,7 +46,19 @@
   `quest_board_overlay.dart` · `asset_ids.dart` (prefix 버그 수정) · `pubspec.yaml` ·
   `asset_ids_test.dart` · `structure_assembly_simulator_test.dart`.
 
-## art-3 ~ art-9 (TODO)
+## art-3 — Title Scene (DONE)
+
+- 상태: 구현 완료 (PR 대기)
+- 생성 에셋: 2 (배경 + 로고 — press start / github icon 은 Flutter 네이티브 텍스트로 대체)
+- API 호출: 2
+- 파일:
+  - `assets/sprites/environments/title/env_title_bg_v1.png` 256×256 (요청 256×144, PixelLab 이 정사각으로 생성 — cover fit 으로 흡수)
+  - `assets/sprites/ui/logos/ui_logo_title_v1.png` 256×256 (요청 256×128, 상동)
+- 코드: `lib/presentation/screens/title_screen.dart` (신설) · `lib/core/router/app_router.dart` (`/` → Title) · `lib/core/assets/asset_ids.dart` (`UiAssets.logoTitle` + `EnvironmentAssets.titleBg` prefix 버그 수정) · `pubspec.yaml`.
+- Manifest §1.3 "타이틀 로고 Flutter 정적 이미지" 준수 — Flame 씬 미개입.
+- 알려진 이슈: `verify_palette.dart` fail (AA 엣지로 16색 외 색상). art-2 와 동일 패턴 — art-9 폴리시 단계에서 quantize 처리 예정.
+
+## art-4 ~ art-9 (TODO)
 
 - 미착수
 
@@ -59,7 +71,7 @@
 | art-0 | ✅ MERGED | 3 | 3 | 3 | 3 |
 | art-1 | ✅ MERGED | 0 | 0 | 3 | 3 |
 | art-2 | ✅ DONE | 8 | 9 | 11 | 12 |
-| art-3 | - | ~4 | ~6 | — | — |
+| art-3 | ✅ DONE | 2 | 2 | 13 | 14 |
 | art-4 | - | ~12 | ~18 | — | — |
 | art-5 | - | ~35 | ~50 | — | — |
 | art-6 | - | ~35 | ~50 | — | — |
