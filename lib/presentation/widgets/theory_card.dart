@@ -4,8 +4,10 @@ import 'package:markdown/markdown.dart' as md;
 import '../../core/constants/app_colors.dart';
 import '../../data/models/book_model.dart';
 import 'blocks/content_block_renderer.dart';
-import 'steampunk_panel.dart';
 
+// art-2b: 이론 탭은 R7 fix-10 시리즈(콘텐츠 재구성) 완료 전까지 9-slice
+// SteampunkPanel 을 사용하지 않는다. framePanel 중앙부 텍스처가 텍스트와
+// 겹쳐 가독성 치명 → 콘텐츠 레이아웃 안정화 후 재도입 예정.
 class TheoryCard extends StatelessWidget {
   final TheoryContent theory;
 
@@ -17,7 +19,7 @@ class TheoryCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (final section in theory.sections) ...[
-          SteampunkPanel(
+          _TheorySectionPanel(
             title: section.title,
             child: _sectionBody(context, section),
           ),
@@ -34,7 +36,7 @@ class TheoryCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           for (final code in theory.codeExamples) ...[
-            SteampunkPanel(
+            _TheorySectionPanel(
               title: '${code.language} — ${code.description}',
               child: SelectableText(
                 code.code,
@@ -179,6 +181,50 @@ class _ScrollablePreBuilder extends MarkdownElementBuilder {
             height: 1.4,
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// art-2b: 이론 탭 전용 섹션 패널. `SteampunkPanel` (9-slice) 대체.
+/// 평평한 darkWalnut 배경 + gold 테두리 + 제목/divider. 텍스처 겹침 없음.
+class _TheorySectionPanel extends StatelessWidget {
+  final String? title;
+  final Widget child;
+
+  const _TheorySectionPanel({required this.child, this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.darkWalnut,
+        border: Border.all(color: AppColors.gold.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (title != null) ...[
+            Text(
+              title!,
+              style: const TextStyle(
+                color: AppColors.brightGold,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 1,
+              color: AppColors.gold.withValues(alpha: 0.4),
+            ),
+            const SizedBox(height: 8),
+          ],
+          child,
+        ],
       ),
     );
   }

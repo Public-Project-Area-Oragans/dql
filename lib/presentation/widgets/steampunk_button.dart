@@ -34,6 +34,29 @@ class _SteampunkButtonState extends State<SteampunkButton> {
     return UiAssets.buttonPrimaryIdle;
   }
 
+  // art-2b: PixelLab 생성 3-state 스프라이트의 시각 차이가 미미 → 상태 구분을
+  // 명확하게 드러내기 위해 밝기 ColorFilter + pressed 1px Y translate 를
+  // 오버레이. 스프라이트 스위칭은 유지 (향후 퀄리티 업그레이드 시 그대로 반영).
+  ColorFilter get _tint {
+    if (_pressed) {
+      return const ColorFilter.matrix([
+        0.75, 0, 0, 0, 0,
+        0, 0.75, 0, 0, 0,
+        0, 0, 0.75, 0, 0,
+        0, 0, 0, 1, 0,
+      ]);
+    }
+    if (_hovering) {
+      return const ColorFilter.matrix([
+        1.25, 0, 0, 0, 0,
+        0, 1.25, 0, 0, 0,
+        0, 0, 1.25, 0, 0,
+        0, 0, 0, 1, 0,
+      ]);
+    }
+    return const ColorFilter.mode(Colors.transparent, BlendMode.dst);
+  }
+
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onPressed != null;
@@ -54,36 +77,44 @@ class _SteampunkButtonState extends State<SteampunkButton> {
         child: SizedBox(
           width: width,
           height: height,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.asset(
-                _asset,
-                width: width,
-                height: height,
-                fit: BoxFit.fill,
-                filterQuality: FilterQuality.none,
-                errorBuilder: (context, error, stack) => _FallbackFace(
-                  width: width,
-                  height: height,
-                  enabled: enabled,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  widget.label,
-                  style: TextStyle(
-                    color: enabled
-                        ? AppColors.brightGold
-                        : AppColors.parchment.withValues(alpha: 0.5),
-                    fontSize: widget.isSmall ? 12 : 14,
-                    fontWeight: FontWeight.bold,
+          child: Transform.translate(
+            offset: _pressed ? const Offset(0, 1) : Offset.zero,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                ColorFiltered(
+                  colorFilter: _tint,
+                  child: Image.asset(
+                    _asset,
+                    width: width,
+                    height: height,
+                    fit: BoxFit.fill,
+                    filterQuality: FilterQuality.none,
+                    errorBuilder: (context, error, stack) => _FallbackFace(
+                      width: width,
+                      height: height,
+                      enabled: enabled,
+                      hovering: _hovering,
+                      pressed: _pressed,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    widget.label,
+                    style: TextStyle(
+                      color: enabled
+                          ? AppColors.brightGold
+                          : AppColors.parchment.withValues(alpha: 0.5),
+                      fontSize: widget.isSmall ? 12 : 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -95,24 +126,39 @@ class _FallbackFace extends StatelessWidget {
   final double width;
   final double height;
   final bool enabled;
+  final bool hovering;
+  final bool pressed;
 
   const _FallbackFace({
     required this.width,
     required this.height,
     required this.enabled,
+    this.hovering = false,
+    this.pressed = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final Color bg;
+    if (!enabled) {
+      bg = AppColors.woodMid.withValues(alpha: 0.4);
+    } else if (pressed) {
+      bg = AppColors.darkWalnut;
+    } else if (hovering) {
+      bg = AppColors.woodMid.withValues(alpha: 1.0);
+    } else {
+      bg = AppColors.woodMid;
+    }
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: AppColors.woodMid,
+        color: bg,
         border: Border.all(
           color: enabled
-              ? AppColors.gold
+              ? (hovering ? AppColors.brightGold : AppColors.gold)
               : AppColors.gold.withValues(alpha: 0.4),
+          width: pressed ? 2 : 1,
         ),
         borderRadius: BorderRadius.circular(4),
       ),
