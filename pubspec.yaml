@@ -75,6 +75,9 @@ flutter:
     # _anchors/ 는 런타임 번들 제외.
     - assets/sprites/ui/frames/
     - assets/sprites/ui/buttons/
+    # art-3: 타이틀 씬 — 배경 + 로고.
+    - assets/sprites/environments/title/
+    - assets/sprites/ui/logos/
   fonts:
     # fix-4a: ASCII 박스 드로잉·코드 블록 열 정렬을 브라우저·OS 독립적으로
     # 보장하기 위해 JetBrains Mono 를 번들링. SIL Open Font License 1.1.

@@ -45,6 +45,9 @@ class UiAssets {
       'assets/sprites/ui/buttons/ui_button_primary_hover_v1.png';
   static const buttonPrimaryPressed =
       'assets/sprites/ui/buttons/ui_button_primary_pressed_v1.png';
+
+  // ── art-3 Title Logo ─────────────────────────────────────────────
+  static const logoTitle = 'assets/sprites/ui/logos/ui_logo_title_v1.png';
 }
 
 // ── NPC Portraits (art-2) ─────────────────────────────────────────────
@@ -89,7 +92,8 @@ class EnvironmentAssets {
   const EnvironmentAssets._();
 
   // Title (art-3)
-  static const titleBg = 'sprites/environments/title/env_title_bg_v1.png';
+  static const titleBg =
+      'assets/sprites/environments/title/env_title_bg_v1.png';
 
   // Main Hall (art-4) — 3 parallax layers
   static const mainhallBgFar =

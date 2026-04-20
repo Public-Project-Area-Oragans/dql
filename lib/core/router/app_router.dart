@@ -4,12 +4,18 @@ import '../../presentation/screens/debug_settings_screen.dart';
 import '../../presentation/screens/debug_telemetry_screen.dart';
 import '../../presentation/screens/game_screen.dart';
 import '../../presentation/screens/login_screen.dart';
+import '../../presentation/screens/title_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
+    // art-3: `/` 는 타이틀 씬. LoginScreen 은 `/login` 로 이동.
     GoRoute(
       path: '/',
+      builder: (context, state) => const TitleScreen(),
+    ),
+    GoRoute(
+      path: '/login',
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
