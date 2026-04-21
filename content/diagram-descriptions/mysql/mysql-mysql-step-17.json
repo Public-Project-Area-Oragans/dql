@@ -1,4 +1,145 @@
 {
   "chapterId": "mysql-mysql-step-17",
-  "entries": {}
+  "entries": {
+    "58b5a8d03911306867dc75563db063233f57d86d9f7727c8609d12b2fa29ac17": {
+      "language": "",
+      "description": "이 목록은 Phase 4 첫 번째 Step 17 의 도달점을 Bloom 다섯 층으로 선언한다. 1NF·2NF·3NF 조건 정의(Remember), 갱신 이상이 발생하는 근본 원인 설명(Understand), 비정규 테이블을 3NF 까지 실제로 분해(Apply), 정규화와 반정규화의 트레이드오프 분석(Analyze), 그리고 특정 도메인에서 반정규화가 더 적합한 상황을 판단(Evaluate). '정규화는 설계의 이론적 토대' 라는 메시지를 문법이 아닌 판단력으로 체화시키는 것이 이 단원의 핵심 목표다."
+    },
+    "dd6679dc5160db54c3fb5167907ed77c5ad35c3840f507abebeb1c6a1465847a": {
+      "language": "",
+      "description": "이 비정규 사례는 쇼핑몰 초기 개발자가 '빠르게' 를 위해 모든 정보를 하나의 orders_all 테이블에 밀어넣었을 때 어떤 구조적 오류가 잠복하는지 네 행짜리 예시로 보여 준다. order_id·user_id·user_name·user_city·product_id·product_name·price 가 한 행에 뒤섞여 있고, 4 번 행에서는 김영희(user_id=11)의 주문인데 user_name 에 '홍길동' 이 잘못 들어간 실제 데이터 오류까지 내재된다. 이 한 장이 뒤따르는 네 가지 갱신 이상의 생생한 출발점이다."
+    },
+    "82c3a3d5c1cf42485253f7ef7b8ae30a0bcf9d4f3a65f3980bf26cff4e824411": {
+      "language": "",
+      "description": "이 나열은 앞 비정규 테이블에서 반드시 발생하는 네 가지 운영 장애를 한 자리에 정리한다. 수정 이상(홍길동 이사 시 여러 행을 모두 고쳐야 함), 삽입 이상(주문 없는 신규 회원을 등록하지 못함), 삭제 이상(유일한 주문을 지우면 회원 정보까지 사라짐), 데이터 중복(Galaxy S24 가격 변경 시 전 행을 수정해야 함). 이 네 항목이 곧 정규화가 해결해야 할 대상이며, 정규화 이론 전체가 이 네 증상에 대한 구조적 처방이라는 메시지를 전달한다."
+    },
+    "e5a44dda97689a8d0852066165e8e81757c6ce6c8393a8f2435d401113ba2975": {
+      "language": "",
+      "description": "이 Phase 3 → 4 전환 도식은 '조회 잘하기' 에서 '잘 설계하기' 로 학습 대상이 이동한다는 사실을 두 개의 박스로 시각화한다. Phase 3 가 주어진 테이블 위에서 SELECT·JOIN·서브쿼리를 썼다면, Phase 4 부터는 정규화·ERD·관계 모델 같은 설계 자체의 원칙을 배운다. 학습자에게 '지금까지는 독자였다면 이제부터는 저자' 라는 역할 전환 의식을 심는 경계선 표지판 역할이다."
+    },
+    "028bdcc17135c18a5e02edcc5216f54d6980bd8f565edb1ad9fa6c7c99ccdf80": {
+      "language": "",
+      "description": "이 함수 종속성 정의는 정규화의 이론적 핵심인 `X → Y` 기호를 `X 가 정해지면 Y 가 유일하게 결정된다` 라는 한 문장으로 풀어낸다. user_id → user_name, product_id → price 같은 단일 컬럼 종속부터 (order_id, product_id) → qty 같은 복합키 종속까지 네 가지 예시로 다양성을 보여 준다. '결정자(Determinant)와 종속자(Dependent)' 라는 수학 용어가 이후 모든 정규형 논의의 어휘 기반이 된다는 점에서 이 한 블록이 단원 전체의 씨앗이다."
+    },
+    "8eb77b8d28ec977d8da981ac81d72b1c62507e82c94e61c650f83f1455c5467c": {
+      "language": "",
+      "description": "이 1NF 위반 예시는 students 테이블의 subjects 컬럼에 `수학, 영어, 과학` 처럼 쉼표로 구분된 다중값이 들어간 상태를 시각화한다. 이 구조의 치명적 문제는 '수학 수강 학생' 검색이 LIKE 매칭으로만 가능해 인덱스를 전혀 활용하지 못하고, 과목 추가·삭제가 문자열 파싱을 요구한다는 점이다. 쉼표 구분 저장이 '편리한 지름길' 처럼 보이지만 실은 1NF 를 가장 쉽게 위반하는 안티패턴이라는 사실을 각인시킨다."
+    },
+    "67b933df49328bbf3dabc921e7efca75a3a13b657b7e14bf917a8b2b39ac53e8": {
+      "language": "sql",
+      "description": "이 1NF 변환은 앞 다중값 구조를 student_subjects 라는 별도 테이블로 분해한 결과를 보여 준다. `(1, 수학), (1, 영어), (1, 과학), (2, 국어), (2, 수학)` 처럼 각 행이 정확히 하나의 학생-과목 쌍을 담아 각 셀이 원자값이 된다. 'LIKE 검색을 WHERE subject = ?' 로 바꿀 수 있게 되고 인덱스 활용이 열린다. 행이 늘어나는 비용을 감수하고 셀을 단일값으로 만드는 것이 1NF 의 본질임을 시각화한다."
+    },
+    "6e3efbf6d2e371e0682224800c39e0b9a102ef9b526839b3769c61b915e36963": {
+      "language": "",
+      "description": "이 1NF 추가 규칙은 정규형의 첫 단계가 단순히 '다중값 금지' 만이 아니라는 사실을 세 줄로 정리한다. 각 셀이 원자값일 것, 반복 컬럼(phone1·phone2·phone3 같은 패턴) 금지, 각 행이 PK 로 고유 식별 가능할 것. 그리고 안티패턴 세 가지(다중값, 반복 그룹, PK 없음)를 체크리스트로 명시한다. 1NF 를 '단순한 규칙' 이 아니라 '테이블이 관계형 모델 안에서 살아남기 위한 최소 조건' 으로 이해하게 만든다."
+    },
+    "f3d97525bdc3d61d80046ec1a4e7d6ebc03567ed12cba5ed879ebc3e9842c281": {
+      "language": "",
+      "description": "이 2NF 위반 예시는 order_items 테이블에 (order_id, product_id) 복합 PK 와 함께 product_name 이 섞여 있는 구조를 드러낸다. 함수 종속 분석이 `(order_id, product_id) → qty, unit_price` 는 완전 종속이지만 `product_id → product_name` 은 PK 의 일부에만 종속되는 부분 종속이라는 결정적 지점을 명시한다. 이 한 줄 때문에 Galaxy S24 이름 수정 시 수많은 주문 행을 동시에 고쳐야 하고, 주문 없는 신규 상품 이름을 저장할 방법이 없어지는 등 여러 갱신 이상이 파생된다."
+    },
+    "b0de84742ac4aed6de9ac6cbc5e25b6e3ceb1af2e264752c24fca3009f55dba9": {
+      "language": "sql",
+      "description": "이 2NF 변환은 앞 order_items 에서 부분 종속 컬럼만 분리한 결과를 두 테이블로 보여 준다. 원본 order_items 에는 `(order_id, product_id, qty, unit_price)` 처럼 복합 PK 에 완전 종속되는 컬럼만 남기고, products 테이블을 신설해 `(product_id, product_name)` 만 담는다. 같은 정보가 중복되지 않고, 상품명 수정은 products 한 행에서 끝난다. 하단의 팁은 '2NF 는 복합키가 있을 때만 적용된다' 는 핵심 조건을 못박아 단일 PK 테이블이 자동으로 2NF 를 만족한다는 사실까지 밝힌다."
+    },
+    "f6d10ae7517b1ac85d1c616508db779223168ac1bbe6e17be54c2afe0902f4a5": {
+      "language": "",
+      "description": "이 3NF 위반 예시는 단일 PK(order_id)인 orders 테이블에 user_id·user_name·zip_code·city_name 이 함께 들어 있을 때 발생하는 이행 종속 체인을 보여 준다. `order_id → user_id → user_name`, `order_id → zip_code → city_name` 이라는 두 개의 이행 경로가 드러나고, 결과적으로 '한 회원의 이름·주소가 여러 주문 행에 반복 저장' 된다. 회원 이사 시 전 주문을 수정해야 하고, 같은 zip_code 인데 city 가 서로 다른 불일치가 가능하다는 두 가지 갱신 이상이 곧 3NF 의 존재 이유다."
+    },
+    "599bf0e04cf6bb819310f2b7c150589aa64ffe8094f0bb313ab0fbea3611098c": {
+      "language": "sql",
+      "description": "이 3NF 변환은 앞 orders 의 이행 종속을 제거하기 위해 테이블을 세 개로 쪼갠 결과다. orders 는 `(order_id, user_id)` 처럼 주문 고유 정보만, users 는 `(user_id, user_name, zip_code)` 로 회원 정보만, zip_codes 는 `(zip_code, city_name)` 으로 우편번호-도시 매핑만 담는다. 각 테이블이 단 하나의 주제만 보유하고, 이행 종속이 완전히 평면화되어 수정이 한 곳에서 끝난다. 이것이 '각 테이블 = 하나의 사실' 이라는 3NF 의 최종 도달점이다."
+    },
+    "8c5555350872d686dfc1fb59958ea2a895b655a10bf4329d4eb96219c80749fe": {
+      "language": "",
+      "description": "이 BCNF 설명은 3NF 보다 엄격한 정규형의 조건을 `결정자는 반드시 후보키여야 한다` 로 한 줄에 정의하고, 3NF 는 만족하지만 BCNF 를 위반하는 예외 상황을 '복합키의 일부가 다른 컬럼을 결정하는 희귀 케이스' 로 간단히 짚는다. 실무에서는 대부분 3NF 까지 맞추면 충분하고 BCNF 까지 요구되는 경우는 드물다는 현실적 조언까지 붙인다. 이론적 완결성과 실무적 선택 사이의 균형을 보여 주는 마무리 절이다."
+    },
+    "d52ae750f74be95690a68de4ff8799437d8bdf2e80a61016e3468615c8a00588": {
+      "language": "",
+      "description": "이 정규화 단계 도식은 비정규화 → 1NF → 2NF → 3NF → BCNF → 4NF → 5NF 로 이어지는 사다리를 한 줄씩 내려간다. 각 단계 화살표 옆에 그 단계에서 제거하는 이상(원자값 보장, 부분 종속, 이행 종속, 결정자 후보키, 다중값 종속, 조인 종속)이 적혀 있어 학습자가 각 단계의 목적을 한눈에 파악할 수 있다. 마지막 줄 '실무 목표: 3NF 달성이 적절한 수준' 이 이 전체 이론 지도에서 실제로 도달해야 할 지점을 못박는다."
+    },
+    "13bf614f5a492bf46eb9fdbaa7b4c456ef54358b4a2a659021d10b0bd3ecd222": {
+      "language": "",
+      "description": "이 대비 블록은 정규화와 반정규화의 장단점을 양쪽 칼럼으로 나란히 비교한다. 정규화는 중복 제거·갱신 이상 방지·데이터 일관성·저장 공간 절약이라는 장점을 주지만, 반정규화는 JOIN 비용 감소·집계 쿼리 단순화·읽기 성능 향상·통계 리포트 적합성이라는 다른 방향의 이점을 제공한다. '정규화가 절대선은 아니다' 라는 실무 관점을 심어 주어, 이어질 반정규화 패턴 세 가지를 받아들일 준비를 시킨다."
+    },
+    "f48cf1a86f44197d619e63a612c1737010438e207c33b88f82142fb94980ac80": {
+      "language": "sql",
+      "description": "이 세 패턴 SQL 블록은 반정규화를 실제로 적용하는 표준 관용구를 보여 준다. 패턴 1 은 users 에 total_orders 같은 파생 컬럼을 추가해 COUNT 집계를 재실행하지 않고 즉시 읽기, 패턴 2 는 orders 에 user_name 을 복사해 JOIN 없이 조회, 패턴 3 은 monthly_sales_cache 같은 별도 캐시 테이블로 월별 집계를 통째로 미리 계산한다. 각 패턴은 '읽기 이득' 과 '쓰기 시 일관성 유지 비용' 이라는 숨은 계약을 포함한다는 사실까지 주석으로 함께 제시된다."
+    },
+    "03674e3225fa64be923dbfd9aca4ad7ab6713555def69b5565555753b9f132b3": {
+      "language": "",
+      "description": "이 선택 기준은 반정규화가 적합한 네 가지 상황(높은 조회 빈도·낮은 수정 빈도, 대용량 복잡 JOIN 병목, 집계 통계 리포트, OLAP/데이터 웨어하우스)과 부적합한 네 가지 상황(빈번한 실시간 수정, 일관성이 치명적인 금융·의료 데이터, JOIN 비용이 무시할 데이터량)을 체크박스로 대비시킨다. 이 분할이 실무에서 '이 테이블에 반정규화를 해도 될까' 라는 질문에 대한 빠른 판단 기준을 제공한다. 반정규화는 도구가 아니라 상황 의존적 선택이라는 메시지가 핵심이다."
+    },
+    "3a9ae503aa482171ba6ad893fed76d54dec3e96203fd4a1ad830cdb9fb84d04a": {
+      "language": "",
+      "description": "이 big_orders 테이블은 사례 연구의 출발점인 10개 컬럼짜리 극단적 비정규 테이블을 네 행 예시와 함께 시각화한다. oid·uid·u_name·zip·city·pid·p_name·qty·unit_price·p_category 가 한 행에 모두 들어 있고 PK 는 (oid, pid) 복합키. 이 테이블이 이어지는 3 단계 분해 예제(1NF 확인 → 2NF → 3NF)의 공통 입력이 되어 학습자가 같은 시작점에서 각 단계가 어떤 구조 변화를 만드는지 추적할 수 있게 한다."
+    },
+    "cf2b43aac1b93e0afd0bc884a699e2013fda34b11a70497a01f43d78ab966fd3": {
+      "language": "",
+      "description": "이 함수 종속성 분석은 앞 big_orders 에 숨은 세 가지 종속 유형을 나열로 명시화한다. `(oid, pid) → qty, unit_price` 완전 종속, `pid → p_name, p_category` 부분 종속(2NF 위반), `uid → u_name, zip` 부분 종속(2NF 위반), `zip → city` 이행 종속(3NF 위반). 이 네 줄이 곧 이후 정규화 작업의 정확한 지도 역할을 하며, '테이블을 보고 어떤 정규형을 위반했는지 식별하는' 이 단원 Analyze 레벨 역량의 결과물이기도 하다."
+    },
+    "241054a4b374dfb6584cd22a78195d19bc2ad919403843b716ee0a99d4f756f4": {
+      "language": "",
+      "description": "이 분리 대상 목록은 2NF 변환에서 구체적으로 어느 컬럼을 어느 새 테이블로 옮길지 두 줄로 선언한다. `pid → p_name, p_category` 는 products 테이블로, `uid → u_name, zip` 은 users 테이블로 분리. 이 두 줄이 다음 SQL 결과 블록의 설계 의도 주석 역할을 하며, '분석(함수 종속 식별) → 결정(어떤 테이블을 만들지) → 실행(SQL)' 이라는 정규화 실무 워크플로를 명시적으로 쪼개 보여 준다."
+    },
+    "d4893ca88b2cc0ca8c41a39e08583d20c050742e4dcbd5fa5218dda8ccc0ba66": {
+      "language": "sql",
+      "description": "이 2NF 결과 SQL 블록은 앞 분리 결정을 세 테이블로 실제 구현한 상태를 보여 준다. products 가 (pid, p_name, p_category), users 가 (uid, u_name, zip), order_items 가 복합 PK + 완전 종속 컬럼(qty, unit_price)만 담는 형태. 각 테이블이 '한 가지 주제' 만 가지고 같은 정보의 중복이 사라지지만, users 에 아직 zip → city 이행 종속이 남아 있어 3NF 까지는 한 발 더 가야 한다는 점을 암시하는 중간 산출물이다."
+    },
+    "34ff28e87a33a7f052daa1f1bd70640395fd66cc77f0435158b8f5ca2745a05d": {
+      "language": "",
+      "description": "이 이행 종속 설명은 users 테이블에 남아 있는 `uid → zip → city` 체인을 세 줄의 화살표 도식으로 시각화한다. uid 가 직접 zip 을 결정하고, zip 이 또 직접 city 를 결정하며, 그 결과 uid → city 는 '간접 = 이행' 종속이 된다. 이 마지막 간접 종속이 바로 3NF 가 제거해야 할 대상이며, '직접 종속만 남기고 간접 종속은 다른 테이블로 밀어내라' 라는 3NF 의 핵심 규칙을 수식처럼 시각화하는 절이다."
+    },
+    "405dbfb0f50af4dd0449b9b140abd0c25501da4b2365036c1c8045a4e3877586": {
+      "language": "sql",
+      "description": "이 3NF 결과 SQL 블록은 앞 이행 종속을 제거해 zip_codes 를 별도 테이블로 분리한 최종 상태를 보여 준다. zip_codes 가 (zip, city)만 담고, users 는 city 컬럼을 내려놓은 채 zip 만 보유한다. 도시 이름이 필요할 때는 users JOIN zip_codes 로 복원하면 된다. 이 한 번의 분해로 같은 도시가 여러 회원 행에 복사되는 중복이 완전히 제거되어, '같은 zip 인데 city 가 달라지는' 불일치 자체가 설계 수준에서 불가능해진다."
+    },
+    "d84db328544d6e9b366dd01986515fdf2bc79dcfcf9362dc0b076a772ade350e": {
+      "language": "",
+      "description": "이 최종 결과 도식은 3NF 달성 상태의 네 테이블이 어떻게 연결되는지 화살표로 시각화한다. zip_codes ← users ← order_items → products 라는 관계망이 한 화면에 그려지고, 각 테이블 아래에 'uid → 이름·zip', '(oid, pid) → qty·가격' 같은 핵심 함수 종속까지 함께 표기된다. '테이블 하나당 주제 하나' 라는 원칙과 '수정은 단 한 곳에서' 라는 목표가 모두 달성됐다는 사실이 이 도식 한 장으로 선언된다."
+    },
+    "0476290efc64eb9ec6bd11ea596535f8125fe313095c5ddea176caf1f0312e0d": {
+      "language": "",
+      "description": "이 실습 테이블은 학원 수강 관리라는 새 도메인에서 raw_enrollments 라는 비정규 테이블을 제시한다. enr_id 단일 PK 에 student·s_email·course_id·course_name·instructor·inst_phone·score 가 섞여 있어 학생·강좌·강사 세 주제가 한 테이블에 혼재한다. 학습자가 앞 사례 연구에서 배운 분석 기술을 다른 도메인에 그대로 적용해 '도메인은 달라도 정규화 원리는 같다' 는 일반성을 체감하게 만드는 연습 출발점이다."
+    },
+    "1d4b87be7c4e8a88acf77c1da6c4c8ae9ff3d03879fb3658015ee7a00e7d342d": {
+      "language": "sql",
+      "description": "이 함수 종속 분석 주석은 raw_enrollments 에 숨어 있는 네 가지 이행 종속 체인을 명시적으로 나열한다. student → s_email, course_id → course_name·instructor, instructor → inst_phone. 이 세 이행 종속이 합쳐져 enr_id 에서 출발하는 여러 간접 종속 경로를 만든다. 이 분석 주석이 곧 다음 SQL 블록의 설계 설명서 역할을 하며, 실습이 '무작정 테이블 쪼개기' 가 아니라 '종속 분석 → 분리' 라는 사고 순서를 따른다는 것을 보여 준다."
+    },
+    "3cf17ea57943ac52feb1ae1d028da9d5155224e5ab5a92c88a59968f6e49fb3a": {
+      "language": "sql",
+      "description": "이 긴 SQL 블록은 raw_enrollments 를 3NF 까지 분해하는 전체 과정을 6 단계로 실행한다. 원본 생성 + 4 행 삽입 → instructors(강사) 분리 → courses(강좌) 분리 + instructor FK → students(학생) 분리 → enrollments(수강 관계) 분리 + FK 두 개 → 마지막 JOIN 검증 쿼리까지. `INSERT ... SELECT DISTINCT ...` 로 중복을 제거하며 새 테이블을 채우는 관용, FK 로 참조 무결성을 걸어 두는 순서, 그리고 '원본과 같은 결과가 나오는지' 확인하는 JOIN 검증까지 실무 표준 절차가 한 스크립트에 담겨 있다."
+    },
+    "8c421a1f031c33e72cccae5fde019d229dc4c4a703898f4e910d20383e4a80d1": {
+      "language": "sql",
+      "description": "이 SQL 블록은 정규화가 실제로 갱신 이상을 어떻게 해결하는지를 두 UPDATE 문으로 증명한다. 김강사 전화번호를 바꾸면 비정규 상태에서는 3 개 수강 행을 모두 고쳐야 했지만, 정규화 이후에는 instructors 1 행만 수정하면 JOIN 을 통해 자동 반영된다. MySQL 강좌 이름 변경도 courses 1 행으로 끝난다. 마지막 DROP 문 5 개가 실습 환경 원상복구까지 마무리해, '정규화 후엔 수정이 단일 지점' 이라는 주장을 숫자로 증거하는 완결 실습이다."
+    },
+    "9fb9ac21a48e64d6ae63844287410540fb866dcd61ea45d49084ad157f40bc3b": {
+      "language": "",
+      "description": "이 Remember 레벨 퀴즈는 세 가지 갱신 이상(삽입·수정·삭제)을 가상의 상황 세 개에서 식별하게 한다. 이메일 변경 시 행마다 불일치(수정 이상), 담당 강좌 없는 강사 등록 불가(삽입 이상), 유일 주문 삭제 시 회원 정보까지 사라짐(삭제 이상). 세 상황 모두 Step 17 의 '현실적 후회담' 을 그대로 재현해, 학습자가 용어 암기가 아니라 증상 매핑으로 개념을 체득하게 만드는 훈련이다."
+    },
+    "7a90056e882484c2c5300867245d6349bcb9769bbaff67473d059a9409256824": {
+      "language": "",
+      "description": "이 O/X 퀴즈는 정규형에 대한 대표 오해 다섯 개를 판별한다. '쉼표 다중값 테이블이 1NF'(X), '2NF 는 단일 PK 에서도 확인 필요'(X — 복합키 때만), '3NF 는 비키 간 이행 종속 제거'(O), '반정규화는 의도적 일관성 희생'(O), '3NF 면 갱신 이상 완전 소멸'(X). 문법이 아니라 경계 조건 오판 가능성을 겨냥해 '자동 만족' 과 '한계' 같은 미묘한 지점을 정확히 파악했는지를 점검한다."
+    },
+    "d75edbf8c1a6a4384d85a93b2b965745cdf595ffa9755c5f791477e8a636b5cf": {
+      "language": "",
+      "description": "이 Analyze 레벨 퀴즈는 employee_projects 라는 복합 PK 테이블을 주고 현재 정규형 수준과 위반 조건을 판단하게 한다. `(emp_id, project_id)` 가 PK 인데 emp_name 은 emp_id 에만, project_name 은 project_id 에만 부분 종속되어 2NF 위반 상태다. hours 만 복합 PK 에 완전 종속된다. 이 식별 과정을 통과해야 학습자가 '정규형 식별 → 분리 설계' 로 이어지는 실무 흐름의 앞 절반을 완수한 것이 된다."
+    },
+    "f35098e0dc660d797aa1844a82c57876f2171fc80615cabd88ecd682394b40f8": {
+      "language": "sql",
+      "description": "이 정답 SQL 블록은 앞 퀴즈 3 의 2NF 위반을 해결하는 3 테이블 분리 설계를 짧게 제시한다. employees(emp_id PK, emp_name), projects(project_id PK, project_name), assignments(emp_id FK, project_id FK, hours) 복합 PK 구조. 각 테이블이 정확히 하나의 주제만 담고, 부분 종속이 완전히 제거된다. 이 최소 스키마가 모든 N:M 관계 설계의 표준 템플릿이며, 다음 Step 18 키·관계 모델 단원의 선행 예제 역할도 함께 한다."
+    },
+    "5532c918d6a3879359f82311520161c89a1cd236b391758e02e210dd50c92be8": {
+      "language": "",
+      "description": "이 Evaluate 레벨 퀴즈는 네 가지 상황에서 반정규화의 적절성을 판단하게 한다. 회원 총 주문 수 저장(조건부 적합 — 갱신 로직 보장 시), 계좌이체 내역에 잔액 복제(부적합 — 금융 일관성 치명), 월별 매출 통계 테이블(적합 — 읽기 전용 캐시), 주문 테이블에 회원 이름 복사(주의 필요 — 이름 변경 빈도에 좌우). 이 네 판단 훈련이 '반정규화는 일률 규칙이 아니라 도메인·빈도·리스크의 함수' 라는 실무 감각을 형성한다."
+    },
+    "2c3854660cec477a9e70e85011d479e9673386a0625699e71f239704bdbb7fd4": {
+      "language": "",
+      "description": "이 요약은 Step 17 전체를 네 덩어리로 정리한다. 세 갱신 이상의 증상, 1NF·2NF·3NF 의 조건 차이, '테이블 하나 = 주제 하나' 라는 단일 책임 원칙, 그리고 반정규화가 읽기 빈도·일관성 리스크의 함수로 적용되는 판단 규칙까지. 이 네 줄이 Step 18 키·관계 모델로 넘어가기 전 학습자가 확보해야 할 최소 장비이며, '좋은 설계' 의 판단 기준이 이 단원에서 처음으로 이론적 근거를 획득한다는 점에서 Phase 4 의 출발점 지도 역할을 한다."
+    },
+    "26e032a83fbf4845a6b0d72aa6bd8601e2308b328ee529968fc2dd351c3b6725": {
+      "language": "",
+      "description": "이 흐름도는 Step 17 의 현재 위치를 다음 두 단원과 함께 좌→우 직선으로 배치한다. 정규화로 테이블을 분해한 다음 Step 18 에서 분리된 테이블을 외래키로 다시 연결하는 관계 모델을 설계하고, Step 19 에서 ERD 로 전체 스키마를 시각화하면서 미니 프로젝트를 수행한다. 분해(17) → 연결(18) → 시각화(19) 라는 Phase 4 의 3 단 구조를 이 한 줄 지도로 확인하게 하는 이정표다."
+    }
+  }
 }
