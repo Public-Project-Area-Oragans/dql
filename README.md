@@ -59,7 +59,7 @@ dart run tools/content_builder.dart docs-source
 flutter run -d chrome --web-port=8080
 
 # 릴리즈 빌드
-flutter build web --release --web-renderer canvaskit --base-href /dol/
+flutter build web --release --web-renderer canvaskit --base-href /dql/
 ```
 
 ## 프로젝트 구조

@@ -39,8 +39,8 @@ master ← develop ← feature/task-XX-*
 
 ### 배포
 - Flutter Web + CanvasKit 렌더러
-- GitHub Pages: `https://public-project-area-oragans.github.io/dol/`
-- `--base-href /dol/` 필수
+- GitHub Pages: `https://public-project-area-oragans.github.io/dql/` (repo rename `dol`→`dql` 후)
+- `--base-href /dql/` 필수
 
 ## 구현 계획
 
