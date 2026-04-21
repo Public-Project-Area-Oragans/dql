@@ -1,4 +1,161 @@
 {
   "chapterId": "mysql-mysql-step-16",
-  "entries": {}
+  "entries": {
+    "969a05a65d1721db9772562a7261df4bee89852e344e74a4704161f1de5120c7": {
+      "language": "",
+      "description": "이 목록은 Phase 3 마지막 Step 16 의 학습 도달점을 네 층으로 선언한다. ROW_NUMBER·RANK·DENSE_RANK·LAG·LEAD 순위·비교 함수를 나열(Remember), PARTITION BY 와 ORDER BY 가 윈도우를 정의하는 원리 설명(Understand), 순위·누적합·전후 행 비교 쿼리를 윈도우 함수로 작성(Apply), 그리고 DATETIME vs TIMESTAMP 저장 방식과 타임존 처리 차이를 분석(Analyze)한다. 단순 집계를 넘어 '원본 행을 유지한 채 행마다 파생 지표를 붙이는' 새 패러다임을 습득하는 것이 이 단원의 핵심이다."
+    },
+    "16b3de2d0ee08b39ecd311b83c76f5c25b10fb66420aa6298835346a128d9cb9": {
+      "language": "",
+      "description": "이 요구사항과 결과표는 '각 월의 매출과 함께 포인트 순위·누적 매출을 같은 행에 보여 달라' 는 비즈니스 요청을 시각화한다. 월·월매출·순위·누적매출 네 컬럼이 한 행씩 쌓여 대시보드에 가까운 모양이 나온다. 이 결과가 GROUP BY 만으로는 표현 불가능한 이유는 '누적매출' 이 각 행마다 서로 다른 값을 가져야 하기 때문이다. 윈도우 함수의 필요성을 시각적 결과물로 먼저 각인시키는 도입 장면이다."
+    },
+    "4bfaf4a33d9dd2b5e79a10d2be9a429b51ba215cad0b0f5076606f7a7e68b185": {
+      "language": "sql",
+      "description": "이 GROUP BY 시도는 앞 요구사항을 기존 도구로 풀려 할 때 왜 막히는지 한 쿼리 안의 주석으로 드러낸다. 월별 매출 집계까지는 GROUP BY 로 가능하지만, 순위와 누적합은 별도 서브쿼리 중첩을 요구하고 '각 행마다 다른 누적값' 은 GROUP BY 의 집약 성질과 근본적으로 충돌한다. 학습자가 도구 한계를 직접 목격하게 만들어 윈도우 함수로 전환할 수밖에 없다는 필연을 인지하게 하는 실패 예제다."
+    },
+    "fac7583b8ccd457c8abde3a5a058ae8b9ebb3b27a125aff7562e357038fd1850": {
+      "language": "",
+      "description": "이 대비 설명은 집계 함수+GROUP BY 와 윈도우 함수의 결정적 차이를 두 덩이로 정리한다. 전자는 그룹을 하나의 행으로 집약해 원본 행 정보가 사라지는 구조, 후자는 그룹(윈도우) 안에서 집계하지만 원본 행을 유지해 각 행에 파생값이 붙는 구조다. '집약 vs 유지' 라는 한 단어 차이가 실은 리포트 모양을 완전히 다르게 만든다는 사실을 압축해서 선언한다. 이어지는 쿼리 대비가 이 선언의 구체 증거다."
+    },
+    "100a086b10b739ff34371628a7991211460ebceb87a347da2c9785c7eb40a8fe": {
+      "language": "sql",
+      "description": "이 두 쿼리 대비는 앞 선언의 구체적 증거를 보여 준다. 집계 함수 버전은 `GROUP BY category_id` 로 카테고리 수만큼의 행만 돌려주고 상품 정보는 사라지지만, 윈도우 함수 버전은 `AVG(price) OVER (PARTITION BY category_id)` 로 모든 상품 행을 그대로 유지한 채 각 행 옆에 해당 카테고리의 평균가를 덧붙인다. SELECT 리스트 한 줄 차이가 결과 행 수를 '카테고리 수' 에서 '상품 수' 로 되돌린다는 사실이 가장 강력한 시각화다."
+    },
+    "026fd2a410c1d6c1434aa66516ad29c30d4471d98ea69e32917820d6edeb1c15": {
+      "language": "sql",
+      "description": "이 템플릿은 OVER 절의 기본 구조를 선택적 세 요소로 나열한다. PARTITION BY 로 윈도우를 나누는 기준, ORDER BY 로 윈도우 내 정렬, 그리고 ROWS/RANGE BETWEEN 으로 프레임 범위를 제한한다. 세 요소 모두 선택사항이라 조합에 따라 OVER()·OVER(PARTITION BY ...)·OVER(ORDER BY ...)·OVER(PARTITION BY ... ORDER BY ...) 같은 네 가지 기본형이 생기고, 각각이 서로 다른 의미의 윈도우를 정의한다. 이 템플릿이 이어지는 모든 예제의 뼈대다."
+    },
+    "1f597785e0f9c1f2acf086db5e223bbc9ef6284522f7fd624b4e04fa47089a88": {
+      "language": "sql",
+      "description": "이 네 쿼리 블록은 OVER 절 네 가지 변형을 연속으로 보여 준다. 빈 OVER() 는 전체 결과가 하나의 윈도우, PARTITION BY 만은 카테고리별로 분리, ORDER BY 만은 윈도우 내 순위 부여, 그리고 PARTITION BY + ORDER BY 는 카테고리별로 나눈 뒤 내부 순위까지 함께. 같은 RANK() 나 AVG() 함수라도 OVER 절 내용에 따라 의미가 완전히 달라진다는 사실을 네 쿼리 한 세트로 각인시킨다."
+    },
+    "34d232ad265b319290ada5718747860e5b9eb8e0d73135fa4095cb6af00afc7a": {
+      "language": "sql",
+      "description": "이 쿼리는 네 가지 순위 함수를 한 줄에 나란히 세워 결과를 직접 비교한다. ROW_NUMBER 는 동점을 허용하지 않는 고유 번호, RANK 는 동점 공유 + 다음 순위 건너뜀, DENSE_RANK 는 동점 공유 + 다음 순위 연속, NTILE(3) 은 전체를 3 버킷으로 균등 분배한 그룹 번호를 반환한다. 같은 ORDER BY point DESC 위에서 네 함수가 어떻게 다른 숫자를 돌려주는지 한 줄씩 비교할 수 있어 학습자가 차이를 숫자로 체감하게 된다."
+    },
+    "003cce611dc34ee2a2c225449ecc2b74cdbf73ac2a1f548d9c48e8542a412603": {
+      "language": "sql",
+      "description": "이 쿼리는 일반 집계 함수 COUNT·SUM·AVG·MAX·MIN 이 OVER 절과 결합되면 그대로 윈도우 함수가 된다는 규칙을 한 화면에 시연한다. 모두 PARTITION BY category_id 로 같은 윈도우를 공유해 카테고리 내 상품 수·총가격·평균·최고·최저를 각 상품 행에 덧붙이고, 마지막 SUM 에만 ORDER BY price ASC 를 얹어 카테고리 내 가격 오름차순 누적합까지 추가한다. '집계 함수 + OVER = 윈도우 함수' 라는 변환 공식이 실전에서 어떻게 쓰이는지 보여 주는 종합 예제다."
+    },
+    "ffd0dc146cf532c22979540a06650efc45ba3a0095902195ade627099908f25b": {
+      "language": "sql",
+      "description": "이 쿼리는 LAG 와 LEAD 함수를 월별 매출 분석에 적용한 전형이다. `LAG(월매출, 1, 0) OVER (ORDER BY 월)` 이 한 행 앞의 월매출(전월)을 가져오고, 현재 행의 월매출에서 빼 증감액을 계산한다. `LEAD(월매출, 1, 0)` 은 반대로 한 행 뒤(다음 달)의 값을 미리 들여다본다. 세 번째 인자 0 은 앞/뒤 행이 없을 때 돌려줄 기본값으로, 1월에는 전월이 없으니 전월매출이 0 으로 채워져 NULL 안전성을 확보한다."
+    },
+    "2f0428cbd02b19c5270de97d5a49f8f410d07f914bc1ea483db633385173af06": {
+      "language": "",
+      "description": "이 결과표는 앞 LAG/LEAD 쿼리가 실제로 어떤 수치를 만들어 내는지 1~5월 다섯 행으로 시각화한다. 1월은 전월매출 0, 증감액이 곧 월매출 자체다. 2~5월은 직전 행의 값이 전월매출로 당겨 오고, 월매출과의 차이가 증감액 컬럼에 나타난다. '마이너스 증감(-152,000)' 처럼 음수도 자연스럽게 표현된다는 점이 LAG 기반 증감 분석의 유연성을 증거한다. 보고서의 '전월 대비 컬럼' 이 실은 이 한 장의 시각화에서 출발한다."
+    },
+    "2932b260389fe367a2daeaf410c57420e95b79563903f874137e07fe71d86370": {
+      "language": "sql",
+      "description": "이 두 쿼리는 FIRST_VALUE·NTH_VALUE 의 두 용례를 보여 준다. 앞 쿼리는 카테고리별로 가격 내림차순 정렬된 윈도우의 첫 행 이름(곧 그 카테고리 최고가 상품명)을 각 상품 행 옆에 깔아 준다. 뒤 쿼리는 월매출 내림차순 전체 윈도우에서 3 번째 행의 매출값을 꺼내는데, 이때 프레임이 `UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` 으로 확장돼 윈도우 전체를 포함하도록 강제된다. 두 함수 모두 '특정 순번의 행 값' 을 꺼내는 도구라는 정체성을 공유한다."
+    },
+    "55916b320c93dae831ab767e06d8f16fbabdc1b6542cebed5e62fa5eaef2e28d": {
+      "language": "",
+      "description": "이 내부 저장 구조 해설은 DATETIME 과 TIMESTAMP 가 바이트 단위에서 어떻게 다르게 저장되는지 분해한다. DATETIME 은 8 바이트 안에 날짜 3 + 시간 3 + 소수초 0~3 으로 입력값을 문자 그대로 담고, TIMESTAMP 는 MySQL 5.6.4 이후 4 바이트 정수로 Unix Epoch 이후 초 수를 저장하며 세션 타임존 기준의 UTC 변환을 저장/조회 양쪽에서 자동 수행한다. 8 vs 4 바이트라는 저장 크기 차이가 대용량 시계열 테이블에서 무시 못할 차이로 번진다는 사실이 배경 메시지다."
+    },
+    "a344242d0fc8b3c10f728877c5de13783477d76fbd3d78a40740ba529c507a49": {
+      "language": "sql",
+      "description": "이 실험 쿼리는 DATETIME 과 TIMESTAMP 의 타임존 처리 차이를 한 테이블에서 직접 체험하게 한다. 서울 타임존(+09:00)에서 NOW() 로 같은 값을 두 컬럼에 넣고 UTC(+00:00)로 타임존을 변경한 뒤 다시 조회하면 DATETIME 은 여전히 14:30:00 그대로, TIMESTAMP 는 UTC 로 역변환된 05:30:00 으로 9 시간 차이가 나타난다. '문자 그대로 저장 vs UTC 자동 변환' 이라는 추상 개념이 실제 SELECT 결과 두 줄의 차이로 체화되는 결정적 실험이다."
+    },
+    "d146737a0ef957a470b0dcfdd584c80bd6db34deb7632de84d58073904008615": {
+      "language": "sql",
+      "description": "이 쿼리는 MySQL 5.6.4 이상부터 지원되는 소수초(Fractional Seconds) 기능을 DATETIME(6)·TIMESTAMP(3) 형식으로 시연한다. 괄호 안 precision 이 소수점 자리 수(0~6)를 지정하고, NOW(6) 로 현재 시각을 마이크로초까지 포함해 삽입할 수 있다. 결과 값 `2024-05-01 14:30:00.123456` 은 로그 순서 보장·동시 트랜잭션 식별 같은 실무 문제를 '시각' 하나로 해결할 수 있게 해 주는 핵심 기반이다."
+    },
+    "8f73e10a3b7d1e521240f81ab1109b0b104d0acbe97570bd3a3abc9195106fd5": {
+      "language": "sql",
+      "description": "이 JSON 블록은 MySQL 5.7.8 이후 정식 타입이 된 JSON 컬럼의 기본 쓰임새를 한꺼번에 보여 준다. 테이블 정의, 세 행 샘플 삽입, `->>` 연산자로 값만 추출(따옴표 없이), JSON 조건 검색(`attributes->>'$.5G' = 'true'`), JSON_EXTRACT 로 동등한 접근, JSON_SET 으로 내부 값 수정, 그리고 `$.tags[0]` 같은 배열 인덱스 접근까지. JSON 타입이 '비정형 속성' 을 관계형 테이블 한 컬럼에 담으면서도 쿼리 가능하게 만드는 다리 역할임을 드러낸다."
+    },
+    "d498d85bdac9b1617bc749882e02b2260ca0e2cb60a15b768fce49c4ba9b1ead": {
+      "language": "",
+      "description": "이 프레임 문법 블록은 ROWS/RANGE BETWEEN 의 시작·끝 선택지 다섯 개를 한 자리에 모은다. UNBOUNDED PRECEDING(파티션 첫 행), n PRECEDING(n 행 앞), CURRENT ROW(현재 행), n FOLLOWING(n 행 뒤), UNBOUNDED FOLLOWING(파티션 마지막 행). 이 다섯 좌표를 시작·끝에 조합하면 '현재 행 기준 앞 2 행+현재(3개월 이동평균)', '파티션 시작부터 현재행(누적합)', '파티션 전체(전체 합계)' 같은 모든 윈도우 모양이 표현 가능해진다."
+    },
+    "faef0d808120d5e58efadc468d344f57d79cd4fc2115734c9899ee20ea85d415": {
+      "language": "sql",
+      "description": "이 쿼리는 앞의 프레임 선택지가 실제로 어떻게 쿼리에 들어가는지 세 가지 용례로 시연한다. 누적매출은 `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`, 3 개월 이동평균은 `ROWS BETWEEN 2 PRECEDING AND CURRENT ROW`, 전체합계는 `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING`. 같은 SUM·AVG 함수가 프레임 범위에 따라 '누적', '이동평균', '전체 합계' 로 의미가 바뀐다는 사실이 이 쿼리의 강력한 교훈이다."
+    },
+    "459ca19c2f2cdfe64141d0d916a01dd0f7324dd17550f3ac4299a96a5134a886": {
+      "language": "",
+      "description": "이 대비 설명은 ROWS 와 RANGE 의 결정적 차이를 물리적 행 수 기준 vs 값 범위 기준으로 구분한다. `ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING` 은 정확히 앞 1행·현재·뒤 1행 = 3행이지만, 같은 구문의 RANGE 는 ORDER BY 값 ±1 범위에 드는 모든 행을 포함해 동점이 있으면 행 수가 달라질 수 있다. 실무 권장은 '이동평균·누적합은 ROWS, 값 범위 기반 집계는 RANGE' 라는 결정 규칙으로 정리된다."
+    },
+    "3a567b9684996f5a4fd8e2176dc55383c234d63c5f84894a6c5b8e1f64872635": {
+      "language": "sql",
+      "description": "이 쿼리 블록은 윈도우 함수가 GROUP BY 이후 단계에도 끼어들 수 있다는 사실을 CTE 조합으로 시연한다. `monthly` CTE 가 월별 매출·주문수를 GROUP BY 로 이미 집계했고, 외부 SELECT 에서 `RANK() OVER (ORDER BY 월매출 DESC)`·`SUM(월매출) OVER (ORDER BY 월)`·`AVG(월매출) OVER ()` 를 얹어 매출 순위·누적매출·전체월평균까지 한 행씩 덧붙인다. '집계 한 번 → 윈도우 함수 한 번' 으로 이어지는 2 단 분석 파이프라인의 표준 형태다."
+    },
+    "ee7e52f9a360a02ee262fdfb92454819f28cc3bf36a53155707fec7fa39211f0": {
+      "language": "sql",
+      "description": "이 쿼리 대비는 '윈도우 함수 결과를 WHERE 로 바로 거르려 하면 에러' 라는 제약을 실패 예제와 두 가지 성공 예제로 해결한다. 윈도우 함수는 논리적 실행 순서상 SELECT 단계에서 처리되어 WHERE(3 단계)보다 나중에 평가되기 때문에 WHERE 절에서 `rnk` 별칭을 직접 쓸 수 없다. 서브쿼리나 CTE 로 한 번 감싼 뒤 외부 WHERE 에서 필터하는 것이 표준 해결책이며, 특히 CTE 버전은 이름 부여로 의도가 훨씬 잘 드러난다."
+    },
+    "bef6c9fb33b58387d8257aee35a26dd89ad8b0501af5ef47648ec1f0fb0095b5": {
+      "language": "sql",
+      "description": "이 쿼리는 JSON 내부 값에 직접 인덱스를 걸 수 없다는 MySQL 제약을 Generated Column(가상 컬럼)로 우회하는 표준 패턴을 보여 준다. `ALTER TABLE ... ADD COLUMN color ... GENERATED ALWAYS AS (attributes->>'$.color') VIRTUAL` 로 JSON 에서 추출한 값을 별도 컬럼처럼 노출한 뒤, 그 컬럼에 일반 인덱스를 생성한다. 이제 `WHERE color = 'black'` 조건이 EXPLAIN 에서 인덱스를 타게 되어 JSON 쿼리도 성능을 확보한다."
+    },
+    "8bcd99ee502a5fcf14bb495f7285f9ce021c9b56765013c80f39b8e483c2eb8d": {
+      "language": "sql",
+      "description": "이 쿼리는 Step 16 의 모든 윈도우 함수를 한 대시보드 쿼리에 총동원한다. monthly_stats CTE 로 월별 집계를 마친 뒤 RANK(매출 순위), 누적매출(UNBOUNDED PRECEDING ~ CURRENT ROW), LAG 기반 전월매출·전월대비 증감·증감률(%), 3 개월 이동평균, 전체 평균, 매출 비중(월매출 / SUM 전체 × 100)까지 한 SELECT 리스트에서 모두 계산된다. '운영팀 대시보드 한 장' 이 사실 윈도우 함수 하나의 쿼리로 만들어질 수 있다는 사실을 증명하는 종합 예제다."
+    },
+    "6f542ea0d897220596fd4ebd283a9e32c0174c17ee83a70d16d51af1d4616aa2": {
+      "language": "sql",
+      "description": "이 쿼리는 각 상품 행에 전체 가격 순위와 카테고리 내 순위를 동시에 덧붙이는 이중 순위 패턴을 보여 준다. `RANK() OVER (ORDER BY p.price DESC)` 로 전체 가격 순위를, `RANK() OVER (PARTITION BY p.category_id ORDER BY p.price DESC)` 로 카테고리 내 순위를 각각 계산하고, FIRST_VALUE 로 카테고리 최고가 상품 이름까지 덧붙인다. 마지막에 `price - AVG(price) OVER (PARTITION BY ...)` 로 평균 대비 차이까지 찍어 '상품 카드' 한 장에 표시할 모든 파생 지표가 완성된다."
+    },
+    "8466725d0b8c9e4e0b195735a6e474b76a3d8fc06d2af98931958732a80f89e7": {
+      "language": "sql",
+      "description": "이 쿼리는 회원별 주문 이력을 시간순으로 풀어 놓으면서 각 주문에 '몇 번째 구매인지, 이전 주문 대비 얼마나 변했는지, 여기까지 누적 얼마 썼는지' 를 동시에 표시한다. `ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at)` 로 구매 순번, `LAG` 로 이전 주문금액, 뺄셈으로 전회 대비 증감, 그리고 `SUM(...) OVER (PARTITION BY user_id ORDER BY created_at ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)` 으로 누적 구매액까지. 회원 LTV 분석의 기본 레이아웃이다."
+    },
+    "706a4016e68611533805bc81ece8f38677a41bf1656847bd8b96f6ce4a4f3495": {
+      "language": "sql",
+      "description": "이 준비 쿼리는 실습 전에 MySQL 버전이 8.0 이상인지를 `SELECT VERSION()` 으로 확인하도록 강제한다. 윈도우 함수는 8.0 부터만 지원되므로 이 체크가 실패하면 뒤따르는 모든 실습이 성립하지 않는다. 이어 completed 주문과 on_sale 상품 건수를 각각 세 실습용 데이터 지반의 적정성을 검증한다. '도구가 있는지' 와 '재료가 있는지' 를 한 번에 확인하는 세팅 단계다."
+    },
+    "767b325882e6072dcbdc5463ff66ca47c71a4e404b9e2999115276009495c326": {
+      "language": "sql",
+      "description": "이 실습 1 은 세 순위 함수를 같은 데이터에 나란히 적용해 차이를 눈으로 비교하게 하고, 뒤이어 카테고리 내 가격 순위 + CTE 로 '각 카테고리 최고가 상품' 을 추출하는 Top-N 패턴까지 연습한다. 특히 마지막 CTE + WHERE rnk = 1 형태는 '윈도우 함수 결과 → CTE → 외부 WHERE 필터' 라는 표준 Top-N 관용구를 손에 새기는 훈련이다."
+    },
+    "0c77ca58020ff4c30e7ea5a28e8e6713e8d6d457f0e0ded84951e2d72c369335": {
+      "language": "sql",
+      "description": "이 실습 2 는 집계 윈도우 함수의 두 대표 용례를 다룬다. 첫 쿼리는 각 상품 행에 카테고리 상품수·평균가·최고가·평균 대비 차이를 함께 표시해 '상품 카드' 보기를, 둘째 쿼리는 월별 매출을 CTE 로 뽑은 뒤 누적매출과 전체 대비 비중(%)까지 한 번에 계산한다. 같은 SUM·AVG 함수가 OVER 절 구성에 따라 '행 단위 파생값' 으로 완전히 다른 얼굴을 보인다는 사실을 두 쿼리로 재확인한다."
+    },
+    "3db835dc90553f9c2a5d4ea815e3bad50e121927c8847f1515dcd6c7d036aaa3": {
+      "language": "sql",
+      "description": "이 실습 3 은 LAG/LEAD 로 월별 매출 증감 분석을 완성한다. 전월 매출·다음 달 예상치·전월 대비 증감액을 각각 계산하고, CASE WHEN 으로 ▲ 상승·▼ 하락·→ 동일·'-'(이전 없음) 네 가지 추세 레이블까지 덧붙여 리포트 가독성을 확보한다. 순수 숫자 계산에 범주 레이블이 결합되면 운영팀이 바로 쓸 수 있는 대시보드 수준의 출력이 나온다는 사실을 체감시킨다."
+    },
+    "5760486ceb4634f239c847f4a306f47b343c197c319fb344d4eb59d497f846c3": {
+      "language": "sql",
+      "description": "이 실습 4 는 DATETIME 과 TIMESTAMP 의 타임존 동작 차이를 실습 테이블 하나로 직접 재현한다. 서울(+09:00)에서 동일한 NOW() 를 두 컬럼에 기록하고 UTC(+00:00)로 세션 타임존을 바꿔 재조회하면 DATETIME 은 그대로, TIMESTAMP 는 9 시간 차이로 변환된 값이 나온다. 마지막에 타임존 복원과 DROP TABLE 까지 포함돼 실습 환경이 원상복구되도록 설계됐다."
+    },
+    "4b99ebeb2956439e0949d88db5a98d93a7f130f279eaf5794d0494bebbd17f82": {
+      "language": "sql",
+      "description": "이 실습 5 는 JSON 타입의 기본 쓰임새 전체를 미니 테이블에서 연습한다. `->>` 로 따옴표 없이 값 추출, `'$.5G' = 'true'` 같은 JSON 경로 조건, `$.tags[0]` 배열 인덱스 접근, `JSON_SET` 으로 내부 값 수정까지 한 번씩 돌아보고 DROP TABLE 로 정리한다. JSON 타입이 단순 문자열 저장소가 아니라 '경로 기반 쿼리 가능한 준구조화 데이터' 라는 정체성을 가장 짧은 코드로 각인시키는 훈련이다."
+    },
+    "c80fa3684c06bc4cbc335b38357cfb4396dc3f19f1273519bc15724204c18ba3": {
+      "language": "",
+      "description": "이 Remember 레벨 퀴즈는 Step 16 에 등장한 아홉 개 함수(ROW_NUMBER, LAG, SUM OVER, RANK, LEAD, AVG OVER, DENSE_RANK, FIRST_VALUE, NTILE)를 순위 함수·집계 윈도우·이동 비교 세 카테고리로 분류하게 한다. 각 함수가 속한 역할 범주를 즉시 떠올릴 수 있어야 이어지는 Apply·Analyze 문제를 풀 기반이 생긴다는 점에서, 이 분류 퀴즈가 단원의 어휘 자산을 점검하는 역할을 한다."
+    },
+    "821f73c8745518e6b4257043dea2495921519d4b9b9326f5fa9e9e9469ed27d1": {
+      "language": "",
+      "description": "이 O/X 퀴즈는 윈도우 함수에 대한 대표 오해 다섯 개를 되묻는다. '행을 집약해 행 수를 줄이는가'(X — 유지), 'PARTITION BY 없이 ORDER BY 만 있으면 전체가 하나의 윈도우'(O), 'WHERE 에서 윈도우 결과 직접 필터 가능'(X — CTE/서브쿼리 필요), 'RANK 는 동점 같은 순위 + 다음 건너뜀'(O), 'TIMESTAMP 가 DATETIME 보다 작고 타임존 자동 변환'(O). 문법·생명 주기·엔진 특성까지 고르게 점검한다."
+    },
+    "d75dad15d825d0553cebe0a504c87956bbe3f0f6a8ba17ee3bddb6d7367133fa": {
+      "language": "",
+      "description": "이 Analyze 레벨 퀴즈는 홍길동·김영희(95)·이철수·박민준(80)·최수진(70) 다섯 행짜리 점수 데이터에 ROW_NUMBER·RANK·DENSE_RANK 를 돌렸을 때 각각이 어떤 순위 숫자를 돌려주는지 예측하게 한다. 정답은 ROW_NUMBER(1~5 모두 고유), RANK(1,1,3,3,5), DENSE_RANK(1,1,2,2,3). 같은 데이터에서 세 함수가 내놓는 숫자 패턴을 직접 써 보게 함으로써 '동점 처리 규칙' 을 문장이 아닌 계산 감각으로 체화시키는 훈련이다."
+    },
+    "d96286a4f52694f1ed2386af93e34bb6fbdcbbfe8992a4ce770c84ef7c60c891": {
+      "language": "",
+      "description": "이 Apply 레벨 퀴즈는 두 요구사항을 윈도우 함수 쿼리로 직접 작성하게 한다. (1) active 회원을 포인트 내림차순으로 RANK 매기고 상위 누적 포인트까지 함께 출력, (2) completed 주문을 회원별로 시간순 나열하면서 ROW_NUMBER 로 구매 순번과 누적 구매액을 출력. 첫 문항은 단일 ORDER BY 윈도우, 둘째 문항은 PARTITION BY + ORDER BY + ROWS 프레임까지 결합된 고급형이라는 점에서 난이도가 순차 상승한다."
+    },
+    "6d499967a6d0ff2fa1250ab5ef5cb190a47729903e8fc4347b15f6a77d894dfa": {
+      "language": "sql",
+      "description": "이 예시 답안은 앞 두 요구사항의 정답 SQL 을 보여 준다. 1번은 `RANK() OVER (ORDER BY point DESC)` + `SUM(point) OVER (ORDER BY point DESC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)` 조합으로 순위와 누적 포인트를 한 번에 뽑고, 2번은 PARTITION BY user_id 를 공유한 ROW_NUMBER + SUM 프레임으로 회원별 순번과 누적 구매액을 돌려준다. '윈도우 함수 = OVER 절 구성' 이라는 단일 원리가 두 문제를 같은 골격으로 푸는 장면이다."
+    },
+    "5eca39fa23a394708752f2a0f4743bb9ba913c89057c3262b889f34345a36dec": {
+      "language": "",
+      "description": "이 요약은 Step 16 전체를 여섯 덩어리로 정리한다. 윈도우 함수의 원본 행 유지 성질, OVER 절 세 요소(PARTITION BY·ORDER BY·ROWS/RANGE), 세 순위 함수의 차이, LAG/LEAD 의 전후 행 참조 용도, WHERE 에서 윈도우 결과를 쓰려면 CTE/서브쿼리로 감싸야 한다는 제약, 그리고 TIMESTAMP 타임존 자동 변환과 JSON 인덱싱은 Generated Column 경유라는 최신 데이터 타입 지식까지. 이 여섯 줄이 Phase 3 의 마지막 장비 세트다."
+    },
+    "0a66266c8bae92045d46a65e7f4a93423630d8b85fcb0898ff70ecc281af6d59": {
+      "language": "",
+      "description": "이 회고 블록은 Phase 3 '데이터 조회 심화' 의 Step 11~16 여섯 단원을 한 줄씩 짚는다. 집계 함수(11) → GROUP BY/HAVING(12) → JOIN(13) → 서브쿼리(14) → CTE/View(15) → 윈도우 함수(16) 라는 여섯 계단을 오른 결과 학습자는 '데이터를 꺼내는 법' 에서 '데이터를 분석하는 법' 으로 넘어왔다. 현재 위치가 Phase 3 최종 도달점임을 시각화함으로써 성취감을 주고, 동시에 Phase 4 로 이어질 준비가 되었음을 선언하는 체크포인트다."
+    },
+    "9bd6f16225232ab6505bbecaef716e16f6b5fd364f0819e9c8148334bacb2db1": {
+      "language": "",
+      "description": "이 이정표는 Phase 3 완료 이후 Phase 4 에서 기다리는 세 단원을 미리 나열한다. Step 17 데이터 정규화(1NF~3NF), Step 18 키와 관계 모델 설계, Step 19 ERD 설계 + 미니 프로젝트. 학습 주제가 SQL 문법에서 데이터베이스 설계로 이동한다는 사실을 명확히 선언해 학습자가 다음 국면의 기대치를 조정하게 만든다. '조회하기' 에서 '설계하기' 로 넘어가는 패러다임 전환의 예고편이다."
+    }
+  }
 }
