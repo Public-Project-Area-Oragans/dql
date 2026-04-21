@@ -50,8 +50,9 @@ master ← develop ← feature/task-XX-*
 
 ## 참조 문서
 
-- [**세션 핸드오프 (2026-04-21)**](docs/2026-04-21-session-handoff.md) — **새 세션 진입 시 최우선 읽기. art-2b Flame hover/pressed + art-3 타이틀 씬 + 8/9차 릴리즈 + fix-10b 잔량 24 chapter (메인 직접 처리 지시).**
-- [세션 핸드오프 (2026-04-20)](docs/2026-04-20-session-handoff.md) — 직전 세션 (subagent describer 파이프라인 ~3,126 entries)
+- [**세션 핸드오프 (2026-04-22)**](docs/2026-04-22-session-handoff.md) — **새 세션 진입 시 최우선 읽기. fix-10b step-11~20 10 chapter · art-4 중앙 홀 픽셀아트 · 10/10.5차 릴리즈 · repo rename dol→dql. 최우선 art-4b 중앙 홀 풀샷 재작업.**
+- [세션 핸드오프 (2026-04-21)](docs/2026-04-21-session-handoff.md) — 직전 세션 (art-2b + art-3 + 8/9차 릴리즈)
+- [세션 핸드오프 (2026-04-20)](docs/2026-04-20-session-handoff.md) — subagent describer 파이프라인 ~3,126 entries
 - [세션 핸드오프 (2026-04-19)](docs/2026-04-19-session-handoff.md) — 직직전 세션
 - [세션 핸드오프 (2026-04-18)](docs/2026-04-18-session-handoff.md) — 4월 중순 세션
 - [**로드맵 피벗 (2026-04-18)**](docs/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계 P0 · 순차 로드맵. Phase 2 §10 게이트 대체.**
