@@ -5,7 +5,7 @@
 - **총 PR 수**: 10 (art-0 ~ art-9)
 - **총 예상 에셋**: ~120 (Manifest §10.1)
 - **총 API 호출 예산**: 1000 call (2026-04-19 사용자 결정, 기존 plan 290 대비 3.5×)
-- **실 사용 누적**: 14 / 1000
+- **실 사용 누적**: 22 / 1000
 
 ---
 
@@ -58,7 +58,25 @@
 - Manifest §1.3 "타이틀 로고 Flutter 정적 이미지" 준수 — Flame 씬 미개입.
 - 알려진 이슈: `verify_palette.dart` fail (AA 엣지로 16색 외 색상). art-2 와 동일 패턴 — art-9 폴리시 단계에서 quantize 처리 예정.
 
-## art-4 ~ art-9 (TODO)
+## art-4 — Central Hall + Wing Doors (DONE)
+
+- 상태: 구현 완료 (PR 대기)
+- 생성 에셋: 7 (main hall 3층 parallax + 4 분관 문)
+- API 호출: 8 (architecture 도어 1회 concurrent job 429 → 재시도 성공)
+- 파일:
+  - `assets/sprites/environments/main_hall/env_mainhall_bg_far_v1.png` 256×256 (요청 256×144, PixelLab 이 정사각으로 생성 — art-3 동일 패턴)
+  - `assets/sprites/environments/main_hall/env_mainhall_bg_mid_v1.png` 256×256
+  - `assets/sprites/environments/main_hall/env_mainhall_bg_near_v1.png` 256×256
+  - `assets/sprites/objects/doors/obj_door_backend_v1.png` 64×64 (요청 64×96 → 정사각)
+  - `assets/sprites/objects/doors/obj_door_database_v1.png` 64×64
+  - `assets/sprites/objects/doors/obj_door_frontend_v1.png` 64×64
+  - `assets/sprites/objects/doors/obj_door_architecture_v1.png` 64×64
+- 코드: `central_hall_scene.dart` (3층 parallax + 분관 문 스프라이트 id 주입), `wing_door_component.dart` (`RectangleComponent` → `PositionComponent` + `SpriteComponent` child + fallback rect), `dol_game.dart` (`images.prefix = ''` + preload 리스트 확장), `asset_ids.dart` (prefix 버그 `sprites/` → `assets/sprites/`), `pubspec.yaml` (2 디렉토리 선언).
+- 분관별 색상: Bible §1.3 적용 — backend=green steam, database=amber, frontend=prism(gold+cyan), architecture=pure gold. 기존 코드 라벨(마법사의 탑 등)은 유지.
+- art-2b 에서 선취된 hover/pressed ColorFilter 가 `SpriteComponent` 에도 그대로 적용됨 (`TappableComponent` 믹스인의 `saveLayer` 가 자식 트리 전체를 감쌈).
+- 알려진 이슈: `verify_palette.dart` fail (AA 엣지로 16색 외 색상) — art-2/3 동일 패턴. art-9 폴리시 단계에서 quantize 처리 예정.
+
+## art-5 ~ art-9 (TODO)
 
 - 미착수
 
@@ -72,7 +90,7 @@
 | art-1 | ✅ MERGED | 0 | 0 | 3 | 3 |
 | art-2 | ✅ DONE | 8 | 9 | 11 | 12 |
 | art-3 | ✅ DONE | 2 | 2 | 13 | 14 |
-| art-4 | - | ~12 | ~18 | — | — |
+| art-4 | ✅ DONE | 7 | 8 | 20 | 22 |
 | art-5 | - | ~35 | ~50 | — | — |
 | art-6 | - | ~35 | ~50 | — | — |
 | art-7 | - | ~28 | ~40 | — | — |
@@ -81,3 +99,5 @@
 | **합계 (예상)** | | **~171** | **~239** | | |
 
 **잉여 예산**: 1000 − 239 (최종 예상) = 761 call. variant 재생성·retry·품질 반복용.
+
+art-4 예산 효율: 실제 7 에셋 / 8 call (예측 12/18 대비 60% 절감). 절감분 후속 PR 로 이월.

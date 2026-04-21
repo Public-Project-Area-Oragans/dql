@@ -78,6 +78,9 @@ flutter:
     # art-3: 타이틀 씬 — 배경 + 로고.
     - assets/sprites/environments/title/
     - assets/sprites/ui/logos/
+    # art-4: 중앙 홀 3층 parallax + 4 분관 문.
+    - assets/sprites/environments/main_hall/
+    - assets/sprites/objects/doors/
   fonts:
     # fix-4a: ASCII 박스 드로잉·코드 블록 열 정렬을 브라우저·OS 독립적으로
     # 보장하기 위해 JetBrains Mono 를 번들링. SIL Open Font License 1.1.
