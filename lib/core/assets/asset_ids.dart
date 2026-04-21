@@ -97,11 +97,11 @@ class EnvironmentAssets {
 
   // Main Hall (art-4) — 3 parallax layers
   static const mainhallBgFar =
-      'sprites/environments/main_hall/env_mainhall_bg_far_v1.png';
+      'assets/sprites/environments/main_hall/env_mainhall_bg_far_v1.png';
   static const mainhallBgMid =
-      'sprites/environments/main_hall/env_mainhall_bg_mid_v1.png';
+      'assets/sprites/environments/main_hall/env_mainhall_bg_mid_v1.png';
   static const mainhallBgNear =
-      'sprites/environments/main_hall/env_mainhall_bg_near_v1.png';
+      'assets/sprites/environments/main_hall/env_mainhall_bg_near_v1.png';
 
   // Backend wing (art-5)
   static const backendBgFar =
@@ -140,17 +140,16 @@ class EnvironmentAssets {
 class ObjectAssets {
   const ObjectAssets._();
 
-  // Wing doors (art-4) — 64×96 + 4-frame glow
+  // Wing doors (art-4) — 64×96 정적 스프라이트 (hover/pressed 는 TappableComponent
+  // 믹스인의 ColorFilter 가 처리. glow 애니메이션은 art-9 폴리시로 이월).
   static const doorBackend =
-      'sprites/objects/doors/obj_door_backend_v1.png';
+      'assets/sprites/objects/doors/obj_door_backend_v1.png';
   static const doorDatabase =
-      'sprites/objects/doors/obj_door_database_v1.png';
+      'assets/sprites/objects/doors/obj_door_database_v1.png';
   static const doorFrontend =
-      'sprites/objects/doors/obj_door_frontend_v1.png';
+      'assets/sprites/objects/doors/obj_door_frontend_v1.png';
   static const doorArchitecture =
-      'sprites/objects/doors/obj_door_architecture_v1.png';
-  static const doorGlow =
-      'sprites/objects/doors/obj_door_glow_v1.png';
+      'assets/sprites/objects/doors/obj_door_architecture_v1.png';
 
   // Bookshelves (art-8) — 64×96 per wing variant
   static const bookshelfBackend =

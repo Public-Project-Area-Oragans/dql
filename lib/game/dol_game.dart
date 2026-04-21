@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
+import '../core/assets/asset_ids.dart';
 import 'rendering/sprite_registry.dart';
 import 'scenes/central_hall_scene.dart';
 import 'scenes/wing_scene.dart';
@@ -22,10 +23,23 @@ class DolGame extends FlameGame {
     //
     // art-3 (타이틀 씬) 에서 FixedResolutionViewport(320×180) 전환 예정.
     // 그때까지는 기본 viewport 유지 (placeholder 렌더).
+    // art-4: Flame `Images` 기본 prefix `assets/images/` 사용 안 함.
+    // 우리 자산은 `assets/sprites/...` 아래 배치되므로 prefix 를 비워서
+    // asset_ids.dart 의 풀 경로를 그대로 사용한다.
+    images.prefix = '';
+
     await SpriteRegistry.preload(
       images: images,
       ids: const <String>[
-        // 현재 프리로드 자산 없음. art-2 부터 UiAssets.frameDialog 등 주입.
+        // art-4: 중앙 홀 3층 parallax + 4 분관 문. 누락 자산은 자동 skip
+        // 되고 씬이 단색 fallback 으로 렌더.
+        EnvironmentAssets.mainhallBgFar,
+        EnvironmentAssets.mainhallBgMid,
+        EnvironmentAssets.mainhallBgNear,
+        ObjectAssets.doorBackend,
+        ObjectAssets.doorDatabase,
+        ObjectAssets.doorFrontend,
+        ObjectAssets.doorArchitecture,
       ],
     );
 
