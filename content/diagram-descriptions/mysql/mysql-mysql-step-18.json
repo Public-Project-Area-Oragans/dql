@@ -1,4 +1,169 @@
 {
   "chapterId": "mysql-mysql-step-18",
-  "entries": {}
+  "entries": {
+    "91e9d10db7455111fb9ee9de06b39b03f3c2906c11459c68e9b42c0e74e58eb5": {
+      "language": "",
+      "description": "이 목록은 Step 18 의 도달점을 Bloom 분류의 네 층으로 선언한다. PK·FK·UK·복합키 정의 나열(Remember), 참조 무결성이 깨지는 상황과 ON DELETE 옵션의 역할 설명(Understand), N:M 관계를 매핑 테이블로 구현(Apply), 그리고 1:1/1:N/N:M 관계를 ERD 에서 식별하고 설계 의도를 분석(Analyze)하는 순서다. 정규화로 분해한 테이블을 '어떻게 다시 연결하고 무결성을 지킬 것인가' 라는 관계 모델 설계의 핵심 역량을 키우는 것이 이 단원의 목표다."
+    },
+    "0f6e6b15b0b1e2eb5a05326b3a604de9328927a168de9f035bd15977ac9ecbdf": {
+      "language": "",
+      "description": "이 사례는 FK 제약 없이 운영되는 orders 테이블이 얼마나 조용히 오염되는지를 네 행짜리 데이터로 드러낸다. user_id=99 인 주문(회원 없음), user_id=NULL 인 주문(정체불명), 그리고 id=10 회원 삭제 시 만들어지는 고아 레코드 시나리오가 한 장에 모인다. 집계 쿼리는 숫자를 돌려주지만 회원 조회로는 따라갈 수 없는 '반쪽짜리 데이터' 가 발생한다는 사실이 곧 FOREIGN KEY 제약의 존재 이유라는 점을 각인시키는 도입 장면이다."
+    },
+    "d4bd2785c2904421e5d2a5346b1de3cba423d24d67db9da8df4c055a3dd15b43": {
+      "language": "",
+      "description": "이 흐름 도식은 Phase 4 의 세 단원(정규화 → 관계 모델 → ERD)이 어떻게 연쇄되는지 한 줄로 보여 준다. Step 17 이 테이블을 올바르게 분리한다면 Step 18 은 분리된 테이블을 관계로 연결해 무결성을 보장하고, Step 19 가 전체 구조를 시각적으로 표현해 이해 가능한 스키마로 완성한다. '분해 → 연결 → 시각화' 라는 3 단 구조 안에서 Step 18 이 어느 지점에 있는지 명확히 선언하는 이정표다."
+    },
+    "00f2f112946ef0cb7aa23a7c11520a6447c5e469a442fbc3b1de929a14f8e1b0": {
+      "language": "",
+      "description": "이 1:1 관계 블록은 users ↔ user_profiles 예시로 한 회원에 정확히 하나의 프로필이 대응되는 카디널리티를 시각화한다. user_profiles.user_id 컬럼에 FK 와 UK(혹은 PK=FK) 를 동시에 걸면 '회원당 정확히 하나의 프로필' 이 DB 레벨에서 강제된다는 핵심 관용이 드러난다. 행 수가 동일한 두 테이블을 왜 굳이 분리할지에 대한 실무 판단(성능·보안·선택적 속성)은 다음 블록들에서 이어진다."
+    },
+    "ee1ff145c7575f7d6774d42f7a0cbbb6775983bfa4675e201bd4b8be2713641e": {
+      "language": "",
+      "description": "이 1:N 관계 블록은 가장 일반적인 관계 유형을 users ↔ orders 예시로 시각화한다. 한 회원이 여러 주문을 가질 수 있기 때문에 '많은 쪽(N)'인 orders 테이블에 FK(user_id)가 놓이고, 이 FK 가 users.id 를 참조한다. '많은 쪽에 FK' 라는 한 줄 규칙이 모든 1:N 설계의 결정적 가이드라인이며, 회원 → 주문 · 부서 → 직원 · 게시글 → 댓글 같은 수많은 실무 관계가 전부 이 원칙의 반복이다."
+    },
+    "8853defd885ff37edcf8548a365cb8f14b322b495f4f2b169a2defff06a6828b": {
+      "language": "",
+      "description": "이 N:M 관계 블록은 products ↔ tags 예시로 양쪽 모두 여러 행과 대응하는 관계를 보여 준다. 한 상품에 여러 태그, 한 태그에 여러 상품이 연결되는 구조는 한 테이블의 FK 로는 표현 불가능하고, product_tags 같은 매핑(Junction) 테이블이 반드시 필요하다. 매핑 테이블의 각 행이 (product_id, tag_id) 한 쌍을 담고, 이 복합 쌍이 곧 N:M 의 물리적 구현체라는 사실을 시각화하는 장면이다."
+    },
+    "614d52741ddf374c4cf80acc412c0767d21f4542c121c8e6c014362b8a678ffd": {
+      "language": "sql",
+      "description": "이 FK 문법 종합 블록은 FK 를 정의하는 세 가지 방법과 관리용 쿼리들을 한 자리에 모은다. 방법 1 은 `CREATE TABLE` 안쪽의 인라인 정의, 방법 2 는 `CONSTRAINT 이름 FOREIGN KEY ...` 로 이름을 명시하는 권장 패턴, 방법 3 은 `ALTER TABLE ... ADD CONSTRAINT` 로 나중에 추가하는 방식이다. 뒤이어 FK 삭제 구문과 `information_schema.KEY_COLUMN_USAGE` 로 현재 FK 전체를 조회하는 쿼리까지 포함돼 있어 '생성 → 관리 → 삭제' 전체 라이프사이클이 한 블록에 담긴다."
+    },
+    "695b8f7cdb98c108a8b4ba50780cb613c6871df76ddbf1fb72b2f48e3681c005": {
+      "language": "",
+      "description": "이 옵션 표는 ON DELETE·ON UPDATE 에 올 수 있는 다섯 가지 동작(RESTRICT·CASCADE·SET NULL·NO ACTION·SET DEFAULT)의 의미를 한 줄씩 정리한다. 기본값 RESTRICT 가 가장 안전하고 실수 방지에 유리하며, CASCADE 는 연쇄 삭제라는 편리함과 위험을 동시에 가지고, SET NULL 은 '연결 없음' 상태로 보존하는 중간 지점이다. InnoDB 에서 SET DEFAULT 가 실질적으로 작동하지 않는다는 엔진 특성까지 포함한 실무적 정리다."
+    },
+    "84bcf8ac7f7c2de558b979ef2d08f572405c6141e5ced2b69b5c7d98d389c15a": {
+      "language": "",
+      "description": "이 선택 가이드는 앞의 다섯 옵션을 '어떤 상황에 어느 옵션을 고를지' 의 결정 규칙으로 바꾼다. RESTRICT 는 주문 있는 회원 삭제 방지·상품 있는 카테고리 삭제 방지 같은 실수 방지 계약, CASCADE 는 게시글-댓글·주문-주문항목처럼 부모-자식 생명주기가 같을 때, SET NULL 은 작성자 탈퇴해도 게시글은 남기고 싶은 '보존 + 연결 해제' 요구에 적합하다. 이 매핑이 곧 실무 DDL 작성의 결정 트리다."
+    },
+    "f0d1e32b97958ac3cded5db13b1c604bb39a59aece1c2e3785079f22c7d6c7a2": {
+      "language": "sql",
+      "description": "이 1:1 SQL 은 user_profiles.user_id 를 FK 이자 PK 로 동시에 선언해 '회원당 정확히 한 프로필' 을 가장 강력하게 강제한다. PK=FK 구조는 UNIQUE KEY 를 별도로 걸 필요가 없고, 두 테이블의 행 수 일치가 구조적으로 보장된다. ON DELETE CASCADE 를 함께 걸어 회원 삭제 시 프로필도 자동 정리되도록 설계했다. '식별 관계' 의 가장 단순하고 강한 형태를 보여 주는 표준 레시피다."
+    },
+    "2a4f03aef661f5f7e3229d9f18a7fffdb07e5862c5e351b830e9307597de89c0": {
+      "language": "",
+      "description": "이 고려사항 블록은 '왜 1:1 을 굳이 두 테이블로 분리하는가' 에 세 가지 답을 제시한다. 자주 조회하지 않는 컬럼을 분리해 기본 조회의 IO 를 줄이는 성능 최적화, bio 같은 선택적 속성을 표현하기 위한 널 허용, 그리고 민감 데이터 분리로 보안 접근 제어를 용이하게 만들기 위함이다. 1:1 이 '굳이 왜 분리?' 라는 의문을 낳는 관계지만, 이 세 이유 중 하나에 해당하면 분리가 정당화된다는 실무 판단 규칙이다."
+    },
+    "67648de444d2e5d689e1102efe54fb2fba9aba7a95ed7b790dc231983ea6213e": {
+      "language": "sql",
+      "description": "이 1:N SQL 은 orders 테이블에 user_id FK 를 배치하고 ON DELETE RESTRICT·ON UPDATE CASCADE 조합을 걸어 표준 1:N 관계를 구현한다. RESTRICT 는 주문이 있는 회원이 실수로 삭제되는 것을 차단하고, UPDATE CASCADE 는 users.id 가 변경되는 희귀 상황에서 orders.user_id 도 자동으로 따라가도록 한다. 모든 '회원이 여러 주문을 갖는다' 류 관계의 표준 레시피이며, N 쪽에 FK 를 두는 원칙의 대표 구현이다."
+    },
+    "f2e63de7a1f686bfc8eab709dec4437849fb5c88f68be5debd5f0bb561d0c6a1": {
+      "language": "sql",
+      "description": "이 N:M SQL 은 products ↔ tags 를 연결하는 product_tags 매핑 테이블을 보여 준다. `PRIMARY KEY (product_id, tag_id)` 복합 PK 가 같은 상품-태그 쌍의 중복 삽입을 DB 수준에서 방지하고, 두 FK 는 각각 CASCADE 로 부모 삭제 시 연결 정보가 자동 정리된다. `created_at` 같은 매핑 전용 속성까지 허용되는 구조라 '순수 연결' 을 넘어 '언제 태그가 붙었는지' 같은 메타데이터도 보관할 수 있다. N:M 매핑 테이블의 완결 템플릿이다."
+    },
+    "71d2c2c23a88f3ba1bf17e981d814b7302a94d4caa1e1de439b481a35e99b44c": {
+      "language": "",
+      "description": "이 식별 관계 설명은 `order_items` 테이블의 `PRIMARY KEY (order_id, product_id)` 구조로 자식의 PK 에 부모 FK 가 포함된 강한 종속 관계를 시각화한다. order_id 가 없으면 order_items 행 자체가 존재할 수 없다는 뜻이므로 주문이 삭제되면 항목도 당연히 함께 사라져야 한다. 주문-주문항목, 학생-수강 처럼 '자식은 부모 없이 존재 불가' 한 관계에 적합하며, 대부분의 N:M 매핑 테이블이 이 식별 관계의 형태를 띤다는 점이 핵심 메시지다."
+    },
+    "464994d4fbc69306ae7ac74b7edb28524ede05a3242260635c37e52cf70d383d": {
+      "language": "",
+      "description": "이 비식별 관계 설명은 orders 의 PK(id)와 FK(user_id) 가 별도 컬럼으로 분리된 구조를 시각화한다. 주문은 자체 id 로 식별되므로 회원이 삭제되어도 주문 행 자체는 논리적으로 존재 가능하고, FK 를 NULL 로 설정하거나 보존 삭제 처리가 가능한 느슨한 종속성을 갖는다. 회원-주문·부서-직원·게시글-댓글 처럼 자식이 부모와 독립적으로 식별되는 관계 전체가 이 비식별 형태다. 식별/비식별의 구분이 ON DELETE 옵션 선택의 이론적 근거라는 점이 핵심이다."
+    },
+    "8d95381aba85e1275d1f18d4c8413530fdde5145afa4854d30b7b6a6b9019435": {
+      "language": "sql",
+      "description": "이 두 SQL 은 N:M 매핑 테이블의 PK 전략을 두 방식으로 대비한다. 방법 1 은 `(product_id, tag_id)` 복합 PK 로 중복을 자연스럽게 막고 매핑의 의미를 PK 자체로 표현한다. 방법 2 는 대리키(id AUTO_INCREMENT)를 PK 로 두고 `UNIQUE KEY (product_id, tag_id)` 를 별도로 걸어 중복을 방지한다. 기능적으론 둘 다 가능하지만, 설계 의도와 이 테이블이 다른 테이블에서 참조되는지 여부에 따라 선택이 달라진다는 사실을 다음 블록이 정리한다."
+    },
+    "811ed924845a939e1973fb736c558a1768222948149aea2c7644f913a3b3eaef": {
+      "language": "",
+      "description": "이 장단점 대비는 앞 두 PK 전략의 선택 기준을 제시한다. 복합 PK 의 장점(PK 자체로 중복 방지, UNIQUE 불필요, 의미 명확)과 대리키의 장점(단일 id 로 다른 테이블이 이 매핑을 참조 가능, 속성이 많아질 때 유연성)이 상반된다. 실무 결정 규칙은 '다른 테이블이 이 매핑을 참조하거나 복잡 속성이 많으면 대리키, 순수 N:M 연결만이면 복합 PK' 이다. 단순한 문법 차이가 아니라 확장성 판단으로 이어지는 실무 포인트다."
+    },
+    "f0b2ba552469c642bba8bd49af79be4a0bb6818e6aab7d463e47932e3cd1e6cf": {
+      "language": "",
+      "description": "이 FK 인덱스 정책 설명은 MySQL InnoDB 가 FK 를 생성할 때 해당 컬럼에 인덱스가 없으면 자동으로 생성한다는 사실을 밝힌다. 이유는 단순하다. FK 제약 검사 시 매번 부모 테이블을 참조해야 하는데, 인덱스가 없으면 Full Scan 이 반복되어 성능이 무너진다. 이를 방지하려고 엔진 수준에서 인덱스 자동 생성이 강제된다. `SHOW INDEX FROM orders` 로 확인 가능하며, JOIN 성능에도 자연스럽게 기여한다는 부차적 이점까지 포함된다."
+    },
+    "e06114dc9faac23e89aa966f55ccb455f22daa794bd6dea1e162f64aa0c6b8fb": {
+      "language": "",
+      "description": "이 요구사항 선언은 쇼핑몰의 상품-태그 기능을 다섯 줄로 정리한다. 한 상품에 여러 태그를 다는 다대다 부착, 태그로 상품을 거꾸로 검색하는 양방향 탐색, 상품 삭제 시 태그 연결 자동 정리, 태그 삭제 시에도 동일 처리. 이 네 조건이 곧 `N:M + CASCADE` 매핑 테이블 설계의 교과서적 적용 시나리오이며, 이어지는 잘못된 설계와 올바른 설계 대비의 판단 기준이 된다. 단순 기능 명세가 아니라 '설계 결정을 직접 낳는 비즈니스 요구' 를 보여 주는 출발점이다."
+    },
+    "f69139ca70953eec1708ebe636467c516b2bf30af6332fe2286c2a579e654964": {
+      "language": "sql",
+      "description": "이 잘못된 설계 SQL 은 products 에 `tags VARCHAR(500)` 단일 컬럼으로 '전자,5G,삼성,스마트폰' 같은 쉼표 구분 다중값을 저장하려는 안티패턴을 보여 준다. 1NF 위반이라는 이론적 문제 외에도, 태그 검색이 `LIKE '%5G%'` 로만 가능해 인덱스 활용이 불가능하고, 태그 수가 늘어나면 VARCHAR 길이 한계 문제까지 발생한다. '쉽지만 망한 설계' 의 전형을 보여 주어 올바른 N:M 설계가 왜 필요한지 체감시키는 반례다."
+    },
+    "6f20dc4cb930b57515980b1a2a1a5c81da2735e6df973fe919949208acffd2d4": {
+      "language": "sql",
+      "description": "이 올바른 설계 SQL 은 tags 와 product_tags 두 테이블로 N:M 을 구현한다. tags 는 자체 id + `UNIQUE KEY (name)` 으로 중복 태그를 방지하고, product_tags 는 `(product_id, tag_id)` 복합 PK, 두 FK 의 CASCADE, 그리고 `INDEX (tag_id)` 로 역방향 검색(태그 → 상품) 성능까지 확보한다. 상품-태그 기능의 완결 구현체이며, 이후 이어지는 INSERT·조회 쿼리의 데이터 지반이 된다."
+    },
+    "4b6ec91ef0ffea74d36d857217033855272e953eda713ee38b9d8436bc340f8b": {
+      "language": "sql",
+      "description": "이 INSERT 블록은 앞 설계 위에 실제 데이터를 채운다. 태그 8개(전자기기·5G·삼성 등) 등록 후 Galaxy S24(id=1)에 네 태그, iPhone 15(id=2)에 네 태그를 연결한다. `(product_id, tag_id)` 쌍을 여러 번 반복하는 형태가 매핑 테이블의 전형이며, 같은 태그(예: 5G)가 여러 상품에 반복되고 같은 상품에 여러 태그가 반복되는 N:M 의 실제 모양을 드러낸다."
+    },
+    "145b46603bc6a35a4df036f6ffd71390b0327fc16deb9ea878058f0b82658b50": {
+      "language": "sql",
+      "description": "이 조회 블록은 N:M 매핑이 실무 쿼리에서 어떻게 활용되는지 세 가지 방향으로 보여 준다. 정방향(상품의 태그 목록), 역방향(태그의 상품 목록), 그리고 AND 결합(여러 태그를 동시에 가진 상품 - EXISTS 서브쿼리 중첩). 마지막 쿼리가 '5G AND 삼성' 같은 다중 조건 검색을 EXISTS 로 해결하는 관용을 보여 주어 매핑 테이블이 단순 연결 저장소를 넘어 유연한 검색 기반임을 증명한다."
+    },
+    "ea1ed6b1702440dfcf7c036fc0272ac077d93cbe85e5509b085136ce83251c66": {
+      "language": "",
+      "description": "이 요구사항은 회원-주소 1:N 관계의 세 조건(복수 주소 등록, 기본 주소 지정, 회원 삭제 시 주소 자동 삭제)을 선언한다. '기본 주소 지정' 이 단순 1:N 을 넘는 확장 요구로, 한 회원의 여러 주소 중 하나를 유일하게 표시해야 한다는 새로운 제약이 덧붙는다. 이 제약을 is_default 플래그와 트랜잭션 기반 해제/설정 패턴으로 해결하는 방식을 이어지는 DDL 과 UPDATE 관용구가 보여 준다."
+    },
+    "d36ccdbc73280f163619fa7ba6eb7c9400e0c57af3fc852506caed559b5e2f28": {
+      "language": "sql",
+      "description": "이 user_addresses SQL 은 회원-주소 1:N 구현의 표준 형태다. id 자체 PK, user_id FK + CASCADE(회원 삭제 시 연쇄), label(집/회사 구분), is_default 플래그, 그리고 `idx_addr_user_id` 인덱스까지. 이 구조가 '여러 주소 + 기본 주소 식별 + 회원 종속 삭제' 라는 세 요구를 모두 충족한다. ON DELETE CASCADE 가 회원 삭제 = 주소 삭제라는 자연스러운 생명주기를 DB 에 위임하는 관용까지 포함된다."
+    },
+    "6c5b6ca095359246a2325a817fe014f986a558f41cbdb7fcebeb3a0ffc94c2bc": {
+      "language": "sql",
+      "description": "이 트랜잭션 블록은 '기본 주소가 회원당 단 하나' 라는 제약을 애플리케이션/트랜잭션 수준에서 유지하는 관용을 보여 준다. START TRANSACTION 안에서 기존 기본 주소를 0 으로 해제한 뒤 새 주소를 1 로 설정하고 COMMIT 한다. DB 제약만으로는 '회원당 1 행만 is_default=1' 을 강제하기 어렵기 때문에, 원자적 트랜잭션으로 일관성을 지키는 실무 패턴이다. 이어지는 SELECT 는 기본 주소 조회가 단일 행 반환임을 확인한다."
+    },
+    "d8bd65444d51014f61cbbc339746631419c30ef8ef9231895b980ac0e36a6355": {
+      "language": "sql",
+      "description": "이 SQL 은 orders → order_items 관계에서 ON DELETE CASCADE 가 어떻게 동작하는지를 보여 주면서 '연쇄 삭제' 의 위험성을 함께 경고한다. 주문이 삭제되면 항목도 자동 삭제되어 편리하지만, 만약 users → orders 도 CASCADE 였다면 '회원 삭제 → 주문 연쇄 삭제 → 주문항목 또다시 연쇄 삭제' 로 3 단계 연쇄가 발동해 의도치 않은 대량 데이터 유실이 발생할 수 있다. 편의성과 위험성의 양면을 동시에 드러내는 경고 예제다."
+    },
+    "e23c8655d6df29bfa09bc5240e0456415328d8c1035939cd079fdd35933654a3": {
+      "language": "",
+      "description": "이 원칙 목록은 CASCADE 를 언제 써야 하고 언제 쓰면 안 되는지를 네 개씩 묶어 정리한다. 적합: 부모-자식 생명주기 동일(주문-항목), 매핑 테이블 FK, 사용자 생성 종속 데이터(게시글-댓글). 부적합: 회원-주문처럼 비즈니스 핵심 이력, 감사(Audit) 목적 기록, 금융·의료 영구 보존 데이터. 이 분할이 '편리해서 CASCADE' 가 아닌 '의미를 이해한 CASCADE' 라는 실무 감각의 근거다."
+    },
+    "e3dd176c4e087120c8e744f8d31dc5432ce7811a1e7565c5d7efb6f9c94f52c5": {
+      "language": "sql",
+      "description": "이 실습 준비 블록은 FK 추가 전에 반드시 확인해야 할 참조 무결성 사전 점검을 수행한다. `LEFT JOIN users ON o.user_id = u.id WHERE u.id IS NULL` 로 orders 에서 users 가 없는 고아 레코드를 찾아 내고, 있으면 정리 후 FK 를 추가해야 에러 없이 성공한다. '기존 테이블에 FK 를 추가하는 작업은 데이터 정합성을 선행 조건으로 한다' 라는 실무 교훈을 확인 단계에서 심어 주는 블록이다."
+    },
+    "8a0ceee76f23e2eaf16e619983b2bb3141bda9f6d07f57b5312dd2d1606fd173": {
+      "language": "sql",
+      "description": "이 실습 1 은 기존 orders·products 테이블에 FK 를 추가하는 표준 ALTER 문을 보여 준다. `CONSTRAINT fk_orders_user_id FOREIGN KEY ... REFERENCES users(id) ON DELETE RESTRICT ON UPDATE CASCADE` 로 명명된 FK 를 추가하고, 같은 패턴으로 products.category_id → categories.id 도 구축한다. 마지막 쿼리가 `information_schema.KEY_COLUMN_USAGE` 로 전체 FK 현황을 리포트 형태로 조회해 작업 결과를 검증한다."
+    },
+    "75164e91867a46777068cbab1624a90a25aab2b3d693c3a9b20392d761fa07d1": {
+      "language": "sql",
+      "description": "이 실습 2 는 FK 의 세 가지 동작을 실제 에러 메시지와 함께 체험하게 한다. RESTRICT 로 주문 있는 회원 삭제 시도 → ERROR 1451, 존재하지 않는 user_id=9999 로 INSERT → ERROR 1452, 그리고 임시 test_parent/test_child 테이블로 CASCADE 연쇄 삭제 전후를 SELECT 로 대조. 에러 코드 번호까지 직접 보게 함으로써 '제약 위반은 실행 시점에 잡힌다' 는 사실을 숫자 수준에서 체감시키는 실습이다."
+    },
+    "e8ef42b825a837375ee2540ec51c8ed8be917813c666dada1fff63403c6c9d6b": {
+      "language": "sql",
+      "description": "이 실습 3 은 태그 시스템 N:M 관계를 처음부터 구축한다. tags + product_tags 생성, 태그 8개 INSERT, 4개 상품에 대한 매핑 삽입, 이어서 정방향/역방향/태그별 COUNT/CASCADE 확인까지 네 조회 쿼리로 검증한다. 특히 마지막 DELETE 주석은 실제 삭제를 막아 안전을 확보하면서도 '삭제하면 매핑도 함께 사라진다' 는 CASCADE 동작을 개념적으로 검증하게 한다. N:M 설계의 실전 완결 훈련이다."
+    },
+    "644fc03ed88f776ad3fe56735779c310012249dab6e984b608a90b6421935ef7": {
+      "language": "sql",
+      "description": "이 실습 4 는 선택적 1:1 관계를 user_profiles 테이블로 구현한다. user_id 를 PK 이자 FK 로 두어 가장 강한 1:1 을 강제하고, bio·website·github_url 같은 선택적 속성만 담는다. 일부 회원에만 프로필이 있는 데이터(선택적 1:1)를 LEFT JOIN 으로 조회하면 프로필 없는 회원은 `IFNULL(up.bio, '프로필 없음')` 로 표시된다. '필수 1:1 과 선택적 1:1' 의 차이를 LEFT JOIN 이 직접 드러내는 실습이다."
+    },
+    "f5c91a715c6fc74238ee26255fb57dc742e8981bb682e8ae4c9bcdced269faa2": {
+      "language": "",
+      "description": "이 Remember 레벨 퀴즈는 네 가지 실무 관계(직원-부서, 여권-사람, 학생-수업, 게시글-댓글) 각각이 1:1/1:N/N:M 중 어느 카디널리티인지 식별하고 FK 를 어느 테이블에 두어야 할지 답하게 한다. 이 매핑을 정확히 판단할 수 있어야 ERD 설계에서 '관계 종류 → FK 배치 → 매핑 테이블 여부' 라는 결정 흐름을 자동화할 수 있다. 관계 유형 식별이 Step 18 의 가장 기초적 어휘 점검이다."
+    },
+    "b0c960947ecad4ba4f82f514dfa4d172a3ad3fac851657c6ba88f2824d45cf4f": {
+      "language": "",
+      "description": "이 Understand 레벨 퀴즈는 네 가지 상황별로 최적의 ON DELETE 옵션을 선택하게 한다. 장바구니 연쇄 삭제(CASCADE), 탈퇴 회원의 주문 기록 보존(SET NULL), 상품 있는 카테고리 삭제 차단(RESTRICT), 게시글 삭제 시 댓글도 삭제(CASCADE). 같은 도메인이지만 비즈니스 요구가 달라지면 다른 옵션이 정답이라는 사실이 곧 'ON DELETE 는 기술이 아니라 정책' 이라는 실무 인식을 확립한다."
+    },
+    "e432df8822b03db0785841619246e59e138dae3ae57479a6143e5cdc8908d50b": {
+      "language": "sql",
+      "description": "이 Analyze 레벨 퀴즈는 세 가지 잘못된 DDL(A·B·C)을 주고 각각의 설계 오류를 짚게 한다. A 는 ON DELETE 옵션 누락으로 의도 불명, B 는 qty 가 NULL 허용이라 비즈니스 오류 + product_id SET NULL 의 의미 문제, C 는 `AUTO_INCREMENT id` 가 PK 인데 `(student_id, course_id)` 중복 방지가 없어 같은 학생이 같은 강좌를 여러 번 수강 가능해진다. 세 사례 모두 '기능은 돌아가지만 의미가 틀린' 설계의 전형이라 분석 능력을 시험하는 종합 문제다."
+    },
+    "6f5e73df5ec5cb5ce5b305c5fe09aa1de092a560ed7fcd34d97fe53f37d81323": {
+      "language": "sql",
+      "description": "이 정답 SQL 은 앞 퀴즈 3 의 C 안을 복합 PK 로 재작성한 수정안이다. `(student_id, course_id)` 를 PRIMARY KEY 로 두어 중복 수강을 PK 자체가 방지하고, AUTO_INCREMENT 대리키를 제거하며, 두 FK 모두 ON DELETE CASCADE 로 학생/강좌 삭제 시 수강 기록이 자연스럽게 정리되도록 한다. 'N:M 매핑은 복합 PK' 라는 표준 레시피가 틀린 예를 고치는 과정에서 자연스럽게 재확인되는 마무리다."
+    },
+    "ee66c602c2b5d2f0254933fc4a0aef5fbd36023b7c755d913d118995d4d5e64b": {
+      "language": "",
+      "description": "이 Apply 레벨 퀴즈는 책-저자의 N:M 관계를 다섯 줄의 요구사항으로 주고 DDL 을 작성하게 한다. 매핑 테이블에 role(주저자·공동저자·번역가·편집자) 컬럼까지 추가해야 해서 '단순 연결' 을 넘어 '연결 자체에 속성이 있는' 매핑의 전형을 다룬다. ENUM 타입으로 role 값을 제한하고 CASCADE 로 양방향 자동 정리까지 구현하게 해 Step 18 에서 배운 거의 모든 개념을 한 DDL 에서 종합 검증하는 문제다."
+    },
+    "37fcb7385e958654bc416cd126739a24703018949afca5511e1c773a03b7b510": {
+      "language": "sql",
+      "description": "이 정답 DDL 은 books + authors + book_authors 세 테이블 구조를 완성형으로 보여 준다. books 는 isbn UNIQUE, book_authors 는 복합 PK + role ENUM + 양쪽 CASCADE + `idx_ba_author_id` 역방향 검색 인덱스까지 모든 실무 관용을 포함한다. 매핑 테이블에 role 같은 속성이 합쳐지면 '관계 자체를 엔티티처럼 다루는' 관계-엔티티 패턴이 되어 책 한 권의 공동 저술 기록까지 질의 가능해진다. Step 18 의 최종 종합 구현체다."
+    },
+    "04219cd2dd5afeeef1f5900d4a6a707a8c1647054853066d7c1b0b890e15ec84": {
+      "language": "",
+      "description": "이 요약은 Step 18 전체를 다섯 덩어리로 정리한다. FK 가 참조 무결성을 자동 강제하며, ON DELETE 세 옵션(RESTRICT·CASCADE·SET NULL)이 비즈니스 정책의 기술적 표현이라는 점, 관계 종류별 FK 배치 원칙(1:N 은 N 쪽, 1:1 은 의존 측, N:M 은 매핑 테이블), 매핑 테이블의 복합 PK + 역방향 인덱스 관용, 그리고 InnoDB 가 FK 컬럼에 인덱스를 자동 생성한다는 엔진 특성까지. 이 다섯 줄이 Step 19 ERD 설계로 가기 전 가져가야 할 최소 장비 세트다."
+    },
+    "3ef0590cde8b19bf49466ba4c66723aff621c6ac4107a36a79b9095ad91a6e97": {
+      "language": "",
+      "description": "이 흐름도는 Step 18 의 현재 위치를 Step 19 와 Phase 5 시작점 사이에 배치한다. 키와 관계 모델 설계를 마친 지금, 다음 단원에서는 정규화 + 관계 모델 지식을 종합해 실제 서비스의 ERD 를 설계하고 MySQL Workbench·dbdiagram.io 같은 도구로 시각화하는 미니 프로젝트를 수행한다. Phase 4 의 마무리 지점을 한 줄 지도로 명시해 학습자가 학습 진행의 골격을 잃지 않도록 돕는다."
+    }
+  }
 }

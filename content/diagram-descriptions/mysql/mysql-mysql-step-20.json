@@ -1,4 +1,145 @@
 {
   "chapterId": "mysql-mysql-step-20",
-  "entries": {}
+  "entries": {
+    "ba7501f27f2c685f283405eba70faa3a331cfe2b0920978fcff50d9d75ee07b5": {
+      "language": "",
+      "description": "이 목록은 Phase 5 첫 단원 Step 20 의 학습 도달점을 Bloom 네 층으로 선언한다. 인덱스 정의와 생성·삭제 문법(Remember), B-Tree 탐색이 O(log n) 이 되는 원리(Understand), 단일 컬럼 인덱스 생성 + 조회 속도 변화 확인(Apply), 그리고 인덱스가 INSERT/UPDATE/DELETE 성능에 미치는 부정적 영향 분석(Analyze)까지. '인덱스는 빠르다' 라는 직관을 넘어 '왜 빠른지' 와 '어떤 대가를 치르는지' 를 구조적으로 이해시키는 것이 이 단원의 핵심 목표다."
+    },
+    "3c4d60f5db8bd5a4345866992d98fd70446a56c02ed36a59e61a8770fe512c2b": {
+      "language": "",
+      "description": "이 시뮬레이션은 100만 건 회원 테이블에서 인덱스 없는 상태로 email 조회를 했을 때 어떤 사태가 벌어지는지를 행 수별 실행 시간(10만→0.05초, 100만→0.5초, 1,000만→5초)으로 시각화한다. 초당 100회 호출되면 서버가 무너지는 장면까지 덧붙여 '인덱스 부재' 가 단순 성능 문제가 아니라 서비스 가용성 문제로 직결된다는 사실을 체감시킨다. 이 숫자 대비가 다음 블록의 '인덱스 있는 경우' 를 받아들일 동기 부여가 된다."
+    },
+    "9cfe45e0222f7de53d6c20e2595f5d96a9b5abc545e56db88472a4bb6cc39614": {
+      "language": "",
+      "description": "이 대비 블록은 같은 쿼리에 email 인덱스가 있을 때 B-Tree 가 약 20 번의 비교(log₂(1,000,000) ≈ 20)로 행을 찾아 10만·100만·1,000만 건 모두 거의 동일한 0.001~0.002 초로 응답한다는 사실을 보여 준다. 행 수 증가에 실행 시간이 거의 무감각해지는 로그 스케일의 위력이 앞 Full Scan 블록과 500 배 이상의 차이로 드러난다. '인덱스 유무가 곧 서비스 품질의 분기점' 이라는 메시지를 숫자로 각인시킨다."
+    },
+    "3057551cad23af987b27e7b9a3f6ece4c7ef4bfc2457de0394100103712f348d": {
+      "language": "",
+      "description": "이 Full Table Scan 설명은 인덱스 없이 WHERE 조건으로 행을 찾는 방식을 페이지 단위 시각화로 풀어낸다. 100 만 행이 16 행씩 묶인 약 62,500 페이지를 모두 읽어야 한다는 구체 숫자, 그리고 EXPLAIN 결과에서 `type = ALL` 이 곧 이 상태를 가리킨다는 실무 연결까지 포함된다. 인덱스 학습이 추상 이론이 아니라 '내 쿼리 EXPLAIN 에서 ALL 이 보이면 위기' 라는 구체 신호와 짝지어진다는 사실을 심는 절이다."
+    },
+    "0873f6b2c8e4e25577df5b09f72ca54ddac18e1c62a2f8726f3d7388e6da1088": {
+      "language": "",
+      "description": "이 책 색인 비유는 '인덱스가 무엇인가' 를 도서관 인덱스로 풀어낸다. 책에서 단어를 찾을 때 처음부터 훑는 Full Scan 대신 뒷면의 색인에서 단어→페이지 번호를 참조해 바로 이동하는 Index Scan 과 DB 인덱스가 1:1 대응한다는 점이 시각화된다. '값 + 위치' 라는 인덱스의 본질과, 원본 외 별도 저장 공간을 사용한다는 트레이드오프까지 비유 하나로 자연스럽게 전달된다."
+    },
+    "68f09afd3a9b06f62468865781de4cefb67b41ffd5649223d5115a9e1ba1834f": {
+      "language": "sql",
+      "description": "이 문법 종합 블록은 인덱스 관련 SQL 을 한 자리에 모은다. `CREATE INDEX`, `CREATE UNIQUE INDEX`, 복합 인덱스 `(col1, col2)`, `DROP INDEX`, 테이블 생성 시 인라인 `INDEX idx_... (...)`, ALTER TABLE 로 추가/삭제, 그리고 `SHOW INDEX FROM ...` 로 현황 조회까지. 생성·삭제·조회의 라이프사이클 전체가 한 블록에 모여 있어 이후 모든 예제의 참고점이 된다."
+    },
+    "30db466675ae6b0689728430ea124262443980354a9100129bad7c39dcf8410e": {
+      "language": "",
+      "description": "이 B-Tree 도식은 users.email 인덱스를 루트·내부·리프 3 층 구조로 시각화한다. 루트는 M·T 로 큰 구간을 나누고, 내부 노드가 A~F·G~L 같은 중간 구간으로 쪼개며, 리프 노드에 실제 이메일 값과 PK 포인터가 담긴다. 리프 노드들이 연결 리스트로 서로 이어져 있어 범위 검색(BETWEEN) 에 효율적이라는 B+Tree 특성까지 표현된다. 추상 개념을 그림으로 고정시키는 핵심 시각화다."
+    },
+    "41963e61e3fd5bda8c5908ae84ec93b878bad20d62f01cdfffd147bdec3b6ee8": {
+      "language": "",
+      "description": "이 탐색 과정은 'hong@example.com' 을 찾는 여정을 루트→내부→리프 3 단계로 따라간다. 각 단계마다 '찾는 값이 어느 구간에 속하는지' 를 비교해 다음 노드로 내려가는 의사 알고리즘이 명시되고, 최종적으로 리프에서 발견된 PK=10 을 가지고 클러스터드 인덱스에서 실제 행에 접근하는 단계까지. 총 I/O 3 번이라는 숫자가 '100만 행이든 B-Tree 높이만큼만 읽는다' 는 정리로 이어진다."
+    },
+    "a3cec7828aece0a15608e82caa2bb48753e7176e6bd63f9c3eb918f8f6ac338f": {
+      "language": "",
+      "description": "이 수식 블록은 B-Tree 탐색이 왜 O(log n) 인지를 `h = log_m(n)` 공식으로 증명한다. InnoDB 의 m(분기 수)이 수백~수천이기 때문에 100만 건이 약 3.3 층, 10 억 건도 약 5 층에 불과하다는 구체 수치가 제시된다. 결론적으로 데이터가 1,000 배 늘어도 I/O 는 2 번만 증가한다는 문장이 이 단원의 가장 강력한 선언이다. 수학적 근거와 실무 숫자가 맞물려 '왜 빠른가' 를 완결 설명한다."
+    },
+    "ecfb18ee36171163be9561241d4a029e2fb5513bc592746bf59113b75f40105e": {
+      "language": "",
+      "description": "이 클러스터드 인덱스 구조 블록은 InnoDB 의 가장 중요한 저장 특성을 한 장의 도식으로 압축한다. 데이터 행 자체가 PK 순서로 정렬되어 리프 노드에 '통째로' 담기기 때문에 PK 조회는 B-Tree 탐색 한 번으로 행 전체를 읽는다. '데이터 = 인덱스' 라는 등식이 성립하는 독특한 구조이며, 이것이 InnoDB 가 PK 선택에 민감한 이유이자 PK 를 자연키보다 AUTO_INCREMENT 로 하는 게 유리한 근거다."
+    },
+    "6cca1e18d11ed0529a04fc7ec47930605085240318424d7d07e2f4dd33ba7314": {
+      "language": "",
+      "description": "이 세컨더리 인덱스 구조 블록은 email 인덱스를 예로 들어 (email 값, PK) 쌍만 리프 노드에 담긴다는 사실을 시각화한다. 실제 행 데이터는 클러스터드 인덱스에 있으므로 세컨더리 인덱스 조회는 '세컨더리 B-Tree 탐색 → PK 획득 → 클러스터드 B-Tree 탐색' 두 번이 필요하고, 이를 Double Lookup 또는 테이블 랜덤 액세스라 한다. 이 2 단계가 커버링 인덱스의 존재 이유이자 Step 21 에서 본격적으로 다룰 최적화 포인트의 기반이다."
+    },
+    "6d7efb8e534ede176758f32802a6897774a896266a4a3b8ada9ada31d3b16fe1": {
+      "language": "",
+      "description": "이 예외 처리 블록은 PK 를 명시하지 않은 테이블을 InnoDB 가 어떻게 처리하는지를 우선순위 2 단으로 설명한다. UNIQUE NOT NULL 컬럼이 있으면 그것을 클러스터드 인덱스로, 없으면 6 바이트 DB_ROW_ID 숨겨진 컬럼을 내부에서 생성한다. 두 경우 모두 행의 물리적 배치가 예측 불가능해 성능 특성이 불안정해진다. 결론은 '반드시 명시적 PK 정의' 라는 설계 규칙이며, 이 한 줄이 Step 17~19 설계 단원의 원칙과 자연스럽게 만난다."
+    },
+    "0de88c01c38f2abcd22547f2ba03d2e1b9e98f47b4fc70cb122fa400e45a2593": {
+      "language": "",
+      "description": "이 페이지(Page) 블록은 InnoDB 가 데이터를 16KB 단위 페이지로 읽고 쓰는 근본 사실을 시각화한다. 한 페이지에 담기는 행 수가 `16KB / 행 크기` 로 결정되며, 행이 160 바이트면 약 102 행이 한 페이지에 들어간다. 핵심 원칙은 '행 1개만 읽어도 해당 페이지 16KB 가 통째로 메모리로 로드' 된다는 점. 컬럼 타입을 크게 설계할수록 페이지당 행 수가 줄어 I/O 가 늘어난다는 설계 영향까지 자연스럽게 드러난다."
+    },
+    "6c6f77d1c3d55106423ae445c1e47312efd09d3f74db4fb31cff7e063d1f71d5": {
+      "language": "",
+      "description": "이 INSERT 비용 블록은 인덱스가 3 개일 때 쓰기 비용이 어떻게 3 배 이상이 되는지를 단계별로 분해한다. 클러스터드 인덱스 삽입 + 인덱스 1 갱신 + 인덱스 2 갱신. 이어 UPDATE 예제로는 email 변경이 곧 기존 인덱스 항목 삭제 + 새 항목 삽입이라는 사실을 밝힌다. '쓰기 한 번 = B-Tree N 개 갱신' 이라는 공식이 곧 다음 블록의 트레이드오프 곡선으로 이어진다."
+    },
+    "c5dc0ad83be40e9692f32f4b95aa97379b8e3a68f7aebbc43aa03dac635eeaca": {
+      "language": "",
+      "description": "이 인덱스 개수와 성능의 트레이드오프 표는 0 개(읽기 느림/쓰기 빠름) → 1~3 개(균형점) → 4~6 개(보통) → 7 개 이상(쓰기 느림)의 곡선을 한 줄씩 보여 준다. 실무 권장이 '테이블당 5~7 개 이하, 실제 WHERE/JOIN/ORDER BY 에 쓰이는 컬럼만' 이라는 점이 못박힌다. '인덱스는 많을수록 좋다' 는 착각을 구조적으로 교정하는 결정 규칙이며, 불필요한 인덱스 제거의 경제적 근거를 제공한다."
+    },
+    "267af29ccfc57b5f382ebdc72c9a4628581066ca6a514966f0e6061a3573314f": {
+      "language": "",
+      "description": "이 Change Buffer 블록은 대량 INSERT 시 세컨더리 인덱스의 랜덤 I/O 문제를 InnoDB 가 어떻게 완화하는지를 설명한다. 세컨더리 인덱스 페이지가 버퍼 풀에 없을 때 변경 내용을 Change Buffer 에 임시 저장했다가, 페이지가 메모리에 로드될 때 한꺼번에 적용해 랜덤 I/O 를 순차 I/O 로 바꾼다. 다만 UNIQUE 인덱스는 중복 검사 때문에 즉시 읽어야 해서 이 최적화가 불가능하다는 제약까지 명시된다. 엔진 내부 최적화의 첫 맛보기다."
+    },
+    "efeac206a1b51cef0b4ff8419e7a3fc41e02790f2ae5b21057c0c1ad7ebb7150": {
+      "language": "",
+      "description": "이 버퍼 풀(Buffer Pool) 블록은 InnoDB 의 메모리 캐시가 인덱스 성능에 미치는 영향을 실용적으로 정리한다. 자주 접근하는 데이터/인덱스 페이지를 메모리에 캐시해 디스크 I/O 없이 응답하고, `SHOW STATUS LIKE 'Innodb_buffer_pool_read%'` 로 히트율(95% 이상이 이상적)을 모니터링한다. '첫 조회는 디스크, 이후는 메모리' 라는 사실과 'RAM 이 많을수록 인덱스 효과 극대화' 라는 실무 원칙이 맞물린다."
+    },
+    "17249a3f967adeefa3d7b5a8ffa3bd1df85be68816f5ee6464a82f820bd24ced": {
+      "language": "",
+      "description": "이 시나리오 블록은 쇼핑몰 관리자 쿼리(`WHERE status='completed' ORDER BY created_at DESC LIMIT 20`)가 주문 수 증가와 함께 느려지는 실제 문제 상황을 제시한다. 이 한 쿼리가 사례 연구의 공통 기준 쿼리가 되어 '인덱스 없을 때 EXPLAIN 결과' 와 '인덱스 추가 후 EXPLAIN 결과' 를 직접 대비할 수 있는 표본이 된다. 추상 이론을 실무 문제에 묶어 주는 연결 고리다."
+    },
+    "9c99c3663cc21e52b971bbd59b6d249315b55077e44f64e34320da42b3bddba2": {
+      "language": "sql",
+      "description": "이 EXPLAIN 블록은 인덱스 없는 상태에서 앞 쿼리의 실행 계획을 조회한 결과를 예측 값과 함께 보여 준다. `type: ALL`(Full Scan), `key: NULL`(인덱스 없음), `Extra: Using where; Using filesort`(정렬 비용 발생) 같은 나쁜 신호가 모두 등장한다. EXPLAIN 결과를 해석하는 연습이 자연스럽게 시작되며, `\\G` 로 세로 출력 포맷까지 보여 주어 실무 터미널 관용까지 함께 익힌다."
+    },
+    "b2a43d9b00e3da5561ca6c60c492d8ea1b0fabecd7b9b8d0d5745a7441767263": {
+      "language": "",
+      "description": "이 EXPLAIN 해석 가이드는 type 컬럼의 좋음→나쁨 순서(system > const > eq_ref > ref > range > index > ALL)와 Extra 컬럼의 핵심 값(Using filesort, Using index, Using where)을 미리 보기로 정리한다. Step 22 에서 본격적으로 다룰 실행 계획 분석의 씨앗 어휘가 이 블록에서 심어진다. 'EXPLAIN 읽는 눈' 이 이 단원의 핵심 부산물이며, 같은 쿼리가 type 이 ALL 에서 range 로 바뀌는 개선의 언어를 제공한다."
+    },
+    "3501a2517f8476c115f06e64cc40213e7f1b2e78d13c4453f52b375e343fd5e2": {
+      "language": "sql",
+      "description": "이 SQL 블록은 `CREATE INDEX idx_orders_status_created ON orders(status, created_at)` 으로 status + created_at 복합 인덱스를 추가하고, EXPLAIN 을 다시 돌려 type 이 range 로 개선되고 key 에 새 인덱스가 사용되며 Extra 가 Using index condition 으로 바뀌는 결과를 보여 준다. 같은 쿼리가 인덱스 한 줄 추가로 실행 계획이 통째로 바뀌는 장면이 '인덱스 = 쿼리 리라이트' 라는 감각을 심는다."
+    },
+    "1ffadced6187a8e5a229b0093d23fab5e363e91fb5985453775f0b8cf77cf8e9": {
+      "language": "",
+      "description": "이 개선 효과 요약은 before(type=ALL, 전체 스캔)와 after(type=range, 인덱스 탐색 + 정렬까지 인덱스 순서 활용)를 두 줄로 대비한다. 특히 'filesort 불필요!' 로 강조된 부분이 이 인덱스의 숨은 이득이다. 복합 인덱스 `(status, created_at)` 가 WHERE 조건과 ORDER BY 정렬을 동시에 서비스하도록 설계된 이유가 자연스럽게 드러나며, Step 21 의 복합 인덱스 심화로 이어지는 다리 역할을 한다."
+    },
+    "2612400086e0e29047ef578ff7e8493a2402167af6baecea38ed9218d48b3e01": {
+      "language": "",
+      "description": "이 체크리스트는 '어떤 컬럼에 인덱스를 만들 것인가' 의 결정 기준을 네 질문으로 정리한다. WHERE 빈번·JOIN ON·ORDER BY 에 사용되는가, 카디널리티(고유값 수)가 충분한가. 뒤이어 인덱스가 비효율적인 컬럼(gender, 상태 3~5개, BOOLEAN)과 효과적인 컬럼(email 고유, 날짜 범위, FK)을 구체 예시로 대비시킨다. 이 한 블록이 Step 20 에서 얻는 실무적 판단 기준의 총정리다."
+    },
+    "2ac925c9c46837b171b5c541566a74dbb630dc173d3428da2541f4d53b55605e": {
+      "language": "sql",
+      "description": "이 실습 준비 블록은 10 만 건 테스트 데이터를 스토어드 프로시저로 생성한다. `idx_test_orders` 테이블을 만들고, WHILE 루프 + RAND() + ELT() + DATE_ADD 조합으로 user_id·status·total_price·created_at 을 랜덤 생성해 10 만 번 INSERT 한다. 실습이 '샘플 3 건' 이 아니라 '10 만 건' 위에서 이루어져야 Full Scan 과 인덱스 탐색의 속도 차이를 실감할 수 있기에, 데이터 준비가 학습 설계의 핵심이라는 사실까지 담는다."
+    },
+    "4d45f464a6de76f1c2d93a729cc08fa75695029e57c705597ad56db12fbc93bd": {
+      "language": "sql",
+      "description": "이 실습 1 은 인덱스가 없는 상태에서 Full Scan 을 EXPLAIN 으로 확인하고 `SET profiling = 1` 로 실제 실행 시간까지 측정한다. type:ALL 이 실제로 찍히는 것을 눈으로 보고, SHOW PROFILES 의 Duration 숫자가 몇 밀리초 수준인지를 기록한다. 이 '숫자 스냅샷' 이 다음 실습에서 인덱스 추가 후 얼마나 빨라졌는지 비교하는 기준선이 된다. 측정 없이는 개선도 없다는 실무 관습을 훈련한다."
+    },
+    "f7dfb16c63728a454d3979a4c772ee2351743bb36396b753ba4efc79594a702b": {
+      "language": "sql",
+      "description": "이 실습 2 는 `CREATE INDEX idx_test_status_created (status, created_at)` 로 복합 인덱스를 추가한 뒤, EXPLAIN 으로 type 이 range 로 바뀌고 key 가 인덱스를 가리키는지 확인하며 SHOW PROFILES 로 실행 시간이 어떻게 줄었는지 직접 측정한다. '인덱스 추가 → EXPLAIN 재확인 → 프로파일링 비교' 라는 3 단 루프가 실무 튜닝의 표준 사이클이며, 이 실습이 그 루프를 체감시키는 첫 경험이 된다."
+    },
+    "5ccedafa8f415216f51a555b8f026947dee10d260415ae4640c7c73b5fe8bf6c": {
+      "language": "sql",
+      "description": "이 실습 3 은 type 컬럼의 여러 값을 한 자리에서 목격하게 한다. PK 조회(type=const 가장 빠름), 복합 조건 세컨더리 인덱스 조회(type=range), 인덱스 없는 컬럼 조회(type=ALL Full Scan). 이어 total_price 에 인덱스 추가 후 재실행하면 type=ref 로 개선된다. 같은 테이블 같은 쿼리 구조인데 인덱스 유무와 종류에 따라 type 이 극적으로 달라지는 사실이 시각화되어 EXPLAIN 해석 감각을 키운다."
+    },
+    "7cd3dcf83ba51e2fe02f9257382e0cb057c5e292e231e7cf53ec8a561f0f306f": {
+      "language": "sql",
+      "description": "이 실습 4 는 인덱스가 INSERT 성능에 미치는 영향을 두 테이블 대비로 직접 측정한다. `idx_no_index`(인덱스 0 개)와 `idx_with_index`(인덱스 3 개)에 같은 1 만 건을 INSERT 하고 SHOW PROFILES 로 시간 차이를 관찰한다. 인덱스가 읽기를 빠르게 하지만 쓰기를 확실히 늦춘다는 트레이드오프를 숫자로 증명하는 실험이며, 인덱스 개수가 서비스 쓰기 패턴에 얼마나 민감한지를 체감시킨다."
+    },
+    "a9dc2c074da6f378046616e4281b6ba1a6c3e30e63c378efdcbc1b90903589e3": {
+      "language": "sql",
+      "description": "이 실습 5 는 인덱스 관리 쿼리를 통해 현재 상태를 조회하고 정리하는 법을 보여 준다. `information_schema.STATISTICS` 에서 테이블별 인덱스 이름·컬럼·순서·UNIQUE 여부를 조회하고, `DROP INDEX` 로 불필요한 인덱스를 제거한 뒤 `DROP TABLE` 로 실습 환경을 원복한다. '생성만큼 정리도 중요하다' 는 실무 위생 감각과 STATISTICS 테이블을 활용한 인덱스 감사 방법을 함께 익힌다."
+    },
+    "a3e8cec20997a8f932eb58ee397a44d3bf169b1affc25e364d678c1445f5db96": {
+      "language": "",
+      "description": "이 Remember 레벨 퀴즈는 Step 20 의 핵심 어휘를 여섯 빈칸으로 점검한다. 자료구조(B-Tree), 클러스터드 인덱스, 세컨더리 인덱스, Full Table Scan, 페이지(Page), 16KB. 이 여섯 단어가 단원 전체의 개념 지도라 할 만큼 핵심이며, 빈칸을 즉시 채울 수 있어야 이후 Analyze·Create 문제로 올라갈 기반이 된다. 어휘 점검이 곧 구조 이해의 확인이다."
+    },
+    "b0202971441af7d9f97234d30a3e5637f6a53e3a829f982a88b87a13b04e13a8": {
+      "language": "",
+      "description": "이 O/X 퀴즈는 인덱스에 대한 대표 오해 다섯 개를 되묻는다. '읽기만 빠르고 쓰기엔 영향 없다'(X — 쓰기 비용 증가), '세컨더리 리프에 행 전체가 있다'(X — 값+PK), 'PK 없으면 숨겨진 row id'(O), '1 억과 10 억 건 탐색 I/O 차이가 작다'(O — log n), '인덱스 많을수록 좋다'(X — 쓰기 저하). 문법이 아닌 구조·트레이드오프 이해를 판별하는 중간 점검이다."
+    },
+    "642bee449ad80258a67812c77fe1486aa58500c8d7b919f3143665ccc753abc6": {
+      "language": "",
+      "description": "이 Analyze 레벨 퀴즈는 B-Tree 탐색 수식을 실제 숫자로 계산하게 한다. m=500 일 때 1 만·100 만·10 억 건에서 탐색 I/O 가 각각 약 2·3·4 번이라는 결과는 '10 만 배 차이에도 I/O 는 2 번만 증가' 라는 로그 스케일의 극적 효과를 수학으로 재확인시킨다. 이 계산을 직접 해 본 학습자만이 '왜 인덱스가 강력한가' 를 수식 수준에서 설명할 수 있게 된다."
+    },
+    "eb96859f2d273ac1eb45f42f35c64802a9433387dd9d195a9fea2939bce7637a": {
+      "language": "",
+      "description": "이 Analyze 레벨 퀴즈는 다섯 가지 상황에서 인덱스 추가의 효과성을 판단하게 한다. gender(카디널리티 2, 낮음), email(고유, 매우 높음), user_id FK(높음), log_level 전체 집계(낮음 — 어차피 전체 스캔), products 1,000 건(낮음 — 규모 작음). 이 다섯 판단이 '인덱스는 고카디널리티 + 선택적 필터 + 규모 있는 테이블' 이라는 결정 트리를 내재화하는 훈련이다."
+    },
+    "fd9699b9a4c290170ac513bc9afa1773dccad231c19453829ff874ed88a68814": {
+      "language": "",
+      "description": "이 요약은 Step 20 전체를 다섯 덩어리로 정리한다. B-Tree 의 O(log n) 탐색, InnoDB 의 클러스터드 인덱스 구조, 세컨더리 인덱스의 Double Lookup, 인덱스의 쓰기 비용 트레이드오프, 카디널리티가 낮은 컬럼은 인덱스 효과 미미. 이 다섯 줄이 Step 21 인덱스 설계 전략으로 넘어가기 전 학습자가 반드시 가져가야 할 최소 장비이며, 실무 DBA·백엔드 개발자가 매일 참조하는 근본 원칙 모음이다."
+    },
+    "29e394a71e9a32fd7050240b7e1598bae4f25988e860653426ab87a7b7dc313c": {
+      "language": "",
+      "description": "이 흐름도는 Step 20 의 현재 위치를 Step 21(인덱스 설계 전략)·Step 22(쿼리 튜닝) 와 함께 좌→우 직선으로 배치한다. 인덱스 기본 원리와 자료구조를 익힌 지금, 다음 단원에서는 복합 인덱스의 컬럼 순서·커버링 인덱스·인덱스 무효화 쿼리 같은 실전 설계 전략을 다루고, 그 다음 EXPLAIN 을 본격 활용한 쿼리 튜닝으로 이어진다. Phase 5 성능 최적화의 3 단 여정을 한 줄로 선언하는 이정표다."
+    }
+  }
 }
