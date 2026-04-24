@@ -65,10 +65,21 @@ void main() {
     });
   });
 
-  group('EnvironmentAssets — 3 parallax 레이어', () {
-    test('main hall far / mid / near 3층', () {
+  group('EnvironmentAssets — art-4b 중앙 홀 base', () {
+    test('mainhallBase 경로 assets/sprites/environments/main_hall/ 하위', () {
+      expect(
+        EnvironmentAssets.mainhallBase,
+        'assets/sprites/environments/main_hall/env_mainhall_base_v1.png',
+      );
+    });
+
+    test('deprecated parallax 상수는 여전히 참조 가능 (호환성 유지)', () {
+      // art-4b 에서 deprecated 표시. art-5 일괄 삭제 전까지 유지.
+      // ignore: deprecated_member_use_from_same_package
       expect(EnvironmentAssets.mainhallBgFar, contains('bg_far'));
+      // ignore: deprecated_member_use_from_same_package
       expect(EnvironmentAssets.mainhallBgMid, contains('bg_mid'));
+      // ignore: deprecated_member_use_from_same_package
       expect(EnvironmentAssets.mainhallBgNear, contains('bg_near'));
     });
 
@@ -87,8 +98,53 @@ void main() {
     });
   });
 
-  group('파일명 v1 suffix 일관성', () {
-    test('모든 경로는 _v1.png 로 끝난다', () {
+  group('MainHallDecoAssets — art-4b 조립식 오버레이', () {
+    test('pillar / chandelier / compass_rose 경로', () {
+      expect(
+        MainHallDecoAssets.pillar,
+        'assets/sprites/environments/main_hall/deco_mainhall_pillar_v1.png',
+      );
+      expect(
+        MainHallDecoAssets.chandelier,
+        'assets/sprites/environments/main_hall/deco_mainhall_chandelier_v1.png',
+      );
+      expect(
+        MainHallDecoAssets.compassRose,
+        'assets/sprites/environments/main_hall/deco_mainhall_compass_rose_v1.png',
+      );
+    });
+
+    test('entrance_arch 4 분관 색 구분', () {
+      expect(
+        MainHallDecoAssets.entranceArchBackend,
+        contains('entrance_arch_backend'),
+      );
+      expect(
+        MainHallDecoAssets.entranceArchDatabase,
+        contains('entrance_arch_database'),
+      );
+      expect(
+        MainHallDecoAssets.entranceArchFrontend,
+        contains('entrance_arch_frontend'),
+      );
+      expect(
+        MainHallDecoAssets.entranceArchArchitecture,
+        contains('entrance_arch_architecture'),
+      );
+    });
+  });
+
+  group('ObjectAssets — art-4b door v2', () {
+    test('doorArchitecture 는 v2 로 업그레이드됨', () {
+      expect(
+        ObjectAssets.doorArchitecture,
+        'assets/sprites/objects/doors/obj_door_architecture_v2.png',
+      );
+    });
+  });
+
+  group('파일명 버전 suffix 일관성', () {
+    test('v1 또는 v2 suffix 로 끝난다', () {
       final ids = <String>[
         AnchorAssets.character,
         AnchorAssets.environment,
@@ -97,13 +153,19 @@ void main() {
         UiAssets.buttonPrimaryIdle,
         PortraitAssets.wizard,
         CharacterAssets.wizardIdle,
-        EnvironmentAssets.mainhallBgFar,
+        EnvironmentAssets.mainhallBase,
+        MainHallDecoAssets.pillar,
         ObjectAssets.doorBackend,
+        ObjectAssets.doorArchitecture,
         TilesetAssets.commonFloor,
         VfxAssets.dustAmbient,
       ];
       for (final id in ids) {
-        expect(id, endsWith('_v1.png'), reason: 'failed on $id');
+        expect(
+          id.endsWith('_v1.png') || id.endsWith('_v2.png'),
+          isTrue,
+          reason: 'failed on $id',
+        );
       }
     });
   });

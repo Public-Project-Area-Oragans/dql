@@ -95,11 +95,20 @@ class EnvironmentAssets {
   static const titleBg =
       'assets/sprites/environments/title/env_title_bg_v1.png';
 
+  // Main Hall (art-4b) — opaque full-shot base (replaces 3 parallax layers).
+  static const mainhallBase =
+      'assets/sprites/environments/main_hall/env_mainhall_base_v1.png';
+
   // Main Hall (art-4) — 3 parallax layers
+  // NOTE(art-4b): deprecated. `mainhallBase` + `MainHallDecoAssets` 로 대체.
+  // art-5 일괄 삭제 예정까지 호환성 유지.
+  @Deprecated('Use MainHallDecoAssets + mainhallBase. Remove in art-5.')
   static const mainhallBgFar =
       'assets/sprites/environments/main_hall/env_mainhall_bg_far_v1.png';
+  @Deprecated('Use MainHallDecoAssets + mainhallBase. Remove in art-5.')
   static const mainhallBgMid =
       'assets/sprites/environments/main_hall/env_mainhall_bg_mid_v1.png';
+  @Deprecated('Use MainHallDecoAssets + mainhallBase. Remove in art-5.')
   static const mainhallBgNear =
       'assets/sprites/environments/main_hall/env_mainhall_bg_near_v1.png';
 
@@ -136,6 +145,37 @@ class EnvironmentAssets {
       'sprites/environments/architecture_wing/env_architecture_wing_bg_near_v1.png';
 }
 
+// ── Main Hall Decorations (art-4b) ────────────────────────────────────
+// 중앙 홀 opaque base 위에 올리는 transparent overlay 에셋.
+// base 는 `EnvironmentAssets.mainhallBase` 사용.
+// art-4 의 3층 parallax 가 create_map_object 투명 강제로 붕괴된 문제를
+// 조립식 opaque base + transparent overlay 로 해결 (art-4b).
+class MainHallDecoAssets {
+  const MainHallDecoAssets._();
+
+  // 좌·우 mirror 재사용. Flame SpriteComponent.scale = Vector2(-1, 1) 로 반전.
+  static const pillar =
+      'assets/sprites/environments/main_hall/deco_mainhall_pillar_v1.png';
+
+  // 4 분관 문 뒤 배치. 지배색 glow 프레임 (Bible §1.3).
+  static const entranceArchBackend =
+      'assets/sprites/environments/main_hall/deco_mainhall_entrance_arch_backend_v1.png';
+  static const entranceArchDatabase =
+      'assets/sprites/environments/main_hall/deco_mainhall_entrance_arch_database_v1.png';
+  static const entranceArchFrontend =
+      'assets/sprites/environments/main_hall/deco_mainhall_entrance_arch_frontend_v1.png';
+  static const entranceArchArchitecture =
+      'assets/sprites/environments/main_hall/deco_mainhall_entrance_arch_architecture_v1.png';
+
+  // 천장 중앙 샹들리에. art-8 폴리시에서 빛 파티클 추가 예정.
+  static const chandelier =
+      'assets/sprites/environments/main_hall/deco_mainhall_chandelier_v1.png';
+
+  // 바닥 중앙 원형 인레이.
+  static const compassRose =
+      'assets/sprites/environments/main_hall/deco_mainhall_compass_rose_v1.png';
+}
+
 // ── Map Objects (art-4, art-8) ────────────────────────────────────────
 class ObjectAssets {
   const ObjectAssets._();
@@ -148,8 +188,9 @@ class ObjectAssets {
       'assets/sprites/objects/doors/obj_door_database_v1.png';
   static const doorFrontend =
       'assets/sprites/objects/doors/obj_door_frontend_v1.png';
+  // art-4b: v1 (scroll-only 붕괴) → v2 (명확한 도어 형태) 로 업그레이드.
   static const doorArchitecture =
-      'assets/sprites/objects/doors/obj_door_architecture_v1.png';
+      'assets/sprites/objects/doors/obj_door_architecture_v2.png';
 
   // Bookshelves (art-8) — 64×96 per wing variant
   static const bookshelfBackend =
