@@ -81,9 +81,12 @@ class CentralHallScene extends Component with HasGameReference<DolGame> {
       ),
     ];
 
-    final doorWidth = size.x / 5;
-    final doorHeight = size.y * 0.3;
-    final y = size.y * 0.4;
+    // art-4b v2: 도어 크기·위치 조정. base corridor 원근감 보존 위해 축소
+    // (/5 → /7, 0.3 → 0.25) + 바닥 쪽으로 내림 (0.4 → 0.5). PNG 자체가 64×64
+    // 정사각이므로 비율 정사각에 가깝게 유지.
+    final doorWidth = size.x / 7;
+    final doorHeight = size.y * 0.25;
+    final y = size.y * 0.5;
 
     for (var i = 0; i < wings.length; i++) {
       final (id, name, color, spriteId) = wings[i];
