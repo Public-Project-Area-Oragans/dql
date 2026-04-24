@@ -31,11 +31,17 @@ class DolGame extends FlameGame {
     await SpriteRegistry.preload(
       images: images,
       ids: const <String>[
-        // art-4: 중앙 홀 3층 parallax + 4 분관 문. 누락 자산은 자동 skip
-        // 되고 씬이 단색 fallback 으로 렌더.
-        EnvironmentAssets.mainhallBgFar,
-        EnvironmentAssets.mainhallBgMid,
-        EnvironmentAssets.mainhallBgNear,
+        // art-4b: opaque base + transparent overlay 조립식. 기존 3층 parallax
+        // (bg_far/mid/near) 는 create_map_object 투명 강제로 붕괴되어 제거.
+        EnvironmentAssets.mainhallBase,
+        MainHallDecoAssets.pillar,
+        MainHallDecoAssets.entranceArchBackend,
+        MainHallDecoAssets.entranceArchDatabase,
+        MainHallDecoAssets.entranceArchFrontend,
+        MainHallDecoAssets.entranceArchArchitecture,
+        MainHallDecoAssets.chandelier,
+        MainHallDecoAssets.compassRose,
+        // 4 분관 문. architecture 는 v2 로 갱신됨 (상수 레벨 경로 교체).
         ObjectAssets.doorBackend,
         ObjectAssets.doorDatabase,
         ObjectAssets.doorFrontend,
