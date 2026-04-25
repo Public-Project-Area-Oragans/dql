@@ -6,32 +6,54 @@ import '../components/wing_door_component.dart';
 import '../dol_game.dart';
 import '../rendering/sprite_registry.dart';
 
+/// 중앙 홀 씬 (art-4b v2).
+///
+/// art-4 의 3층 parallax 가 `create_map_object` 투명 강제 제약으로 객체처럼
+/// 떠 보이는 붕괴를 해결하기 위해 opaque base + 도어 overlay 구성으로
+/// 재정렬. 렌더 스택 (뒤→앞):
+///
+///   1. fallback 단색 (SpriteRegistry 로드 실패 대비)
+///   2. env_mainhall_base (opaque 풀스크린 front-facing corridor)
+///   3. WingDoorComponent × 4 (상호작용)
+///
+/// 초기 구상(v1) 의 pillar / entrance_arch / chandelier / compass_rose
+/// overlay 는 base 이미지가 이미 책장·아치·샹들리에·컴퍼스를 포함해 중복·
+/// 충돌 발생으로 현 단계에서 skip. 에셋 자체는 보존되어 art-8 폴리시 단계의
+/// 독립 좌표·애니메이션에서 재활용 예정.
 class CentralHallScene extends Component with HasGameReference<DolGame> {
   @override
   Future<void> onLoad() async {
-    // 단색 바닥(FilterQuality 영향 없는 fallback).
+    final size = game.size;
+
+    // 1. Fallback 단색 (base 스프라이트 로드 실패 시 노출).
     add(RectangleComponent(
-      size: game.size,
+      size: size,
       paint: Paint()..color = const Color(0xFF1A1420),
     ));
 
-    // art-4: 3층 parallax 배경. 로드된 레이어만 쌓는다 — 하나라도 누락이면
-    // 해당 층 skip. 현재는 정적 단일 프레임. 향후 art-4b 에서 카메라 이동 시
-    // 시차 스크롤 적용 가능.
-    for (final layer in const <String>[
-      EnvironmentAssets.mainhallBgFar,
-      EnvironmentAssets.mainhallBgMid,
-      EnvironmentAssets.mainhallBgNear,
-    ]) {
-      if (!SpriteRegistry.has(layer)) continue;
+    // 2. env_mainhall_base (opaque 풀스크린).
+    if (SpriteRegistry.has(EnvironmentAssets.mainhallBase)) {
       add(SpriteComponent(
-        sprite: Sprite(SpriteRegistry.get(layer)),
-        size: game.size,
+        sprite: Sprite(SpriteRegistry.get(EnvironmentAssets.mainhallBase)),
+        size: size,
         paint: Paint()..filterQuality = FilterQuality.none,
       ));
     }
 
-    // 4 분관 문 배치 — 기존 위치·크기 로직 그대로 유지, 스프라이트 id 만 추가.
+    // art-4b v2: pillar / entrance_arch / chandelier / compass_rose overlay 를
+    // skip. 새 base 이미지가 이미 책장·아치·샹들리에·컴퍼스를 포함하고 있어
+    // overlay 중복·충돌 발생. 에셋은 보존 (art-8 폴리시 단계에서 별도 좌표 ·
+    // 애니메이션으로 재활용). 현 단계는 opaque base + 4 도어 구성으로 단순화.
+    //
+    // _addPillars(size);
+    // _addEntranceArches(size);
+    // _addCenterDecorations(size);
+
+    // 6. 4 분관 문.
+    _addWingDoors(size);
+  }
+
+  void _addWingDoors(Vector2 size) {
     final wings = <(String, String, Color, String)>[
       (
         'backend',
@@ -59,14 +81,16 @@ class CentralHallScene extends Component with HasGameReference<DolGame> {
       ),
     ];
 
-    final doorWidth = game.size.x / 5;
-    final doorHeight = game.size.y * 0.3;
-    final y = game.size.y * 0.4;
+    // art-4b v2: 도어 크기·위치 조정. base corridor 원근감 보존 위해 축소
+    // (/5 → /7, 0.3 → 0.25) + 바닥 쪽으로 내림 (0.4 → 0.5). PNG 자체가 64×64
+    // 정사각이므로 비율 정사각에 가깝게 유지.
+    final doorWidth = size.x / 7;
+    final doorHeight = size.y * 0.25;
+    final y = size.y * 0.5;
 
     for (var i = 0; i < wings.length; i++) {
       final (id, name, color, spriteId) = wings[i];
-      final x = (i + 0.5) * (game.size.x / 4) - doorWidth / 2;
-
+      final x = (i + 0.5) * (size.x / 4) - doorWidth / 2;
       add(WingDoorComponent(
         wingId: id,
         label: name,
