@@ -25,7 +25,8 @@ class CentralHallSceneLayout {
       for (final xRatio in doorXRatios)
         DoorTransform(
           size: Vector2(width, height),
-          position: Vector2(sceneSize.x * xRatio, y),
+          // xRatio 는 도어 중심점, position 은 top-left 이므로 width/2 만큼 좌측 이동.
+          position: Vector2(sceneSize.x * xRatio - width / 2, y),
         ),
     ];
   }

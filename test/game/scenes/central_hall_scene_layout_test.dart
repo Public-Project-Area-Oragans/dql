@@ -30,9 +30,10 @@ void main() {
       }
     });
 
-    test('도어 x = sceneWidth * [0.25, 0.42, 0.58, 0.75] (등간격 클러스터)', () {
+    test('도어 x = sceneWidth * [center ratio] - width/2 (등간격 클러스터, 중심 기준 정렬)', () {
       final transforms = CentralHallSceneLayout.doorTransforms(Vector2(1100, 720));
-      final expectedXs = [275.0, 462.0, 638.0, 825.0]; // 1100 * 비율
+      // 1100 * 비율 - 137.5/2: center 기준 top-left 변환
+      final expectedXs = [206.25, 393.25, 569.25, 756.25];
       for (var i = 0; i < 4; i++) {
         expect(transforms[i].position.x, closeTo(expectedXs[i], 0.01));
       }
