@@ -168,6 +168,8 @@ void main() {
         EnvironmentAssets.mainhallBase,
         MainHallDecoAssets.pillar,
         ObjectAssets.doorBackend,
+        ObjectAssets.doorFrontend,
+        ObjectAssets.doorDatabase,
         ObjectAssets.doorArchitecture,
         TilesetAssets.commonFloor,
         VfxAssets.dustAmbient,

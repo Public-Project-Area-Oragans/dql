@@ -182,6 +182,7 @@ class ObjectAssets {
 
   // Wing doors (art-4 → art-4c) — 64×96 정적 스프라이트.
   // art-4c: arched stone doorway form + keystone accent (background_image 매칭).
+  // hover/pressed: TappableComponent ColorFilter. glow 애니메이션은 art-9 폴리시로 이월.
   static const doorBackend =
       'assets/sprites/objects/doors/obj_door_backend_v3.png';
   static const doorFrontend =
