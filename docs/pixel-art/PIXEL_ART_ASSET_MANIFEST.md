@@ -287,10 +287,14 @@ Bible v1.0 §1.3에 나열된 6개 분관 중, 이 프로젝트는 **4개 분관
 | `env_mainhall_bg_mid` | Parallax | 256×144 | Flame |
 | `env_mainhall_bg_near` | Parallax | 256×144 | Flame |
 | `tileset_common_floor` | Wang 타일셋 | 128×128 (16타일) | Flame |
-| `obj_door_backend` | 정적 + glow | 64×96 + 4프레임 | Flame |
-| `obj_door_database` | 정적 + glow | 64×96 + 4프레임 | Flame |
-| `obj_door_frontend` | 정적 + glow | 64×96 + 4프레임 | Flame |
-| `obj_door_architecture` | 정적 + glow | 64×96 + 4프레임 | Flame |
+| `obj_door_backend` | 정적 + glow | 64×96 + 4프레임 | Flame | <!-- v1 DEPRECATED — art-4c v3 로 대체 -->
+| `obj_door_database` | 정적 + glow | 64×96 + 4프레임 | Flame | <!-- v1 DEPRECATED — art-4c v3 로 대체 -->
+| `obj_door_frontend` | 정적 + glow | 64×96 + 4프레임 | Flame | <!-- v1 DEPRECATED — art-4c v3 로 대체 -->
+| `obj_door_architecture` | 정적 + glow | 64×96 + 4프레임 | Flame | <!-- v1/v2 DEPRECATED — art-4c v3 로 대체 -->
+| `obj_door_backend_v3` | 정적 (arched stone + keystone) | 64×96 | Flame | <!-- art-4c: deep forest green -->
+| `obj_door_frontend_v3` | 정적 (arched stone + keystone) | 64×96 | Flame | <!-- art-4c: deep sapphire blue -->
+| `obj_door_database_v3` | 정적 (arched stone + keystone) | 64×96 | Flame | <!-- art-4c: burnished amber -->
+| `obj_door_architecture_v3` | 정적 (arched stone + keystone) | 64×96 | Flame | <!-- art-4c: deep amethyst purple -->
 | `char_wizard_idle` | 시트 | 256×96 (4프레임) | Flame |
 | `char_alchemist_idle` | 시트 | 256×96 | Flame |
 | `char_mechanic_idle` | 시트 | 256×96 | Flame |

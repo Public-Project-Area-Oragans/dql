@@ -5,8 +5,13 @@ import '../../core/assets/asset_ids.dart';
 import '../components/wing_door_component.dart';
 import '../dol_game.dart';
 import '../rendering/sprite_registry.dart';
+import 'central_hall_scene_layout.dart';
 
-/// 중앙 홀 씬 (art-4b v2).
+/// 중앙 홀 씬 (art-4b v2 → art-4c).
+///
+/// art-4c: 도어 4개 v3 (arched stone form + keystone accent, base v2 와 매칭)
+/// 으로 재생성. 좌표 공식은 [CentralHallSceneLayout] 순수 함수로 추출 (TDD 격리).
+/// 후면 아치 근처 클러스터 배치 (`/11` 폭, x[0.32~0.65], y 0.45).
 ///
 /// art-4 의 3층 parallax 가 `create_map_object` 투명 강제 제약으로 객체처럼
 /// 떠 보이는 붕괴를 해결하기 위해 opaque base + 도어 overlay 구성으로
@@ -55,49 +60,23 @@ class CentralHallScene extends Component with HasGameReference<DolGame> {
 
   void _addWingDoors(Vector2 size) {
     final wings = <(String, String, Color, String)>[
-      (
-        'backend',
-        '마법사의 탑',
-        const Color(0xFF7B68EE),
-        ObjectAssets.doorBackend,
-      ),
-      (
-        'frontend',
-        '기계공의 작업장',
-        const Color(0xFFFF6347),
-        ObjectAssets.doorFrontend,
-      ),
-      (
-        'database',
-        '연금술사의 실험실',
-        const Color(0xFF2E8B57),
-        ObjectAssets.doorDatabase,
-      ),
-      (
-        'architecture',
-        '건축가의 설계실',
-        const Color(0xFF9370DB),
-        ObjectAssets.doorArchitecture,
-      ),
+      ('backend', '마법사의 탑', const Color(0xFF7B68EE), ObjectAssets.doorBackend),
+      ('frontend', '기계공의 작업장', const Color(0xFFFF6347), ObjectAssets.doorFrontend),
+      ('database', '연금술사의 실험실', const Color(0xFF2E8B57), ObjectAssets.doorDatabase),
+      ('architecture', '건축가의 설계실', const Color(0xFF9370DB), ObjectAssets.doorArchitecture),
     ];
 
-    // art-4b v2: 도어 크기·위치 조정. base corridor 원근감 보존 위해 축소
-    // (/5 → /7, 0.3 → 0.25) + 바닥 쪽으로 내림 (0.4 → 0.5). PNG 자체가 64×64
-    // 정사각이므로 비율 정사각에 가깝게 유지.
-    final doorWidth = size.x / 7;
-    final doorHeight = size.y * 0.25;
-    final y = size.y * 0.5;
+    final transforms = CentralHallSceneLayout.doorTransforms(size);
 
     for (var i = 0; i < wings.length; i++) {
       final (id, name, color, spriteId) = wings[i];
-      final x = (i + 0.5) * (size.x / 4) - doorWidth / 2;
       add(WingDoorComponent(
         wingId: id,
         label: name,
         color: color,
         spriteId: spriteId,
-        position: Vector2(x, y),
-        size: Vector2(doorWidth, doorHeight),
+        position: transforms[i].position,
+        size: transforms[i].size,
       ));
     }
   }
