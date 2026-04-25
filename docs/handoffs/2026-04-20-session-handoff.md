@@ -192,9 +192,9 @@ git branch -D worktree-agent-XXX feature/describer-*
 
 ## 7. 참조
 
-- `docs/2026-04-19-session-handoff.md` — 직전 세션
-- `docs/2026-04-19-requirements-consolidated.md` — R0~R7 원점
-- `docs/PIXEL_ART_ASSET_BIBLE.md` / `docs/PIXEL_ART_ASSET_MANIFEST.md` — 스타일 규격
-- `docs/PIXEL_ART_PROGRESS.md` — art-* 누적 추적
+- `docs/handoffs/2026-04-19-session-handoff.md` — 직전 세션
+- `docs/designs/2026-04-19-requirements-consolidated.md` — R0~R7 원점
+- `docs/pixel-art/PIXEL_ART_ASSET_BIBLE.md` / `docs/pixel-art/PIXEL_ART_ASSET_MANIFEST.md` — 스타일 규격
+- `docs/pixel-art/PIXEL_ART_PROGRESS.md` — art-* 누적 추적
 - `C:/Users/deepe/.claude/plans/optimized-yawning-rocket.md` — 픽셀아트 9-PR 플랜
 - `tools/ai_diagram_describer.dart` — describer API 파이프라인 (credit 재충전 후 재실행)

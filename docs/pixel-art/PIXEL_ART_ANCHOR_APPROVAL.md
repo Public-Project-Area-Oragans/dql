@@ -1,6 +1,6 @@
 # PIXEL ART ANCHOR APPROVAL (art-0)
 
-> `docs/PIXEL_ART_ASSET_BIBLE.md` §4 Style Anchor Protocol 의 승인 게이트.
+> `docs/pixel-art/PIXEL_ART_ASSET_BIBLE.md` §4 Style Anchor Protocol 의 승인 게이트.
 > 이 문서 merge = 앵커 v1 승인 = 이후 art-1 ~ art-9 착수 허가.
 
 - **작성일**: 2026-04-19
@@ -95,6 +95,6 @@ selective outline
 
 ## 참조
 
-- `docs/PIXEL_ART_ASSET_BIBLE.md` v1.0 §4 Style Anchor Protocol
-- `docs/PIXEL_ART_ASSET_MANIFEST.md` v1.0 §4 애니메이션 상태 / §7 pubspec 매핑
+- `docs/pixel-art/PIXEL_ART_ASSET_BIBLE.md` v1.0 §4 Style Anchor Protocol
+- `docs/pixel-art/PIXEL_ART_ASSET_MANIFEST.md` v1.0 §4 애니메이션 상태 / §7 pubspec 매핑
 - `C:\Users\deepe\.claude\plans\optimized-yawning-rocket.md` (art-0 plan)

@@ -76,8 +76,8 @@ lib/
 
 ## 문서
 
-- [설계 문서](docs/2026-04-17-dev-quest-library-design.md)
-- [구현 계획서](docs/2026-04-17-dev-quest-library-plan.md)
+- [설계 문서](docs/phases/2026-04-17-dev-quest-library-design.md)
+- [구현 계획서](docs/phases/2026-04-17-dev-quest-library-plan.md)
 
 ## 브랜치 전략
 

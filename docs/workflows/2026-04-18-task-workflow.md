@@ -263,7 +263,7 @@ python .omc/analyze_raw34.py    # 또는 유사 스크립트
 3. **develop과의 diff**: `git log origin/develop..HEAD --oneline`
 4. **열린 PR 목록**: `gh pr list --state open`
 5. **최근 CI 실행**: `gh run list --limit 5`
-6. **메모리/문서**: MEMORY.md, `docs/2026-04-18-troubleshooting-journal.md` 해당 주제 검색.
+6. **메모리/문서**: MEMORY.md, `docs/workflows/2026-04-18-troubleshooting-journal.md` 해당 주제 검색.
 
 ---
 
@@ -280,8 +280,8 @@ python .omc/analyze_raw34.py    # 또는 유사 스크립트
 
 ## 11. 참조
 
-- 로드맵: `docs/2026-04-18-roadmap-pivot-personal-first.md`
-- Phase 계획: `docs/2026-04-18-phase-plan.md`
-- 작업 이력: `docs/2026-04-18-work-history.md`
-- 트러블슈팅: `docs/2026-04-18-troubleshooting-journal.md`
+- 로드맵: `docs/phases/2026-04-18-roadmap-pivot-personal-first.md`
+- Phase 계획: `docs/phases/2026-04-18-phase-plan.md`
+- 작업 이력: `docs/workflows/2026-04-18-work-history.md`
+- 트러블슈팅: `docs/workflows/2026-04-18-troubleshooting-journal.md`
 - 프로젝트 가이드: `CLAUDE.md`

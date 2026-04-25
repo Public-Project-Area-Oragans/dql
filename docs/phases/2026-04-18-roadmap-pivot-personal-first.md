@@ -7,10 +7,10 @@
 - **작성일**: 2026-04-18
 - **상태**: 확정 (사용자 지시, 2026-04-18)
 - **Supersedes**:
-  - `docs/2026-04-18-dev-quest-library-phase2-design.md` §10 "성공 기준" (1주일 3챕터 대조군 실험)
+  - `docs/phases/2026-04-18-dev-quest-library-phase2-design.md` §10 "성공 기준" (1주일 3챕터 대조군 실험)
 - **유지 (변경 없음)**:
-  - `docs/2026-04-17-dev-quest-library-design.md` — 아키텍처/데이터 모델/화면 흐름
-  - `docs/2026-04-17-dev-quest-library-plan.md` — Task별 구현 단계
+  - `docs/phases/2026-04-17-dev-quest-library-design.md` — 아키텍처/데이터 모델/화면 흐름
+  - `docs/phases/2026-04-17-dev-quest-library-plan.md` — Task별 구현 단계
 
 ---
 
@@ -122,8 +122,8 @@ Phase 2 설계 §10은 다음 게이트를 두었다:
 
 ## 5. 참조
 
-- Phase 1 설계 — `docs/2026-04-17-dev-quest-library-design.md`
-- Phase 1 구현 계획 — `docs/2026-04-17-dev-quest-library-plan.md`
-- Phase 2 설계 (§10 실험 게이트는 본 문서가 대체) — `docs/2026-04-18-dev-quest-library-phase2-design.md`
-- Phase 3 다이어그램 위젯 이주 — `docs/2026-04-18-diagram-widget-migration-design.md`
-- 트러블슈팅 저널 — `docs/2026-04-18-troubleshooting-journal.md`
+- Phase 1 설계 — `docs/phases/2026-04-17-dev-quest-library-design.md`
+- Phase 1 구현 계획 — `docs/phases/2026-04-17-dev-quest-library-plan.md`
+- Phase 2 설계 (§10 실험 게이트는 본 문서가 대체) — `docs/phases/2026-04-18-dev-quest-library-phase2-design.md`
+- Phase 3 다이어그램 위젯 이주 — `docs/designs/2026-04-18-diagram-widget-migration-design.md`
+- 트러블슈팅 저널 — `docs/workflows/2026-04-18-troubleshooting-journal.md`

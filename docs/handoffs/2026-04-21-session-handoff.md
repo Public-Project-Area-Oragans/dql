@@ -151,8 +151,8 @@ Manifest §1.3 "타이틀 로고 Flutter 정적 이미지" 원칙 준수. 기존
 ```
 [ ] git fetch origin develop && git pull --ff-only
 [ ] gh pr list --state open (현재 0 예상)
-[ ] docs/2026-04-21-session-handoff.md (본 문서) 읽기
-[ ] docs/PIXEL_ART_PROGRESS.md 누적 14/1000 확인
+[ ] docs/handoffs/2026-04-21-session-handoff.md (본 문서) 읽기
+[ ] docs/pixel-art/PIXEL_ART_PROGRESS.md 누적 14/1000 확인
 [ ] fix-10b 잔량 chapter 리스트 (§2.1) vs content/diagram-descriptions/ 실제 파일 비교
 [ ] 다음 작업 선택:
     (A) fix-10b chapter 1-2 개 메인 직접 처리
@@ -165,10 +165,10 @@ Manifest §1.3 "타이틀 로고 Flutter 정적 이미지" 원칙 준수. 기존
 
 ## 6. 참조
 
-- `docs/2026-04-20-session-handoff.md` — 직전 세션
-- `docs/2026-04-19-session-handoff.md` — 직직전 세션
-- `docs/2026-04-19-requirements-consolidated.md` — R0~R7 원점
-- `docs/PIXEL_ART_ASSET_BIBLE.md` / `docs/PIXEL_ART_ASSET_MANIFEST.md` — 스타일 규격
-- `docs/PIXEL_ART_PROGRESS.md` — art-* 누적 (14/1000 call)
+- `docs/handoffs/2026-04-20-session-handoff.md` — 직전 세션
+- `docs/handoffs/2026-04-19-session-handoff.md` — 직직전 세션
+- `docs/designs/2026-04-19-requirements-consolidated.md` — R0~R7 원점
+- `docs/pixel-art/PIXEL_ART_ASSET_BIBLE.md` / `docs/pixel-art/PIXEL_ART_ASSET_MANIFEST.md` — 스타일 규격
+- `docs/pixel-art/PIXEL_ART_PROGRESS.md` — art-* 누적 (14/1000 call)
 - `C:/Users/deepe/.claude/plans/optimized-yawning-rocket.md` — 픽셀아트 9-PR 플랜
 - `tools/ai_diagram_describer.dart` — describer API 파이프라인 (credit 재충전 후 재실행)

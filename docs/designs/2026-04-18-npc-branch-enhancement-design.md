@@ -1,15 +1,15 @@
 # DOL — 분관별 NPC 기능 보강 설계 (P0-5)
 
-> Phase 1 설계 `docs/2026-04-17-dev-quest-library-design.md` §3~§5 구조를 전제로 한
+> Phase 1 설계 `docs/phases/2026-04-17-dev-quest-library-design.md` §3~§5 구조를 전제로 한
 > NPC·책장·퀘스트 3축 보강. 핵심은 **Claude API 기반 NPC Q&A** 도입.
 
 - **작성일**: 2026-04-18
 - **상태**: DRAFT (승인 대기)
 - **Phase**: P0-5 (개인 사용용 완성 단계의 잔여 태스크)
 - **전제 문서**:
-  - `docs/2026-04-17-dev-quest-library-design.md` §3 세계관·씬, §5 NPC 설계
-  - `docs/2026-04-18-roadmap-pivot-personal-first.md` (현 단계 P0)
-  - `docs/2026-04-18-phase-plan.md` §1.3 P0-5
+  - `docs/phases/2026-04-17-dev-quest-library-design.md` §3 세계관·씬, §5 NPC 설계
+  - `docs/phases/2026-04-18-roadmap-pivot-personal-first.md` (현 단계 P0)
+  - `docs/phases/2026-04-18-phase-plan.md` §1.3 P0-5
 
 ---
 
@@ -422,8 +422,8 @@ abstract class Quest with _$Quest {
 
 ## 14. 참조
 
-- Phase 1 설계: `docs/2026-04-17-dev-quest-library-design.md` §3 씬, §5 NPC
-- Phase 계획: `docs/2026-04-18-phase-plan.md` §1.3 P0-5
-- 로드맵 피벗: `docs/2026-04-18-roadmap-pivot-personal-first.md`
-- 트러블슈팅: `docs/2026-04-18-troubleshooting-journal.md` (Claude API 관련 항목 추가 예정)
-- Task 워크플로: `docs/2026-04-18-task-workflow.md`
+- Phase 1 설계: `docs/phases/2026-04-17-dev-quest-library-design.md` §3 씬, §5 NPC
+- Phase 계획: `docs/phases/2026-04-18-phase-plan.md` §1.3 P0-5
+- 로드맵 피벗: `docs/phases/2026-04-18-roadmap-pivot-personal-first.md`
+- 트러블슈팅: `docs/workflows/2026-04-18-troubleshooting-journal.md` (Claude API 관련 항목 추가 예정)
+- Task 워크플로: `docs/workflows/2026-04-18-task-workflow.md`
