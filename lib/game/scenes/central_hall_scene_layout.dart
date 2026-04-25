@@ -11,10 +11,10 @@ class DoorTransform {
 }
 
 class CentralHallSceneLayout {
-  static const double doorWidthRatio = 1 / 11;
+  static const double doorWidthRatio = 1 / 8; // 1/11 → 1/8 (확대). 1100 / 8 = 137.5
   static const double doorAspect = 1.5; // 64×96 PNG 비율
   static const double doorYRatio = 0.45;
-  static const List<double> doorXRatios = [0.32, 0.43, 0.54, 0.65];
+  static const List<double> doorXRatios = [0.25, 0.42, 0.58, 0.75];
 
   static List<DoorTransform> doorTransforms(Vector2 sceneSize) {
     final width = sceneSize.x * doorWidthRatio;

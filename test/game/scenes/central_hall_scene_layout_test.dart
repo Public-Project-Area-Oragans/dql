@@ -9,17 +9,17 @@ void main() {
       expect(transforms.length, 4);
     });
 
-    test('도어 width = sceneWidth / 11', () {
+    test('도어 width = sceneWidth / 8', () {
       final transforms = CentralHallSceneLayout.doorTransforms(Vector2(1100, 720));
       for (final t in transforms) {
-        expect(t.size.x, closeTo(100, 0.01)); // 1100 / 11 = 100
+        expect(t.size.x, closeTo(137.5, 0.01)); // 1100 / 8 = 137.5
       }
     });
 
     test('도어 height = width * 1.5 (64×96 비율)', () {
       final transforms = CentralHallSceneLayout.doorTransforms(Vector2(1100, 720));
       for (final t in transforms) {
-        expect(t.size.y, closeTo(150, 0.01)); // 100 * 1.5 = 150
+        expect(t.size.y, closeTo(206.25, 0.01)); // 137.5 * 1.5 = 206.25
       }
     });
 
@@ -30,9 +30,9 @@ void main() {
       }
     });
 
-    test('도어 x = sceneWidth * [0.32, 0.43, 0.54, 0.65] (등간격 클러스터)', () {
+    test('도어 x = sceneWidth * [0.25, 0.42, 0.58, 0.75] (등간격 클러스터)', () {
       final transforms = CentralHallSceneLayout.doorTransforms(Vector2(1100, 720));
-      final expectedXs = [352.0, 473.0, 594.0, 715.0]; // 1100 * 비율
+      final expectedXs = [275.0, 462.0, 638.0, 825.0]; // 1100 * 비율
       for (var i = 0; i < 4; i++) {
         expect(transforms[i].position.x, closeTo(expectedXs[i], 0.01));
       }
