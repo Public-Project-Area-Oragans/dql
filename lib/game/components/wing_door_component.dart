@@ -64,8 +64,9 @@ class WingDoorComponent extends PositionComponent
         text: label,
         style: const TextStyle(
           color: Color(0xFFFFD700),
-          fontSize: 20,  // 16 → 20 (한글 가독성)
+          fontSize: 20,
           fontWeight: FontWeight.bold,
+          fontFamily: 'JetBrainsMonoHangul',
         ),
       ),
       textDirection: TextDirection.ltr,

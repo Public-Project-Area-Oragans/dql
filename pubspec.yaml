@@ -88,3 +88,11 @@ flutter:
     - family: JetBrainsMono
       fonts:
         - asset: assets/fonts/JetBrainsMono-Regular.ttf
+    # art-4c: 한글 라벨 (분관 도어 사인 등) 가독성 위해 JetBrains Mono Hangul 번들.
+    # JetBrainsMono 와 동일한 영문 mono 메트릭 + 한글 글리프 추가. SIL OFL 1.1.
+    # https://github.com/Jhyub/JetBrainsMonoHangul (release 20260222)
+    - family: JetBrainsMonoHangul
+      fonts:
+        - asset: assets/fonts/JetBrainsMonoHangul-Regular.ttf
+        - asset: assets/fonts/JetBrainsMonoHangul-Bold.ttf
+          weight: 700
