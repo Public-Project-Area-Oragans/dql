@@ -179,8 +179,8 @@ art-4b 마무리 후 착수. 현재 누적 22 / 1000 call, 잉여 978 매우 여
 ```
 [ ] git fetch origin develop master && git pull --ff-only
 [ ] gh pr list --state open (현재 0 예상)
-[ ] docs/2026-04-22-session-handoff.md (본 문서) 읽기
-[ ] docs/PIXEL_ART_PROGRESS.md 누적 22/1000 확인
+[ ] docs/handoffs/2026-04-22-session-handoff.md (본 문서) 읽기
+[ ] docs/pixel-art/PIXEL_ART_PROGRESS.md 누적 22/1000 확인
 [ ] 배포 URL https://public-project-area-oragans.github.io/dql/ 접속 시 중앙 홀 현황 시각 확인
 [ ] 다음 작업 선택:
     (A) art-4b 중앙 홀 풀샷 재작업 [최우선]
@@ -193,11 +193,11 @@ art-4b 마무리 후 착수. 현재 누적 22 / 1000 call, 잉여 978 매우 여
 
 ## 6. 참조
 
-- `docs/2026-04-21-session-handoff.md` — 직전 세션 (art-2b + art-3 + 8/9차 릴리즈)
-- `docs/2026-04-20-session-handoff.md` — subagent describer 파이프라인
-- `docs/2026-04-19-requirements-consolidated.md` — R0~R7 원점
-- `docs/PIXEL_ART_ASSET_BIBLE.md` / `docs/PIXEL_ART_ASSET_MANIFEST.md` — 스타일 규격
-- `docs/PIXEL_ART_PROGRESS.md` — art-* 누적 (22/1000 call)
+- `docs/handoffs/2026-04-21-session-handoff.md` — 직전 세션 (art-2b + art-3 + 8/9차 릴리즈)
+- `docs/handoffs/2026-04-20-session-handoff.md` — subagent describer 파이프라인
+- `docs/designs/2026-04-19-requirements-consolidated.md` — R0~R7 원점
+- `docs/pixel-art/PIXEL_ART_ASSET_BIBLE.md` / `docs/pixel-art/PIXEL_ART_ASSET_MANIFEST.md` — 스타일 규격
+- `docs/pixel-art/PIXEL_ART_PROGRESS.md` — art-* 누적 (22/1000 call)
 - `C:/Users/deepe/.claude/plans/optimized-yawning-rocket.md` — 픽셀아트 9-PR 플랜
 - `.tmp/extract_blocks.py` / `.tmp/list_blocks.py` / `.tmp/build_step11.py` ~ `build_step20.py` — fix-10b 메인 직접 처리 파이프라인 (재사용 가능)
 - 배포 URL: `https://public-project-area-oragans.github.io/dql/`

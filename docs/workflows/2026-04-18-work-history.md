@@ -33,7 +33,7 @@
 | #2 | feat: freezed 데이터 모델 (Book, Quest, NPC, Library, PlayerProgress) |
 | #3 | docs: README.md + CLAUDE.md 프로젝트 문서 작성 |
 
-**산출물**: 설계 문서 (`docs/2026-04-17-dev-quest-library-design.md`), 구현 계획서 (`docs/2026-04-17-dev-quest-library-plan.md`), freezed 모델 4종.
+**산출물**: 설계 문서 (`docs/phases/2026-04-17-dev-quest-library-design.md`), 구현 계획서 (`docs/phases/2026-04-17-dev-quest-library-plan.md`), freezed 모델 4종.
 
 ---
 
@@ -186,8 +186,8 @@
 
 ## 9. 참조
 
-- 설계: `docs/2026-04-17-dev-quest-library-design.md` / `docs/2026-04-18-dev-quest-library-phase2-design.md` / `docs/2026-04-18-diagram-widget-migration-design.md`
-- 로드맵: `docs/2026-04-18-roadmap-pivot-personal-first.md`
-- 트러블슈팅: `docs/2026-04-18-troubleshooting-journal.md`
-- Phase 계획: `docs/2026-04-18-phase-plan.md` (본 세션에서 신설)
-- Task 워크플로: `docs/2026-04-18-task-workflow.md` (본 세션에서 신설)
+- 설계: `docs/phases/2026-04-17-dev-quest-library-design.md` / `docs/phases/2026-04-18-dev-quest-library-phase2-design.md` / `docs/designs/2026-04-18-diagram-widget-migration-design.md`
+- 로드맵: `docs/phases/2026-04-18-roadmap-pivot-personal-first.md`
+- 트러블슈팅: `docs/workflows/2026-04-18-troubleshooting-journal.md`
+- Phase 계획: `docs/phases/2026-04-18-phase-plan.md` (본 세션에서 신설)
+- Task 워크플로: `docs/workflows/2026-04-18-task-workflow.md` (본 세션에서 신설)

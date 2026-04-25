@@ -7,7 +7,7 @@
 - **Phase 1 상태**: 프로덕션 배포 완료 (https://public-project-area-oragans.github.io/dol/)
 - **Status**: APPROVED (office-hours 세션 산출, 2026-04-18 승인)
 - **Mode**: Startup (pre-product / 1→4→3 진화 경로)
-- **원설계 문서**: `docs/2026-04-17-dev-quest-library-design.md` 연장
+- **원설계 문서**: `docs/phases/2026-04-17-dev-quest-library-design.md` 연장
 
 ---
 

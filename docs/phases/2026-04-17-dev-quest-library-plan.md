@@ -10,7 +10,7 @@
 
 **GitHub:** `https://github.com/Public-Project-Area-Oragans/dol.git`
 
-**Spec:** `docs/2026-04-17-dev-quest-library-design.md`
+**Spec:** `docs/phases/2026-04-17-dev-quest-library-design.md`
 
 ---
 
