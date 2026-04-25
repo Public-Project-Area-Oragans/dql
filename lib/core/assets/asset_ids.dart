@@ -180,17 +180,16 @@ class MainHallDecoAssets {
 class ObjectAssets {
   const ObjectAssets._();
 
-  // Wing doors (art-4) — 64×96 정적 스프라이트 (hover/pressed 는 TappableComponent
-  // 믹스인의 ColorFilter 가 처리. glow 애니메이션은 art-9 폴리시로 이월).
+  // Wing doors (art-4 → art-4c) — 64×96 정적 스프라이트.
+  // art-4c: arched stone doorway form + keystone accent (background_image 매칭).
   static const doorBackend =
-      'assets/sprites/objects/doors/obj_door_backend_v1.png';
-  static const doorDatabase =
-      'assets/sprites/objects/doors/obj_door_database_v1.png';
+      'assets/sprites/objects/doors/obj_door_backend_v3.png';
   static const doorFrontend =
-      'assets/sprites/objects/doors/obj_door_frontend_v1.png';
-  // art-4b: v1 (scroll-only 붕괴) → v2 (명확한 도어 형태) 로 업그레이드.
+      'assets/sprites/objects/doors/obj_door_frontend_v3.png';
+  static const doorDatabase =
+      'assets/sprites/objects/doors/obj_door_database_v3.png';
   static const doorArchitecture =
-      'assets/sprites/objects/doors/obj_door_architecture_v2.png';
+      'assets/sprites/objects/doors/obj_door_architecture_v3.png';
 
   // Bookshelves (art-8) — 64×96 per wing variant
   static const bookshelfBackend =

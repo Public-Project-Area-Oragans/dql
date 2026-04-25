@@ -134,17 +134,29 @@ void main() {
     });
   });
 
-  group('ObjectAssets — art-4b door v2', () {
-    test('doorArchitecture 는 v2 로 업그레이드됨', () {
+  group('ObjectAssets — art-4c door v3', () {
+    test('4 도어 모두 v3 로 업그레이드됨 (arched stone form)', () {
+      expect(
+        ObjectAssets.doorBackend,
+        'assets/sprites/objects/doors/obj_door_backend_v3.png',
+      );
+      expect(
+        ObjectAssets.doorFrontend,
+        'assets/sprites/objects/doors/obj_door_frontend_v3.png',
+      );
+      expect(
+        ObjectAssets.doorDatabase,
+        'assets/sprites/objects/doors/obj_door_database_v3.png',
+      );
       expect(
         ObjectAssets.doorArchitecture,
-        'assets/sprites/objects/doors/obj_door_architecture_v2.png',
+        'assets/sprites/objects/doors/obj_door_architecture_v3.png',
       );
     });
   });
 
   group('파일명 버전 suffix 일관성', () {
-    test('v1 또는 v2 suffix 로 끝난다', () {
+    test('v1, v2, v3 suffix 로 끝난다', () {
       final ids = <String>[
         AnchorAssets.character,
         AnchorAssets.environment,
@@ -162,7 +174,7 @@ void main() {
       ];
       for (final id in ids) {
         expect(
-          id.endsWith('_v1.png') || id.endsWith('_v2.png'),
+          id.endsWith('_v1.png') || id.endsWith('_v2.png') || id.endsWith('_v3.png'),
           isTrue,
           reason: 'failed on $id',
         );
