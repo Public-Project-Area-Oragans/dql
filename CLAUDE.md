@@ -44,29 +44,31 @@ master ← develop ← feature/task-XX-*
 
 ## 구현 계획
 
-`docs/2026-04-17-dev-quest-library-plan.md` + [**로드맵 피벗 문서**](docs/2026-04-18-roadmap-pivot-personal-first.md) 참조.
+`docs/phases/2026-04-17-dev-quest-library-plan.md` + [**로드맵 피벗 문서**](docs/phases/2026-04-18-roadmap-pivot-personal-first.md) 참조.
 현재 단계: **P0 (개인 사용용 전체 기능 완성)**. 1주일 대조군 실험 게이트 제거됨.
 순차 로드맵: P0 완성 → P1 전 언어 실사용 → P2 팀 버전 → P3 공개 버전 (각 단계 별도 설계).
 
 ## 참조 문서
 
-- [**세션 핸드오프 (2026-04-21)**](docs/2026-04-21-session-handoff.md) — **새 세션 진입 시 최우선 읽기. art-2b Flame hover/pressed + art-3 타이틀 씬 + 8/9차 릴리즈 + fix-10b 잔량 24 chapter (메인 직접 처리 지시).**
-- [세션 핸드오프 (2026-04-20)](docs/2026-04-20-session-handoff.md) — 직전 세션 (subagent describer 파이프라인 ~3,126 entries)
-- [세션 핸드오프 (2026-04-19)](docs/2026-04-19-session-handoff.md) — 직직전 세션
-- [세션 핸드오프 (2026-04-18)](docs/2026-04-18-session-handoff.md) — 4월 중순 세션
-- [**로드맵 피벗 (2026-04-18)**](docs/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계 P0 · 순차 로드맵. Phase 2 §10 게이트 대체.**
-- [**Phase 계획**](docs/2026-04-18-phase-plan.md) — P0~P3 단계별 산출물·전환 기준·잔여 태스크 (P0-5 NPC 보강 포함)
-- [**Task 워크플로**](docs/2026-04-18-task-workflow.md) — 브랜치→커밋→PR→머지→릴리즈 표준 절차
-- [**작업 이력**](docs/2026-04-18-work-history.md) — PR #1~#54 전체 타임라인 + 배포 릴리즈 기록 (릴리즈 #54 = P0-5 NPC)
-- [**트러블슈팅 저널**](docs/2026-04-18-troubleshooting-journal.md) — 세션 간 재발 방지용 문제·해결 축적. **같은 증상 만나면 먼저 여기 검색.**
-- [Phase 1 설계](docs/2026-04-17-dev-quest-library-design.md) — 아키텍처 · 데이터 모델 · 화면 흐름 · **4개 분관 + NPC 역할** 정의 (백엔드=Java·Spring / 프론트=Dart·Flutter / DB=MySQL / 아키=MSA)
-- [Phase 1 구현 계획](docs/2026-04-17-dev-quest-library-plan.md) — Task 상세
-- [Phase 2 설계](docs/2026-04-18-dev-quest-library-phase2-design.md) — MSA 구조 조립 시뮬레이터 (§10은 로드맵 피벗이 대체)
-- [Phase 3 다이어그램 위젯 이주 설계](docs/2026-04-18-diagram-widget-migration-design.md) — ASCII/표/Mermaid → Flutter 위젯
-- [P0-5 NPC 분관 보강 설계](docs/2026-04-18-npc-branch-enhancement-design.md) — Claude API 기반 NPC Q&A + 책장 카테고리 필터 + 퀘스트 분관화
-- [**2026-04-19 재작업 요구사항**](docs/2026-04-19-requirements-consolidated.md) — R0~R7 실사용 결함 + AI 설명 파이프라인 정책
-- [2026-04-19 ASCII→위젯 이주 설계](docs/2026-04-19-ascii-to-widget-migration-design.md) — R2 기술 설계
-- [Pixel Art Asset Bible](docs/PIXEL_ART_ASSET_BIBLE.md) / [Asset Manifest](docs/PIXEL_ART_ASSET_MANIFEST.md) — 픽셀아트 스타일·아키텍처 락
-- [Pixel Art Anchor Approval](docs/PIXEL_ART_ANCHOR_APPROVAL.md) — art-0 승인 게이트
-- [Pixel Art Progress](docs/PIXEL_ART_PROGRESS.md) — art-0~9 누적 진행
+- [**세션 핸드오프 (2026-04-24)**](docs/handoffs/2026-04-24-session-handoff.md) — **새 세션 진입 시 최우선 읽기. art-4b 중앙 홀 재작업 미완 (feature 브랜치 8 commits + develop 로컬 ahead 4 commits). 도어 4개 재생성 (Option B `background_image` 스타일 매칭) 필요. art-4b spec + plan 작성 완료.**
+- [세션 핸드오프 (2026-04-22)](docs/handoffs/2026-04-22-session-handoff.md) — 직전 세션 (fix-10b step-11~20 · art-4 · 10/10.5차 릴리즈 · repo rename)
+- [세션 핸드오프 (2026-04-21)](docs/handoffs/2026-04-21-session-handoff.md) — 직직전 세션 (art-2b + art-3 + 8/9차 릴리즈)
+- [세션 핸드오프 (2026-04-20)](docs/handoffs/2026-04-20-session-handoff.md) — subagent describer 파이프라인 ~3,126 entries
+- [세션 핸드오프 (2026-04-19)](docs/handoffs/2026-04-19-session-handoff.md) — 직직전 세션
+- [세션 핸드오프 (2026-04-18)](docs/handoffs/2026-04-18-session-handoff.md) — 4월 중순 세션
+- [**로드맵 피벗 (2026-04-18)**](docs/phases/2026-04-18-roadmap-pivot-personal-first.md) — **현재 단계 P0 · 순차 로드맵. Phase 2 §10 게이트 대체.**
+- [**Phase 계획**](docs/phases/2026-04-18-phase-plan.md) — P0~P3 단계별 산출물·전환 기준·잔여 태스크 (P0-5 NPC 보강 포함)
+- [**Task 워크플로**](docs/workflows/2026-04-18-task-workflow.md) — 브랜치→커밋→PR→머지→릴리즈 표준 절차
+- [**작업 이력**](docs/workflows/2026-04-18-work-history.md) — PR #1~#54 전체 타임라인 + 배포 릴리즈 기록 (릴리즈 #54 = P0-5 NPC)
+- [**트러블슈팅 저널**](docs/workflows/2026-04-18-troubleshooting-journal.md) — 세션 간 재발 방지용 문제·해결 축적. **같은 증상 만나면 먼저 여기 검색.**
+- [Phase 1 설계](docs/phases/2026-04-17-dev-quest-library-design.md) — 아키텍처 · 데이터 모델 · 화면 흐름 · **4개 분관 + NPC 역할** 정의 (백엔드=Java·Spring / 프론트=Dart·Flutter / DB=MySQL / 아키=MSA)
+- [Phase 1 구현 계획](docs/phases/2026-04-17-dev-quest-library-plan.md) — Task 상세
+- [Phase 2 설계](docs/phases/2026-04-18-dev-quest-library-phase2-design.md) — MSA 구조 조립 시뮬레이터 (§10은 로드맵 피벗이 대체)
+- [Phase 3 다이어그램 위젯 이주 설계](docs/designs/2026-04-18-diagram-widget-migration-design.md) — ASCII/표/Mermaid → Flutter 위젯
+- [P0-5 NPC 분관 보강 설계](docs/designs/2026-04-18-npc-branch-enhancement-design.md) — Claude API 기반 NPC Q&A + 책장 카테고리 필터 + 퀘스트 분관화
+- [**2026-04-19 재작업 요구사항**](docs/designs/2026-04-19-requirements-consolidated.md) — R0~R7 실사용 결함 + AI 설명 파이프라인 정책
+- [2026-04-19 ASCII→위젯 이주 설계](docs/designs/2026-04-19-ascii-to-widget-migration-design.md) — R2 기술 설계
+- [Pixel Art Asset Bible](docs/pixel-art/PIXEL_ART_ASSET_BIBLE.md) / [Asset Manifest](docs/pixel-art/PIXEL_ART_ASSET_MANIFEST.md) — 픽셀아트 스타일·아키텍처 락
+- [Pixel Art Anchor Approval](docs/pixel-art/PIXEL_ART_ANCHOR_APPROVAL.md) — art-0 승인 게이트
+- [Pixel Art Progress](docs/pixel-art/PIXEL_ART_PROGRESS.md) — art-0~9 누적 진행
 - [flutter-setup 스킬](../develop-study-documents/Skillbook/flutter-setup/) — Flutter 패키지/설정 레퍼런스

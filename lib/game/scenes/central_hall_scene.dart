@@ -5,75 +5,78 @@ import '../../core/assets/asset_ids.dart';
 import '../components/wing_door_component.dart';
 import '../dol_game.dart';
 import '../rendering/sprite_registry.dart';
+import 'central_hall_scene_layout.dart';
 
+/// 중앙 홀 씬 (art-4b v2 → art-4c).
+///
+/// art-4c: 도어 4개 v3 (arched stone form + keystone accent, base v2 와 매칭)
+/// 으로 재생성. 좌표 공식은 [CentralHallSceneLayout] 순수 함수로 추출 (TDD 격리).
+/// 후면 아치 근처 클러스터 배치 (`/11` 폭, x[0.32~0.65], y 0.45).
+///
+/// art-4 의 3층 parallax 가 `create_map_object` 투명 강제 제약으로 객체처럼
+/// 떠 보이는 붕괴를 해결하기 위해 opaque base + 도어 overlay 구성으로
+/// 재정렬. 렌더 스택 (뒤→앞):
+///
+///   1. fallback 단색 (SpriteRegistry 로드 실패 대비)
+///   2. env_mainhall_base (opaque 풀스크린 front-facing corridor)
+///   3. WingDoorComponent × 4 (상호작용)
+///
+/// 초기 구상(v1) 의 pillar / entrance_arch / chandelier / compass_rose
+/// overlay 는 base 이미지가 이미 책장·아치·샹들리에·컴퍼스를 포함해 중복·
+/// 충돌 발생으로 현 단계에서 skip. 에셋 자체는 보존되어 art-8 폴리시 단계의
+/// 독립 좌표·애니메이션에서 재활용 예정.
 class CentralHallScene extends Component with HasGameReference<DolGame> {
   @override
   Future<void> onLoad() async {
-    // 단색 바닥(FilterQuality 영향 없는 fallback).
+    final size = game.size;
+
+    // 1. Fallback 단색 (base 스프라이트 로드 실패 시 노출).
     add(RectangleComponent(
-      size: game.size,
+      size: size,
       paint: Paint()..color = const Color(0xFF1A1420),
     ));
 
-    // art-4: 3층 parallax 배경. 로드된 레이어만 쌓는다 — 하나라도 누락이면
-    // 해당 층 skip. 현재는 정적 단일 프레임. 향후 art-4b 에서 카메라 이동 시
-    // 시차 스크롤 적용 가능.
-    for (final layer in const <String>[
-      EnvironmentAssets.mainhallBgFar,
-      EnvironmentAssets.mainhallBgMid,
-      EnvironmentAssets.mainhallBgNear,
-    ]) {
-      if (!SpriteRegistry.has(layer)) continue;
+    // 2. env_mainhall_base (opaque 풀스크린).
+    if (SpriteRegistry.has(EnvironmentAssets.mainhallBase)) {
       add(SpriteComponent(
-        sprite: Sprite(SpriteRegistry.get(layer)),
-        size: game.size,
+        sprite: Sprite(SpriteRegistry.get(EnvironmentAssets.mainhallBase)),
+        size: size,
         paint: Paint()..filterQuality = FilterQuality.none,
       ));
     }
 
-    // 4 분관 문 배치 — 기존 위치·크기 로직 그대로 유지, 스프라이트 id 만 추가.
+    // art-4b v2: pillar / entrance_arch / chandelier / compass_rose overlay 를
+    // skip. 새 base 이미지가 이미 책장·아치·샹들리에·컴퍼스를 포함하고 있어
+    // overlay 중복·충돌 발생. 에셋은 보존 (art-8 폴리시 단계에서 별도 좌표 ·
+    // 애니메이션으로 재활용). 현 단계는 opaque base + 4 도어 구성으로 단순화.
+    //
+    // _addPillars(size);
+    // _addEntranceArches(size);
+    // _addCenterDecorations(size);
+
+    // 6. 4 분관 문.
+    _addWingDoors(size);
+  }
+
+  void _addWingDoors(Vector2 size) {
     final wings = <(String, String, Color, String)>[
-      (
-        'backend',
-        '마법사의 탑',
-        const Color(0xFF7B68EE),
-        ObjectAssets.doorBackend,
-      ),
-      (
-        'frontend',
-        '기계공의 작업장',
-        const Color(0xFFFF6347),
-        ObjectAssets.doorFrontend,
-      ),
-      (
-        'database',
-        '연금술사의 실험실',
-        const Color(0xFF2E8B57),
-        ObjectAssets.doorDatabase,
-      ),
-      (
-        'architecture',
-        '건축가의 설계실',
-        const Color(0xFF9370DB),
-        ObjectAssets.doorArchitecture,
-      ),
+      ('backend', '마법사의 탑', const Color(0xFF7B68EE), ObjectAssets.doorBackend),
+      ('frontend', '기계공의 작업장', const Color(0xFFFF6347), ObjectAssets.doorFrontend),
+      ('database', '연금술사의 실험실', const Color(0xFF2E8B57), ObjectAssets.doorDatabase),
+      ('architecture', '건축가의 설계실', const Color(0xFF9370DB), ObjectAssets.doorArchitecture),
     ];
 
-    final doorWidth = game.size.x / 5;
-    final doorHeight = game.size.y * 0.3;
-    final y = game.size.y * 0.4;
+    final transforms = CentralHallSceneLayout.doorTransforms(size);
 
     for (var i = 0; i < wings.length; i++) {
       final (id, name, color, spriteId) = wings[i];
-      final x = (i + 0.5) * (game.size.x / 4) - doorWidth / 2;
-
       add(WingDoorComponent(
         wingId: id,
         label: name,
         color: color,
         spriteId: spriteId,
-        position: Vector2(x, y),
-        size: Vector2(doorWidth, doorHeight),
+        position: transforms[i].position,
+        size: transforms[i].size,
       ));
     }
   }

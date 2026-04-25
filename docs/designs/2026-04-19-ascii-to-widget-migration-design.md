@@ -7,7 +7,7 @@
 - **작성일**: 2026-04-19
 - **상태**: DRAFT (사용자 승인 대기)
 - **전제**:
-  - `docs/2026-04-18-diagram-widget-migration-design.md` — Phase 3 기존 이주 (mermaid 대상, ASCII 제외)
+  - `docs/designs/2026-04-18-diagram-widget-migration-design.md` — Phase 3 기존 이주 (mermaid 대상, ASCII 제외)
   - fix-4a (JetBrains Mono 번들) — 본 이주 완료 전까지의 **안전 렌더 층**
 
 ---
@@ -343,8 +343,8 @@ class BoxDiagramWidget extends StatelessWidget {
 
 ## 11. 참조
 
-- `docs/2026-04-18-diagram-widget-migration-design.md` — Phase 3 mermaid 이주 (선행)
-- `docs/2026-04-18-phase-plan.md` §1.3 — P0 잔여 맥락
-- `docs/2026-04-18-troubleshooting-journal.md` §4 — Mermaid 파서 교훈 (실측 주도 반복 패치)
+- `docs/designs/2026-04-18-diagram-widget-migration-design.md` — Phase 3 mermaid 이주 (선행)
+- `docs/phases/2026-04-18-phase-plan.md` §1.3 — P0 잔여 맥락
+- `docs/workflows/2026-04-18-troubleshooting-journal.md` §4 — Mermaid 파서 교훈 (실측 주도 반복 패치)
 - `lib/presentation/widgets/blocks/content_block_renderer.dart` — 디스패처
 - `tools/content_builder.dart` `_extractBlocks` — 파서 편입 지점

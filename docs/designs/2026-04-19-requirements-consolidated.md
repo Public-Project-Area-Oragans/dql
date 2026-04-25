@@ -263,7 +263,7 @@
 
 - **최종 목표**: ASCII 박스 0 개. 모두 구조화 Flutter 위젯으로 이주 (fix-4b 이후).
 - **중간 단계**: JetBrainsMono 로드 확인됨. 한글 전각 충돌 시각 확인 필요. 폰트만으로 부족하면 fix-4b 부터 파서+위젯.
-- 설계 문서: `docs/2026-04-19-ascii-to-widget-migration-design.md` 참조.
+- 설계 문서: `docs/designs/2026-04-19-ascii-to-widget-migration-design.md` 참조.
 
 ### 2.5 배포 검증 (R5)
 
@@ -382,8 +382,8 @@ R7 의 fix-10a 가 이론 섹션의 asciiDiagram / raw / flowchart / sequence / 
 
 ## 6. 참조
 
-- `docs/2026-04-18-session-handoff.md` — 직전 세션 핸드오프
-- `docs/2026-04-18-phase-plan.md` — P0 단계 정의
-- `docs/2026-04-19-ascii-to-widget-migration-design.md` — ASCII 이주 세부 설계
-- `docs/2026-04-18-troubleshooting-journal.md` — 기존 결함/해결 축적
+- `docs/handoffs/2026-04-18-session-handoff.md` — 직전 세션 핸드오프
+- `docs/phases/2026-04-18-phase-plan.md` — P0 단계 정의
+- `docs/designs/2026-04-19-ascii-to-widget-migration-design.md` — ASCII 이주 세부 설계
+- `docs/workflows/2026-04-18-troubleshooting-journal.md` — 기존 결함/해결 축적
 - `CLAUDE.md` — 프로젝트 전체 규칙

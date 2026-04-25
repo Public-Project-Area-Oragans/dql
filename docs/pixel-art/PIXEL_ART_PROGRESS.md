@@ -5,7 +5,7 @@
 - **총 PR 수**: 10 (art-0 ~ art-9)
 - **총 예상 에셋**: ~120 (Manifest §10.1)
 - **총 API 호출 예산**: 1000 call (2026-04-19 사용자 결정, 기존 plan 290 대비 3.5×)
-- **실 사용 누적**: 22 / 1000
+- **실 사용 누적**: 37 / 1000
 
 ---
 
@@ -76,6 +76,38 @@
 - art-2b 에서 선취된 hover/pressed ColorFilter 가 `SpriteComponent` 에도 그대로 적용됨 (`TappableComponent` 믹스인의 `saveLayer` 가 자식 트리 전체를 감쌈).
 - 알려진 이슈: `verify_palette.dart` fail (AA 엣지로 16색 외 색상) — art-2/3 동일 패턴. art-9 폴리시 단계에서 quantize 처리 예정.
 
+## art-4b — Central Hall Fullshot Redo (DONE)
+
+- 상태: 머지됨 (PR #124)
+- 생성 에셋: 9 (env_mainhall_base v2 + deco_pillar + deco_entrance_arch ×4 + deco_chandelier + deco_compass_rose + obj_door_architecture v2)
+- API 호출: 11 (base v1 1 + base v2 1 + pillar 1 + arch ×4 + chandelier 1 (concurrent 429 retry 포함) + compass 1 + door_architecture v2 1)
+- 핵심: art-4 의 3층 parallax 가 `create_map_object` 투명 강제로 객체처럼 떠 보이는 프로덕션 붕괴 해소. opaque base v2 (steampunk corridor) + 4 도어 overlay 단순화 (overlay 자산은 보존, art-8 폴리시에서 재활용).
+- 알려진 한계: 도어 4개 스타일이 base v2 의 어두운 pastel 팔레트와 부조화 + 2D 평면 배치가 base 3D corridor 원근감과 mismatch — art-4c 에서 해소.
+- 코드: `lib/game/scenes/central_hall_scene.dart` (조립식 렌더 스택 재작성) · `lib/core/assets/asset_ids.dart` (`MainHallDecoAssets` 클래스 신규 + `mainhallBase`) · `lib/game/dol_game.dart` (preload 12 신규 상수). 178 테스트 모두 GREEN.
+- 파일:
+  - `assets/sprites/environments/main_hall/env_mainhall_base_v1.png` 256×256 (실 콘텐츠 v2 — 빈 corridor)
+  - `assets/sprites/environments/main_hall/deco_pillar.png` (overlay 자산, 현 단계 미사용)
+  - `assets/sprites/environments/main_hall/deco_entrance_arch_{backend,database,frontend,architecture}.png` ×4
+  - `assets/sprites/environments/main_hall/deco_chandelier.png`
+  - `assets/sprites/environments/main_hall/deco_compass_rose.png`
+  - `assets/sprites/objects/doors/obj_door_architecture_v2.png` 64×64
+
+## art-4c — Doors Redo + Cluster Layout (DONE)
+
+- 상태: 구현 완료 (PR 대기)
+- 생성 에셋: 4 (obj_door_{backend,frontend,database,architecture} v3)
+- API 호출: 4 (Phase 1 backend 파일럿 1 + Phase 2 일괄 3, 재시도 0)
+- 핵심: 도어 4개를 arched stone doorway form + keystone accent 로 재생성하여 base v2 corridor 와 조화. 좌표 공식을 `CentralHallSceneLayout` 순수 함수로 추출 (TDD 격리). 후면 아치 근처 클러스터 배치 (`/8` 폭, x 중심점 [0.25, 0.42, 0.58, 0.75], y 0.45). 라벨을 도어 위 반투명 plaque + JetBrainsMonoHangul 폰트로 분리 (한글 가독성).
+- 코드: `lib/game/scenes/central_hall_scene_layout.dart` (신규) · `lib/game/scenes/central_hall_scene.dart` (layout 함수 사용) · `lib/core/assets/asset_ids.dart` (도어 4개 v3) · `lib/game/components/wing_door_component.dart` (라벨 plaque + Hangul 폰트) · `pubspec.yaml` (JetBrainsMonoHangul 폰트 등록). 184 테스트 GREEN.
+- 파일:
+  - `assets/sprites/objects/doors/obj_door_backend_v3.png` 64×96 (deep forest green keystone)
+  - `assets/sprites/objects/doors/obj_door_frontend_v3.png` 64×96 (deep sapphire blue)
+  - `assets/sprites/objects/doors/obj_door_database_v3.png` 64×96 (burnished amber)
+  - `assets/sprites/objects/doors/obj_door_architecture_v3.png` 64×96 (deep amethyst purple)
+  - `assets/fonts/JetBrainsMonoHangul-Regular.ttf` ~2.6MB (SIL OFL 1.1)
+  - `assets/fonts/JetBrainsMonoHangul-Bold.ttf` ~2.6MB
+- 발견 사항: PixelLab `create_map_object` 가 metadata 에 64×64 로 표시하지만 실제 다운로드 PNG 는 64×96 (요청 그대로). 후속 art-* 에서 metadata 값 신뢰 말고 PIL 직접 검증.
+
 ## art-5 ~ art-9 (TODO)
 
 - 미착수
@@ -91,13 +123,15 @@
 | art-2 | ✅ DONE | 8 | 9 | 11 | 12 |
 | art-3 | ✅ DONE | 2 | 2 | 13 | 14 |
 | art-4 | ✅ DONE | 7 | 8 | 20 | 22 |
+| art-4b | ✅ MERGED | 9 | 11 | 29 | 33 |
+| art-4c | ✅ DONE | 4 | 4 | 33 | 37 |
 | art-5 | - | ~35 | ~50 | — | — |
 | art-6 | - | ~35 | ~50 | — | — |
 | art-7 | - | ~28 | ~40 | — | — |
 | art-8 | - | ~36 | ~50 | — | — |
 | art-9 | - | ~8 | ~12 | — | — |
-| **합계 (예상)** | | **~171** | **~239** | | |
+| **합계 (예상)** | | **~180** | **~254** | | |
 
-**잉여 예산**: 1000 − 239 (최종 예상) = 761 call. variant 재생성·retry·품질 반복용.
+**잉여 예산**: 1000 − 254 (최종 예상) = 746 call. variant 재생성·retry·품질 반복용.
 
-art-4 예산 효율: 실제 7 에셋 / 8 call (예측 12/18 대비 60% 절감). 절감분 후속 PR 로 이월.
+art-4b 예산: 9 에셋 / 11 call (base 1회 재생성 포함). art-4c 예산 효율: 4 에셋 / 4 call (재시도 0 — `background_image` 없이도 명시적 프롬프트 만으로 1회 통과).

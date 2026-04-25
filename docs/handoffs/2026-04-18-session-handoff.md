@@ -49,8 +49,8 @@
 - `lib/presentation/screens/debug_settings_screen.dart` — Claude 키 등록 UI.
 
 **docs/**
-- `docs/2026-04-18-npc-branch-enhancement-design.md` — P0-5 설계.
-- `docs/2026-04-18-session-handoff.md` — (본 문서).
+- `docs/designs/2026-04-18-npc-branch-enhancement-design.md` — P0-5 설계.
+- `docs/handoffs/2026-04-18-session-handoff.md` — (본 문서).
 
 ---
 
@@ -105,7 +105,7 @@
    - 중앙 홀 → 분관 이동 → 복귀 정상
    - HUD XP/진행률 표시 정상
 
-발견한 결함은 `docs/2026-04-18-troubleshooting-journal.md`에 증상+해결 축적 후 수정 PR.
+발견한 결함은 `docs/workflows/2026-04-18-troubleshooting-journal.md`에 증상+해결 축적 후 수정 PR.
 
 ### 3.2 선택 — P0-1 카테고리별 시뮬레이터 당위성 판단
 
@@ -160,12 +160,12 @@ P1은 4주 실사용 축적 단계 — 별도 설계 없음, 사용하며 backlo
 
 ## 5. 참조 (빠른 재진입)
 
-- **현재 상태**: `docs/2026-04-18-work-history.md` §8
-- **Phase 계획**: `docs/2026-04-18-phase-plan.md`
-- **NPC 설계**: `docs/2026-04-18-npc-branch-enhancement-design.md`
-- **로드맵**: `docs/2026-04-18-roadmap-pivot-personal-first.md`
-- **트러블슈팅**: `docs/2026-04-18-troubleshooting-journal.md`
-- **Task 워크플로**: `docs/2026-04-18-task-workflow.md`
+- **현재 상태**: `docs/workflows/2026-04-18-work-history.md` §8
+- **Phase 계획**: `docs/phases/2026-04-18-phase-plan.md`
+- **NPC 설계**: `docs/designs/2026-04-18-npc-branch-enhancement-design.md`
+- **로드맵**: `docs/phases/2026-04-18-roadmap-pivot-personal-first.md`
+- **트러블슈팅**: `docs/workflows/2026-04-18-troubleshooting-journal.md`
+- **Task 워크플로**: `docs/workflows/2026-04-18-task-workflow.md`
 - **CLAUDE.md**: 프로젝트 루트 — 아키텍처/생성/배포 규칙
 
 ---
@@ -176,7 +176,7 @@ P1은 4주 실사용 축적 단계 — 별도 설계 없음, 사용하며 backlo
 [ ] git checkout develop && git pull
 [ ] git log --oneline master..develop (비어있어야 함 — 이 세션 종료 시 release 완료)
 [ ] gh pr list --state open (오픈 PR 없어야 함)
-[ ] docs/2026-04-18-session-handoff.md 읽기
+[ ] docs/handoffs/2026-04-18-session-handoff.md 읽기
 [ ] 프로덕션 URL 접속 → §3.1 체크리스트 수행
 [ ] 결함 있으면 troubleshooting-journal 업데이트 + 수정 PR
 [ ] 결함 없으면 P0-1 당위성 판단 or P1 실사용 전환

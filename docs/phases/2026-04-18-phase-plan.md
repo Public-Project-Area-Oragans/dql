@@ -1,8 +1,8 @@
 # DOL — Phase 계획 (P0 → P3)
 
-> `docs/2026-04-18-roadmap-pivot-personal-first.md`에서 확정된 4단계 로드맵을
+> `docs/phases/2026-04-18-roadmap-pivot-personal-first.md`에서 확정된 4단계 로드맵을
 > 단계별로 세분화. 각 Phase는 **착수 조건 · 산출물 · 전환 기준 · 현재 잔여**를 명시.
-> Task 세분화는 `docs/2026-04-18-task-workflow.md`의 표준 플로우를 따른다.
+> Task 세분화는 `docs/workflows/2026-04-18-task-workflow.md`의 표준 플로우를 따른다.
 
 - **최초 작성**: 2026-04-18
 - **현재 단계**: **P0 (개인 사용용 전체 기능 완성)** — 진행 중 (P0-5 NPC 보강 완료 / P0-1 시뮬레이터 타입 당위성 재검토 남음)
@@ -58,7 +58,7 @@ Phase 0~3 전체 + Task 12 + Task 2-5 완료.
 
 #### P0-5 (2026-04-18 **완료**): 분관별 NPC 기능 보강
 
-**상태**: ✅ 완료 (PR #46~#53 머지, 릴리즈 #54). 설계 문서 `docs/2026-04-18-npc-branch-enhancement-design.md` 채택.
+**상태**: ✅ 완료 (PR #46~#53 머지, 릴리즈 #54). 설계 문서 `docs/designs/2026-04-18-npc-branch-enhancement-design.md` 채택.
 
 **구현 요약** (상세는 `work-history.md` §6.4):
 - NPC-1: 책장 카테고리 필터링.
@@ -232,7 +232,7 @@ P2 전환 기준 충족.
 
 ## 6. 참조
 
-- 로드맵 피벗: `docs/2026-04-18-roadmap-pivot-personal-first.md`
-- 작업 이력: `docs/2026-04-18-work-history.md`
-- Task 워크플로: `docs/2026-04-18-task-workflow.md`
-- 트러블슈팅: `docs/2026-04-18-troubleshooting-journal.md`
+- 로드맵 피벗: `docs/phases/2026-04-18-roadmap-pivot-personal-first.md`
+- 작업 이력: `docs/workflows/2026-04-18-work-history.md`
+- Task 워크플로: `docs/workflows/2026-04-18-task-workflow.md`
+- 트러블슈팅: `docs/workflows/2026-04-18-troubleshooting-journal.md`

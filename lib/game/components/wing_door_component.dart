@@ -6,15 +6,16 @@ import '../dol_game.dart';
 import '../mixins/tappable_component.dart';
 import '../rendering/sprite_registry.dart';
 
-/// 4 분관 입구 문 (art-4).
+/// 4 분관 입구 문 (art-4 → art-4c).
 ///
 /// 스프라이트 로드 성공 시 `SpriteComponent` 자식으로 실제 분관 문 픽셀아트
-/// 렌더, 실패/미로드 시 단색 `RectangleComponent` fallback. 어느 쪽이든
-/// 라벨은 중앙에 `TextComponent` 로 덮어 그린다.
+/// 렌더, 실패/미로드 시 단색 `RectangleComponent` fallback.
+///
+/// art-4c: 라벨은 도어 위에 반투명 plaque 형태의 별도 sign 으로 분리
+/// (이전: 도어 중앙 덮어 그리기). 도어 v3 가 작아도 텍스트 가독성 확보.
 ///
 /// hover / pressed 시각 효과는 `TappableComponent` 믹스인의 ColorFilter
-/// tint 로 자식 전체를 일괄 감싼다 (art-2b). Flutter `ColorFilter` 는
-/// Bible §3.1 팔레트 락 위반이므로 스프라이트 단계에서 색조를 바꾸지 않음.
+/// tint 로 자식 전체를 일괄 감싼다.
 class WingDoorComponent extends PositionComponent
     with
         TapCallbacks,
@@ -57,27 +58,36 @@ class WingDoorComponent extends PositionComponent
       ));
     }
 
-    // 라벨은 항상 중앙에 덮어 그린다. 자식 순서상 마지막에 추가해 최상단
-    // 렌더. TappableComponent tint 로 같이 색조 변함.
+    // art-4c: 라벨을 도어 위 반투명 plaque 로 분리. 작은 도어에서도 가독성 확보.
     final textPainter = TextPainter(
       text: TextSpan(
         text: label,
         style: const TextStyle(
           color: Color(0xFFFFD700),
-          fontSize: 14,
+          fontSize: 20,
           fontWeight: FontWeight.bold,
+          fontFamily: 'JetBrainsMonoHangul',
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
 
-    add(_LabelComponent(
+    const plaqueHorizontalPadding = 8.0;
+    const plaqueVerticalPadding = 4.0;
+    const plaqueGap = 6.0; // 도어 상단과 plaque 하단 사이 여백
+    final plaqueWidth = textPainter.width + plaqueHorizontalPadding * 2;
+    final plaqueHeight = textPainter.height + plaqueVerticalPadding * 2;
+    final plaqueX = (size.x - plaqueWidth) / 2;
+    final plaqueY = -plaqueHeight - plaqueGap;
+
+    add(_LabelPlaqueComponent(
       painter: textPainter,
-      position: Vector2(
-        (size.x - textPainter.width) / 2,
-        (size.y - textPainter.height) / 2,
+      plaquePadding: const EdgeInsets.symmetric(
+        horizontal: plaqueHorizontalPadding,
+        vertical: plaqueVerticalPadding,
       ),
-      size: Vector2(textPainter.width, textPainter.height),
+      position: Vector2(plaqueX, plaqueY),
+      size: Vector2(plaqueWidth, plaqueHeight),
     ));
   }
 
@@ -87,19 +97,28 @@ class WingDoorComponent extends PositionComponent
   }
 }
 
-/// 문 라벨 전용 PositionComponent. TextComponent 대신 직접 TextPainter 를
-/// 재사용해 폰트·색상 지정 일관성을 유지.
-class _LabelComponent extends PositionComponent {
+/// 도어 위 반투명 plaque + 텍스트 라벨. art-4c 시각적 가독성 보강.
+class _LabelPlaqueComponent extends PositionComponent {
   final TextPainter painter;
+  final EdgeInsets plaquePadding;
 
-  _LabelComponent({
+  _LabelPlaqueComponent({
     required this.painter,
+    required this.plaquePadding,
     required Vector2 position,
     required Vector2 size,
   }) : super(position: position, size: size);
 
   @override
   void render(Canvas canvas) {
-    painter.paint(canvas, Offset.zero);
+    // 반투명 검정 plaque (간판 느낌).
+    final rect = Rect.fromLTWH(0, 0, size.x, size.y);
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(3));
+    canvas.drawRRect(
+      rrect,
+      Paint()..color = const Color(0xCC000000), // 80% opacity black
+    );
+    // 텍스트는 plaque 안쪽 padding 위치에서 그린다.
+    painter.paint(canvas, Offset(plaquePadding.left, plaquePadding.top));
   }
 }
