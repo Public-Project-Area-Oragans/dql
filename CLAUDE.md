@@ -50,7 +50,8 @@ master ← develop ← feature/task-XX-*
 
 ## 참조 문서
 
-- [**세션 핸드오프 (2026-04-24)**](docs/handoffs/2026-04-24-session-handoff.md) — **새 세션 진입 시 최우선 읽기. art-4b 중앙 홀 재작업 미완 (feature 브랜치 8 commits + develop 로컬 ahead 4 commits). 도어 4개 재생성 (Option B `background_image` 스타일 매칭) 필요. art-4b spec + plan 작성 완료.**
+- [**세션 핸드오프 (2026-04-25)**](docs/handoffs/2026-04-25-session-handoff.md) — **새 세션 진입 시 최우선 읽기. docs 5폴더 재구성 + art-4b + art-4c (도어 v3 + 후면 클러스터 + 라벨 plaque + Hangul 폰트) + 11차 통합 릴리즈 완료. 누적 PixelLab 37/1000. 다음: art-5 (분관 배경) 또는 fix-10b 잔량.**
+- [세션 핸드오프 (2026-04-24)](docs/handoffs/2026-04-24-session-handoff.md) — 직전 세션 (art-4b spec/plan 작성 + 9 PixelLab call, 도어 mismatch 잔존)
 - [세션 핸드오프 (2026-04-22)](docs/handoffs/2026-04-22-session-handoff.md) — 직전 세션 (fix-10b step-11~20 · art-4 · 10/10.5차 릴리즈 · repo rename)
 - [세션 핸드오프 (2026-04-21)](docs/handoffs/2026-04-21-session-handoff.md) — 직직전 세션 (art-2b + art-3 + 8/9차 릴리즈)
 - [세션 핸드오프 (2026-04-20)](docs/handoffs/2026-04-20-session-handoff.md) — subagent describer 파이프라인 ~3,126 entries
